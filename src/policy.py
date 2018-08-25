@@ -31,6 +31,9 @@ def CreatePolicy(opts,capabilities,mounts):
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
 
+    if opts['FullNetworkAccess']:
+        policy.write('    (blockinherit net_container)\n')
+
     caps=''
     for item in capabilities:
         caps = caps + perms.cap[item]
