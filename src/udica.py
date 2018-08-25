@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument(
         '-n', '--name', type=str, help='Name for SELinux policy module', dest='ContainerName', required=True)
     parser.add_argument(
-        '--full-network-access', help='Allow container full Network access ', dest='FullNetworkAccess', action='store_false')
+        '--full-network-access', help='Allow container full Network access ', required=False, dest='FullNetworkAccess', action='store_true')
     args = parser.parse_args()
     return vars(args)
 
