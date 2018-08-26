@@ -5,6 +5,11 @@ import semanage
 
 import perms
 
+config_container = '/etc'
+home_container = '/home'
+log_container = '/var/log'
+tmp_container = '/tmp'
+
 def ListContexts(directory):
     directory_len = (len(directory))
 
@@ -67,6 +72,38 @@ def CreatePolicy(opts,capabilities,mounts,ports):
     # mounts
     for item in mounts:
         if not item['source'].find("/"):
+            if (item['source'] == log_container and 'ro' in item['options']):
+                policy.write('    (blockinherit log_container)\n')
+                continue;
+
+            if (item['source'] == log_container and 'rw' in item['options']):
+                policy.write('    (blockinherit log_rw_container)\n')
+                continue;
+
+            if (item['source'] == home_container and 'ro' in item['options']):
+                policy.write('    (blockinherit home_container)\n')
+                continue;
+
+            if (item['source'] == home_container and 'rw' in item['options']):
+                policy.write('    (blockinherit home_rw_container)\n')
+                continue;
+
+            if (item['source'] == tmp_container and 'ro' in item['options']):
+                policy.write('    (blockinherit tmp_container)\n')
+                continue;
+
+            if (item['source'] == tmp_container and 'rw' in item['options']):
+                policy.write('    (blockinherit tmp_rw_container)\n')
+                continue;
+
+            if (item['source'] == config_container and 'ro' in item['options']):
+                policy.write('    (blockinherit config_container)\n')
+                continue;
+
+            if (item['source'] == config_container and 'rw' in item['options']):
+                policy.write('    (blockinherit config_rw_container)\n')
+                continue;
+
             Contexts = ListContexts(item['source'])
             for context in Contexts:
                 if 'rw' in item['options']:
