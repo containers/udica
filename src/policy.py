@@ -26,7 +26,22 @@ def ListContexts(directory):
     Contexts.append(context.split(':')[2])
     return Contexts
 
-def CreatePolicy(opts,capabilities,mounts):
+def ListPorts(port_number):
+
+    handle = semanage.semanage_handle_create()
+    semanage.semanage_connect(handle)
+
+    (rc, plist) = semanage.semanage_port_list(handle)
+    (rc, plocal) = semanage.semanage_port_list_local(handle)
+
+    for port in plist + plocal:
+        con = semanage.semanage_port_get_con(port)
+        ctype = semanage.semanage_context_get_type(con)
+        low = semanage.semanage_port_get_low(port)
+        if (low == port_number):
+            return ctype
+
+def CreatePolicy(opts,capabilities,mounts,ports):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
@@ -34,6 +49,10 @@ def CreatePolicy(opts,capabilities,mounts):
     if opts['FullNetworkAccess']:
         policy.write('    (blockinherit net_container)\n')
 
+    if ports:
+        policy.write('    (blockinherit restricted_net_container)\n')
+
+    # capabilities
     caps=''
     for item in capabilities:
         caps = caps + perms.cap[item]
@@ -41,6 +60,11 @@ def CreatePolicy(opts,capabilities,mounts):
     policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
     policy.write('\n')
 
+    # ports
+    for item in ports:
+        policy.write('    (allow process ' + ListPorts(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
+
+    # mounts
     for item in mounts:
         if not item['source'].find("/"):
             Contexts = ListContexts(item['source'])

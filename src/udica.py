@@ -22,8 +22,8 @@ def main():
 
     opts = get_args()
 
-    os.system("podman inspect " + opts['ContainerID'] + "> /tmp/container.inspect")
-    os.system("podman top " + opts['ContainerID'] + " capeff > /tmp/container.caps")
+    os.system("podman inspect " + opts['ContainerID'] + "&> /tmp/container.inspect")
+    os.system("podman top " + opts['ContainerID'] + " capeff &> /tmp/container.caps")
 
     ContainerInspect = parse.Parser("/tmp/container.inspect")
     ContainerCaps = parse.ParserCaps("/tmp/container.caps")
@@ -31,7 +31,7 @@ def main():
     ContainerMounts = ContainerInspect[0]['Mounts']
     ContainerPorts = ContainerInspect[0]['NetworkSettings']['Ports']
 
-    policy.CreatePolicy(opts,ContainerCaps,ContainerMounts)
+    policy.CreatePolicy(opts,ContainerCaps,ContainerMounts, ContainerPorts)
 
     print('\nPolicy ' + opts['ContainerName'] + ' with container id ' + opts['ContainerID'] + ' created!\n')
     print('Please load this module using: # semodule -i ' + opts['ContainerName'] + '.cil')

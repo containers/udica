@@ -49,3 +49,8 @@ perm = {
         'srw': 'getattr read write append open ',
         'sro': 'getattr read open ',
 }
+
+socket = {
+        'tcp': 'tcp_socket',
+        'udp': 'udp_socket',
+}
