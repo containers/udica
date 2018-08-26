@@ -1,8 +1,0 @@
-(block logreader_container
-    (blockinherit container)
-    (allow process var_t (dir (getattr search open)))
-    (allow process logfile (dir (ioctl read getattr lock search open)))
-    (allow process logfile (file (ioctl read getattr lock open map)))
-    (allow process auditd_log_t (dir (ioctl read getattr lock search open)))
-    (allow process auditd_log_t (file (ioctl read getattr lock open)))
-)

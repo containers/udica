@@ -1,5 +1,0 @@
-(block fluentd_container
-    (blockinherit net_container)
-    (blockinherit logreader_container)
-    (allow process process (capability (fowner chown setgid setuid)))
-)

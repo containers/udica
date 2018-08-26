@@ -1,5 +1,0 @@
-(block net_container
-	(blockinherit container)
-	(typeattributeset sandbox_net_domain (process))
-)
-

@@ -1,6 +1,0 @@
-(block container
-(type process)
-(roletype system_r process)
-(typeattributeset svirt_sandbox_domain (process ))
-(typeattributeset container_domain (process ))
-)
