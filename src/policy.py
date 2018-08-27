@@ -22,10 +22,12 @@ def list_contexts(directory):
 
     contexts = []
     for fcontext in fclist + fclocal + fchome:
-        # print(semanage.semanage_fcontext_get_expr(fcontext))
         expression = semanage.semanage_fcontext_get_expr(fcontext)
         if expression[0:directory_len] == directory:
-            contexts.append(semanage.semanage_context_get_type(semanage.semanage_fcontext_get_con(fcontext)))
+            context = semanage.semanage_fcontext_get_con(fcontext)
+            if context:
+                contexts.append(semanage.semanage_context_get_type(context))
+
     selabel = selinux.selabel_open(selinux.SELABEL_CTX_FILE, None, 0)
     (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
     contexts.append(context.split(':')[2])
