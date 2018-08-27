@@ -2,15 +2,15 @@
 
 import json
 
-def Parser(configFile):
-    file = open(configFile)
-    jsonRep = json.load(file)
+def parse_inspect(config_file):
+    file = open(config_file)
+    json_rep = json.load(file)
     file.close()
-    return jsonRep
+    return json_rep
 
-def ParserCaps(ConfigFile):
-    file = open(ConfigFile)
-    CapabilitiesData = file.readline()
-    CapabilitiesData = file.readline()
+def parse_cap(config_file):
+    file = open(config_file)
+    caps = file.readline()
+    caps = file.readline()
     file.close()
-    return CapabilitiesData.rstrip().split(",")
+    return caps.rstrip().split(",")

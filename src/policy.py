@@ -10,7 +10,7 @@ home_container = '/home'
 log_container = '/var/log'
 tmp_container = '/tmp'
 
-def ListContexts(directory):
+def list_contexts(directory):
     directory_len = (len(directory))
 
     handle = semanage.semanage_handle_create()
@@ -20,18 +20,18 @@ def ListContexts(directory):
     (rc, fclocal) = semanage.semanage_fcontext_list_local(handle)
     (rc, fchome) = semanage.semanage_fcontext_list_homedirs(handle)
 
-    Contexts = []
+    contexts = []
     for fcontext in fclist + fclocal + fchome:
         # print(semanage.semanage_fcontext_get_expr(fcontext))
         expression = semanage.semanage_fcontext_get_expr(fcontext)
         if expression[0:directory_len] == directory:
-            Contexts.append(semanage.semanage_context_get_type(semanage.semanage_fcontext_get_con(fcontext)))
+            contexts.append(semanage.semanage_context_get_type(semanage.semanage_fcontext_get_con(fcontext)))
     selabel = selinux.selabel_open(selinux.SELABEL_CTX_FILE, None, 0)
     (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
-    Contexts.append(context.split(':')[2])
-    return Contexts
+    contexts.append(context.split(':')[2])
+    return contexts
 
-def ListPorts(port_number):
+def list_ports(port_number):
 
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
@@ -46,7 +46,7 @@ def ListPorts(port_number):
         if (low == port_number):
             return ctype
 
-def CreatePolicy(opts,capabilities,mounts,ports):
+def create_policy(opts,capabilities,mounts,ports):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
@@ -67,7 +67,7 @@ def CreatePolicy(opts,capabilities,mounts,ports):
 
     # ports
     for item in ports:
-        policy.write('    (allow process ' + ListPorts(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
+        policy.write('    (allow process ' + list_ports(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
 
     # mounts
     for item in mounts:
@@ -104,8 +104,8 @@ def CreatePolicy(opts,capabilities,mounts,ports):
                 policy.write('    (blockinherit config_rw_container)\n')
                 continue;
 
-            Contexts = ListContexts(item['source'])
-            for context in Contexts:
+            contexts = list_contexts(item['source'])
+            for context in contexts:
                 if 'rw' in item['options']:
                     policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
