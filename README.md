@@ -12,7 +12,7 @@ Install udica tool with all dependencies
 
     $ sudo dnf install -y podman setools-console git container-selinux
     $ git clone https://gitlab.cee.redhat.com/lvrabec/udica.git
-    $ sudo python3 ./setup.py install
+    $ cd udica && sudo python3 ./setup.py install
 
 Make sure that SELinux is in Enforcing mode
 
@@ -82,25 +82,25 @@ Container ID is **37a3635afb8f**.
 
 To create policy for it **udica** tool could be used. Parameter '*-i*' is for *container id* and '*-n*' for SELinux policy *name* for container.
 
-    # cd src/
-    # ./udica.py -i 37a3635afb8f -n my_container
+    # udica -i 37a3635afb8f -n my_container
 
     Policy my_container with container id 37a3635afb8f created!
 
-    Please load this module using: # semodule -i my_container.cil
+    Please load this module using: 
+    # semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
+
     Start container with: "--security-opt label=type:my_container.process" parameter
 
 Policy is generated. Let's follow instructions from output:
 
-    # semodule -i my_container.cil
+    # semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
 
-    # podman run --security-opt label=type:my_container.process --net host -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it fedora bash
+    # podman run --security-opt label=type:my_container.process -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it fedora bash
 
 Container is now running with **my\_container.process** type:
 
     # ps -efZ | grep my_container.process
-    ps -efZ | grep my_container.process
-    unconfined_u:system_r:container_runtime_t:s0-s0:c0.c1023 root 2275 434  1 13:49 pts/1 00:00:00 podman run --security-opt label=type:my_container.process --net host -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it fedora bash
+    unconfined_u:system_r:container_runtime_t:s0-s0:c0.c1023 root 2275 434  1 13:49 pts/1 00:00:00 podman run --security-opt label=type:my_container.process -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it fedora bash
     system_u:system_r:my_container.process:s0:c270,c963 root 2317 2305  0 13:49 pts/0 00:00:00 bash
 
 Proof that SELinux now allowing access */home* and */var/spool* mount points:
