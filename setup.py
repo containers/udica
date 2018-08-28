@@ -4,22 +4,6 @@ import os
 
 import semanage
 
-class PostInstallCommand(install):
-
-    def run(self):
-        install.run(self)
-        
-        os.chdir("./udica/templates")
-        templates = os.listdir("./")
-
-        handle = semanage.semanage_handle_create()
-        semanage.semanage_connect(handle)
-
-        for template in templates:
-            semanage.semanage_module_install_file(handle, template)
-
-        semanage.semanage_commit(handle)
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -33,6 +17,14 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://gitlab.cee.redhat.com/lvrabec/udica",
     packages=["udica"],
+    data_files=[
+        ('/usr/share/udica/templates', ['udica/templates/base_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/config_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/home_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/log_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/net_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/tmp_container.cil']),
+        ],
     # scripts=["bin/udica"],
     entry_points = {
         'console_scripts': ['udica=udica:main'],
@@ -42,8 +34,5 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
     ],
-    cmdclass={
-        "install": PostInstallCommand,
-        }
 )
 

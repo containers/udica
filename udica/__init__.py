@@ -4,7 +4,7 @@ import argparse
 
 # import udica
 from udica.parse import parse_inspect, parse_cap
-from udica.policy import create_policy
+from udica.policy import create_policy, load_policy
 
 def get_args():
     parser = argparse.ArgumentParser(description='Script generates SELinux policy for running container.')
@@ -14,6 +14,8 @@ def get_args():
         '-n', '--name', type=str, help='Name for SELinux policy module', dest='ContainerName', required=True)
     parser.add_argument(
         '--full-network-access', help='Allow container full Network access ', required=False, dest='FullNetworkAccess', action='store_true')
+    parser.add_argument(
+        '-l', '--load-modules', help='Load templates and module created by this tool ', required=False, dest='LoadModules', action='store_true')
     args = parser.parse_args()
     return vars(args)
 
@@ -31,9 +33,11 @@ def main():
 
     create_policy(opts,container_caps,container_mounts,container_ports)
 
-    print('\nPolicy ' + opts['ContainerName'] + ' with container id ' + opts['ContainerID'] + ' created!\n')
-    print('Please load this module using: # semodule -i ' + opts['ContainerName'] + '.cil')
-    print('Start container with: "--security-opt label=type:' + opts['ContainerName'] + '.process" parameter')
+    print('\nPolicy ' + opts['ContainerName'] + ' with container id ' + opts['ContainerID'] + ' created!')
+
+    load_policy(opts)
+
+    print('\nStart container with: "--security-opt label=type:' + opts['ContainerName'] + '.process" parameter')
 
 if __name__ == "__main__":
     main()

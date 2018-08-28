@@ -3,12 +3,24 @@
 import selinux
 import semanage
 
+from os import chdir, getcwd
+
 import udica.perms as perms
 
-config_container = '/etc'
-home_container = '/home'
-log_container = '/var/log'
-tmp_container = '/tmp'
+CONFIG_CONTAINER = '/etc'
+HOME_CONTAINER = '/home'
+LOG_CONTAINER = '/var/log'
+TMP_CONTAINER = '/tmp'
+
+TEMPLATES_STORE = '/usr/share/udica/templates'
+
+templates_to_load = []
+
+def add_template(template):
+    templates_to_load.append(template)
+
+def list_templates_to_string(templates_to_load):
+    return '.cil,'.join(map(str, templates_to_load)) + '.cil'
 
 def list_contexts(directory):
     directory_len = (len(directory))
@@ -52,12 +64,15 @@ def create_policy(opts,capabilities,mounts,ports):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
+    add_template("base_container");
 
     if opts['FullNetworkAccess']:
         policy.write('    (blockinherit net_container)\n')
+        add_template("net_container");
 
     if ports:
         policy.write('    (blockinherit restricted_net_container)\n')
+        add_template("net_container");
 
     # capabilities
     caps=''
@@ -74,36 +89,44 @@ def create_policy(opts,capabilities,mounts,ports):
     # mounts
     for item in mounts:
         if not item['source'].find("/"):
-            if (item['source'] == log_container and 'ro' in item['options']):
+            if (item['source'] == LOG_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit log_container)\n')
+                add_template("log_container");
                 continue;
 
-            if (item['source'] == log_container and 'rw' in item['options']):
+            if (item['source'] == LOG_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit log_rw_container)\n')
+                add_template("log_container");
                 continue;
 
-            if (item['source'] == home_container and 'ro' in item['options']):
+            if (item['source'] == HOME_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit home_container)\n')
+                add_template("home_container");
                 continue;
 
-            if (item['source'] == home_container and 'rw' in item['options']):
+            if (item['source'] == HOME_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit home_rw_container)\n')
+                add_template("home_container");
                 continue;
 
-            if (item['source'] == tmp_container and 'ro' in item['options']):
+            if (item['source'] == TMP_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit tmp_container)\n')
+                add_template("tmp_container");
                 continue;
 
-            if (item['source'] == tmp_container and 'rw' in item['options']):
+            if (item['source'] == TMP_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit tmp_rw_container)\n')
+                add_template("tmp_container");
                 continue;
 
-            if (item['source'] == config_container and 'ro' in item['options']):
+            if (item['source'] == CONFIG_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit config_container)\n')
+                add_template("config_container");
                 continue;
 
-            if (item['source'] == config_container and 'rw' in item['options']):
+            if (item['source'] == CONFIG_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit config_rw_container)\n')
+                add_template("config_container");
                 continue;
 
             contexts = list_contexts(item['source'])
@@ -119,3 +142,23 @@ def create_policy(opts,capabilities,mounts,ports):
 
     policy.write(') ')
     policy.close()
+
+def load_policy(opts):
+    PWD = getcwd()
+    chdir(TEMPLATES_STORE)
+
+    if opts['LoadModules']:
+        handle = semanage.semanage_handle_create()
+        semanage.semanage_connect(handle)
+
+        for template in templates_to_load:
+            semanage.semanage_module_install_file(handle, template + '.cil')
+
+        chdir(PWD)
+
+        semanage.semanage_module_install_file(handle, opts['ContainerName'] + '.cil')
+
+        semanage.semanage_commit(handle)
+    else:
+        templates = list_templates_to_string(templates_to_load)
+        print('\nPlease load this module using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')
