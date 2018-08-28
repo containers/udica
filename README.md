@@ -8,13 +8,11 @@ This tool is still in early phase of development. Any feedback, ideas, pull requ
 
 ## Installing
 
-To install all prerequisites use 'install' script
+Install udica tool with all dependencies
 
+    $ sudo dnf install -y podman setools-console git container-selinux
     $ git clone https://gitlab.cee.redhat.com/lvrabec/udica.git
-    $ cd udica
-    # ./install
-
-Script will install packages like podman, setools-console and download **Container SELinux Customization** project where are stored all SELinux policy templates for containers
+    $ sudo python3 ./setup.py install
 
 Make sure that SELinux is in Enforcing mode
 

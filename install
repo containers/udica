@@ -1,7 +1,0 @@
-dnf install -y podman setools-console git container-selinux
-
-git clone https://github.com/fedora-selinux/container-selinux-customization.git
-
-cd container-selinux-customization
-
-semodule -X 200 -i base_container.cil net_container.cil home_container.cil log_container.cil config_container.cil tmp_container.cil
