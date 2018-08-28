@@ -1,7 +1,7 @@
 #!/bin/python3
 
 import sys
-import os
+import subprocess
 import argparse
 
 import parse
@@ -22,11 +22,10 @@ def main():
 
     opts = get_args()
 
-    os.system("podman inspect " + opts['ContainerID'] + "&> /tmp/container.inspect")
-    os.system("podman top " + opts['ContainerID'] + " capeff &> /tmp/container.caps")
-
-    container_inspect = parse.parse_inspect("/tmp/container.inspect")
-    container_caps = parse.parse_cap("/tmp/container.caps")
+    container_inspect_data = subprocess.run(["podman", "inspect", opts['ContainerID']], capture_output=True).stdout.decode()
+    container_caps_data = subprocess.run(["podman", "top", opts['ContainerID'], "capeff"], capture_output=True).stdout.decode()
+    container_inspect = parse.parse_inspect(container_inspect_data)
+    container_caps = parse.parse_cap(container_caps_data)
 
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']

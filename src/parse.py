@@ -2,15 +2,9 @@
 
 import json
 
-def parse_inspect(config_file):
-    file = open(config_file)
-    json_rep = json.load(file)
-    file.close()
+def parse_inspect(data):
+    json_rep = json.loads(data)
     return json_rep
 
-def parse_cap(config_file):
-    file = open(config_file)
-    caps = file.readline()
-    caps = file.readline()
-    file.close()
-    return caps.rstrip().split(",")
+def parse_cap(data):
+    return data.split('\n')[1].split(',')
