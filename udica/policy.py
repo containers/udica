@@ -3,7 +3,7 @@
 import selinux
 import semanage
 
-import perms
+import udica.perms as perms
 
 config_container = '/etc'
 home_container = '/home'
