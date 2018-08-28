@@ -1,11 +1,10 @@
-#!/bin/python3
-
 import sys
 import subprocess
 import argparse
 
-import parse
-import policy
+# import udica
+from udica.parse import parse_inspect, parse_cap
+from udica.policy import create_policy
 
 def get_args():
     parser = argparse.ArgumentParser(description='Script generates SELinux policy for running container.')
@@ -24,13 +23,13 @@ def main():
 
     container_inspect_data = subprocess.run(["podman", "inspect", opts['ContainerID']], capture_output=True).stdout.decode()
     container_caps_data = subprocess.run(["podman", "top", opts['ContainerID'], "capeff"], capture_output=True).stdout.decode()
-    container_inspect = parse.parse_inspect(container_inspect_data)
-    container_caps = parse.parse_cap(container_caps_data)
+    container_inspect = parse_inspect(container_inspect_data)
+    container_caps = parse_cap(container_caps_data)
 
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']
 
-    policy.create_policy(opts,container_caps,container_mounts,container_ports)
+    create_policy(opts,container_caps,container_mounts,container_ports)
 
     print('\nPolicy ' + opts['ContainerName'] + ' with container id ' + opts['ContainerID'] + ' created!\n')
     print('Please load this module using: # semodule -i ' + opts['ContainerName'] + '.cil')
