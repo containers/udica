@@ -37,7 +37,7 @@ def main():
 
     load_policy(opts)
 
-    print('\nStart container with: "--security-opt label=type:' + opts['ContainerName'] + '.process" parameter')
+    print('\nRestart the container with: "--security-opt label=type:' + opts['ContainerName'] + '.process" parameter')
 
 if __name__ == "__main__":
     main()

@@ -161,4 +161,4 @@ def load_policy(opts):
         semanage.semanage_commit(handle)
     else:
         templates = list_templates_to_string(templates_to_load)
-        print('\nPlease load this module using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')
+        print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')

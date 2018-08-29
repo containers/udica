@@ -86,10 +86,10 @@ To create policy for it **udica** tool could be used. Parameter '*-i*' is for *c
 
     Policy my_container with container id 37a3635afb8f created!
 
-    Please load this module using: 
+    Please load these modules using:
     # semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
 
-    Start container with: "--security-opt label=type:my_container.process" parameter
+    Restart the container with: "--security-opt label=type:my_container.process" parameter
 
 Policy is generated. Let's follow instructions from output:
 
