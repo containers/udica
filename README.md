@@ -14,6 +14,10 @@ Install udica tool with all dependencies
     $ git clone https://gitlab.cee.redhat.com/lvrabec/udica.git
     $ cd udica && sudo python3 ./setup.py install
 
+Alternatively tou can run udica directly from git:
+
+    $ python3 -m udica --help
+
 Make sure that SELinux is in Enforcing mode
 
     # setenforce 1

@@ -27,7 +27,7 @@ setuptools.setup(
         ],
     # scripts=["bin/udica"],
     entry_points = {
-        'console_scripts': ['udica=udica:main'],
+        'console_scripts': ['udica=udica.__main__:main'],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
