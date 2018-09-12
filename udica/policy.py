@@ -75,12 +75,13 @@ def create_policy(opts,capabilities,mounts,ports):
         add_template("net_container");
 
     # capabilities
-    caps=''
-    for item in capabilities:
-        caps = caps + perms.cap[item]
+    if capabilities:
+        caps=''
+        for item in capabilities:
+            caps = caps + perms.cap[item]
 
-    policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
-    policy.write('\n')
+        policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
+        policy.write('\n')
 
     # ports
     for item in ports:
