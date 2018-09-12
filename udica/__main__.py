@@ -34,8 +34,13 @@ def main():
             import sys
             container_inspect_data = sys.stdin.read()
         else:
-            with open(opts['JsonFile'], 'r') as f:
-                container_inspect_data = f.read()
+            import os.path
+            if os.path.isfile(opts['JsonFile']):
+                with open(opts['JsonFile'], 'r') as f:
+                    container_inspect_data = f.read()
+            else:
+                print('Json file does not exists!')
+                exit(2)
     else:
         container_inspect_data = subprocess.run(["podman", "inspect", opts['ContainerID']], capture_output=True).stdout.decode()
 
