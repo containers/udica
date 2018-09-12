@@ -8,17 +8,17 @@ from udica.policy import create_policy, load_policy
 
 def get_args():
     parser = argparse.ArgumentParser(description='Script generates SELinux policy for running container.')
-    parser.add_argument(
-        '-i', '--container-id', type=str, help='Running container ID', dest='ContainerID', required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '-i', '--container-id', type=str, help='Running container ID', dest='ContainerID', default=None)
+    group.add_argument(
+        '-j', '--json', help='Load json from this file, use "-j -" for stdin', required=False, dest='JsonFile', default=None)
     parser.add_argument(
         '-n', '--name', type=str, help='Name for SELinux policy module', dest='ContainerName', required=True)
     parser.add_argument(
         '--full-network-access', help='Allow container full Network access ', required=False, dest='FullNetworkAccess', action='store_true')
     parser.add_argument(
         '-l', '--load-modules', help='Load templates and module created by this tool ', required=False, dest='LoadModules', action='store_true')
-    parser.add_argument(
-        '-j', '--json', help='Load json from this file, use "-j -" for stdin', required=False, dest='JsonFile', default=None
-    )
     parser.add_argument(
         '-c', '--caps', help='List of capabilities, e.g "-c AUDIT_WRITE,CHOWN,DAC_OVERRIDE,FOWNER,FSETID,KILL,MKNOD,NET_BIND_SERVICE,NET_RAW,SETFCAP,SETGID,SETPCAP,SETUID,SYS_CHROOT"', required=False, dest='Caps', default=None
     )
@@ -54,7 +54,7 @@ def main():
 
     create_policy(opts, container_caps, container_mounts, container_ports)
 
-    print('\nPolicy ' + opts['ContainerName'] + ' with container id ' + opts['ContainerID'] + ' created!')
+    print('\nPolicy ' + opts['ContainerName'] + ' created!')
 
     load_policy(opts)
 
