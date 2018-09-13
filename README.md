@@ -1,10 +1,17 @@
 # udica
 
-This repository contains tool for generating SELinux security policies for containers.
+This repository contains a tool for generating SELinux security profiles for containers. The whole concept is based on "block inheritence" feature inside CIL intermediate language supported by SELinux userspace. The tool creates a policy which combines rules inherited from specified CIL blocks(templates) and rules discovered by inspection of container JSON file, which contains mountpoints and ports definitions.
+
+Final policy could be loaded imediately or moved to another system where could be loaded by semodule.
 
 ## State
 
-This tool is still in early phase of development. Any feedback, ideas, pull requests are welcome.
+This tool is still in early phase of development. Any feedback, ideas, pull requests are welcome. We're still adding new features, parameters and policy blocks which could be used.
+
+## Proof of concept
+
+Tool was created based on following PoC where process of creating policy is described:
+https://github.com/fedora-selinux/container-selinux-customization
 
 ## Installing
 
