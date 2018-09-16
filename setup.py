@@ -19,6 +19,7 @@ setuptools.setup(
     url="https://gitlab.cee.redhat.com/lvrabec/udica",
     packages=["udica"],
     data_files=[
+        ('/usr/share/licenses/udica', ['LICENSE']),
         ('/usr/share/udica/templates', ['udica/templates/base_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/config_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/home_container.cil']),
