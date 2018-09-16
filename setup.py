@@ -13,6 +13,7 @@ setuptools.setup(
     author="Lukas Vrabec",
     author_email="lvrabec@redhat.com",
     description="A tool for generating SELinux security policies for containers",
+    license="GPLv3+",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://gitlab.cee.redhat.com/lvrabec/udica",
