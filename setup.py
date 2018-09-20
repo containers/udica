@@ -16,7 +16,7 @@ setuptools.setup(
     license="GPLv3+",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.cee.redhat.com/lvrabec/udica",
+    url="https://github.com/wrabcak/udica",
     packages=["udica"],
     data_files=[
         ('/usr/share/licenses/udica', ['LICENSE']),

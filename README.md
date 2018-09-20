@@ -20,7 +20,7 @@ https://github.com/fedora-selinux/container-selinux-customization
 Install udica tool with all dependencies
 
     $ sudo dnf install -y podman setools-console git container-selinux
-    $ git clone https://gitlab.cee.redhat.com/lvrabec/udica.git
+    $ git clone https://github.com/wrabcak/udica
     $ cd udica && sudo python3 ./setup.py install
 
 Alternatively tou can run udica directly from git:
