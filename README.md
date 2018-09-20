@@ -1,3 +1,5 @@
+<a href="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/"><img src="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/status_image/last_build.png" /></a>
+
 # udica
 
 This repository contains a tool for generating SELinux security profiles for containers. The whole concept is based on "block inheritence" feature inside CIL intermediate language supported by SELinux userspace. The tool creates a policy which combines rules inherited from specified CIL blocks(templates) and rules discovered by inspection of container JSON file, which contains mountpoints and ports definitions.
