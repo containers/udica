@@ -30,13 +30,13 @@ Alternatively tou can run udica directly from git:
 Another way how to install udica is to use following repository:
 
     # cat << \EOF > /etc/yum.repos.d/lvrabec-udica-fedora-rawhide.repo
-    [lvrabec-udcia]
-    name=Copr repo for udcia owned by lvrabec
-    baseurl=https://copr-be.cloud.fedoraproject.org/results/lvrabec/udcia/fedora-rawhide-$basearch/
+    [lvrabec-udica]
+    name=Copr repo for udica owned by lvrabec
+    baseurl=https://copr-be.cloud.fedoraproject.org/results/lvrabec/udica/fedora-rawhide-$basearch/
     type=rpm-md
     skip_if_unavailable=True
     gpgcheck=1
-    gpgkey=https://copr-be.cloud.fedoraproject.org/results/lvrabec/udcia/pubkey.gpg
+    gpgkey=https://copr-be.cloud.fedoraproject.org/results/lvrabec/udica/pubkey.gpg
     repo_gpgcheck=0
     enabled=1
     enabled_metadata=1
