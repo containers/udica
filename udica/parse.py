@@ -7,4 +7,4 @@ def parse_inspect(data):
     return json_rep
 
 def parse_cap(data):
-    return data.split('\n')[1].split(',')
+    return data.decode().split('\n')[1].split(',')

@@ -29,7 +29,7 @@ def main():
     opts = get_args()
 
     if opts['ContainerID']:
-        return_code = subprocess.run(["podman", "inspect", opts['ContainerID']], capture_output=True).returncode
+        return_code = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         if return_code != 0:
             print('Container with specified ID does not exits!')
             exit(2)
@@ -47,7 +47,8 @@ def main():
                 print('Json file does not exists!')
                 exit(2)
     else:
-        container_inspect_data = subprocess.run(["podman", "inspect", opts['ContainerID']], capture_output=True).stdout.decode()
+        run_podman = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
+        container_inspect_data = run_podman.communicate()[0]
 
     if opts['Caps']:
         if opts['Caps'] == 'None':
@@ -58,9 +59,9 @@ def main():
         if opts['JsonFile']:
             container_caps = []
         else:
-            container_caps_data = subprocess.run(["podman", "top", opts['ContainerID'], "capeff"], capture_output=True).stdout.decode()
+            run_podman = subprocess.Popen(["podman", "top", opts['ContainerID'], "capeff"], stdout=subprocess.PIPE)
+            container_caps_data = run_podman.communicate()[0]
             container_caps = parse_cap(container_caps_data)
-
     container_inspect = parse_inspect(container_inspect_data)
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']
