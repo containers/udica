@@ -2,8 +2,6 @@ import setuptools
 from setuptools.command.install import install
 import os
 
-import semanage
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
