@@ -4,7 +4,7 @@
 
 This repository contains a tool for generating SELinux security profiles for containers. The whole concept is based on "block inheritence" feature inside CIL intermediate language supported by SELinux userspace. The tool creates a policy which combines rules inherited from specified CIL blocks(templates) and rules discovered by inspection of container JSON file, which contains mountpoints and ports definitions.
 
-Final policy could be loaded imediately or moved to another system where could be loaded by semodule.
+Final policy could be loaded immediately or moved to another system where it could be loaded via semodule.
 
 ## State
 
