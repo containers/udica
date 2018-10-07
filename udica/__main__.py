@@ -13,7 +13,7 @@ def get_args():
     parser.add_argument(
         '-j', '--json', help='Load json from this file, use "-j -" for stdin', required=False, dest='JsonFile', default=None)
     parser.add_argument(
-        '-n', '--name', type=str, help='Name for SELinux policy module', dest='ContainerName', required=True)
+        type=str, help='Name for SELinux policy module', dest='ContainerName')
     parser.add_argument(
         '--full-network-access', help='Allow container full Network access ', required=False, dest='FullNetworkAccess', action='store_true')
     parser.add_argument(
