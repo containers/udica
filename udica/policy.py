@@ -74,6 +74,10 @@ def create_policy(opts,capabilities,mounts,ports):
         policy.write('    (blockinherit x_container)\n')
         add_template("x_container");
 
+    if opts['TtyAccess']:
+        policy.write('    (blockinherit tty_container)\n')
+        add_template("tty_container");
+
     if ports:
         policy.write('    (blockinherit restricted_net_container)\n')
         add_template("net_container");

@@ -17,6 +17,8 @@ def get_args():
     parser.add_argument(
         '--full-network-access', help='Allow container full Network access ', required=False, dest='FullNetworkAccess', action='store_true')
     parser.add_argument(
+        '--tty-access', help='Allow container to read and write the controlling terminal ', required=False, dest='TtyAccess', action='store_true')
+    parser.add_argument(
         '--X-access', help='Allow container to communicate with Xserver ', required=False, dest='XAccess', action='store_true')
     parser.add_argument(
         '-l', '--load-modules', help='Load templates and module created by this tool ', required=False, dest='LoadModules', action='store_true')
