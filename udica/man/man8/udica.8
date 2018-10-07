@@ -1,0 +1,64 @@
+.\" Manpage for udica.
+.\" Contact lvrabec@redhat.com to correct errors or typos.
+.TH man 8 "07 October 2018" "1.0" "udica man page"
+
+.SH NAME
+udica \- The tool for generating SELinux security profiles for containers.
+
+.SH SYNOPSIS
+udica [options] container_name
+
+.SH DESCRIPTION
+The tool for generating SELinux security profiles for containers. The whole concept is based on "block inheritence" feature inside CIL intermediate language supported by SELinux userspace. The tool creates a policy which combines rules inherited from specified CIL blocks(templates) and rules discovered by inspection of container JSON file, which contains mountpoints and ports definitions.
+
+.SH OPTIONS
+.TP
+.I  \-h, \-\-help
+show this help message and exit
+
+.TP
+.I   \-i, \-\-container\-id ID
+ID of the running container for which should be SELinux policy created
+
+.TP
+.I   \-j, \-\-json JSONFILE
+Load json of inspected container from this file
+
+.TP
+.I   \-l, \-\-load\-modules
+Load templates and module created by this tool
+
+.TP
+.I  \-c, \-\-caps CAPS
+List of capabilities, e.g "\-c AUDIT\_WRITE,CHOWN,DAC\_OVERRIDE,FOWNER,FSETID,KILL"
+
+.TP
+.I   \-\-full\-network\-access
+Allow container full Network access
+
+.TP
+.I   \-\-tty\-access
+Allow container to read and write the controlling terminal
+
+.TP
+.I   \-\-X\-access
+Allow container to communicate with Xserver
+
+.TP
+.I   \-\-virt\-access
+Allow container to communicate with libvirt
+
+.SH EXAMPLES
+.nf
+# cat my_con.json | udica \-\-x\-access \-\-full\-network\-access my_container
+Creates new SELinux policy with name my_container based on inspecting container and adding access to X server and full network access.
+
+.SH SEE ALSO
+.BR selinux(8),
+.BR podman(1)
+
+.SH BUGS
+No known bugs.
+
+.SH AUTHOR
+Lukas Vrabec (lvrabec@redhat.com)
