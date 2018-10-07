@@ -3,8 +3,11 @@
 import json
 
 def parse_inspect(data):
-    json_rep = json.loads(data)
-    return json_rep
+    try:
+        json_rep = json.loads(data)
+        return json_rep
+    except:
+        exit(2)
 
 def parse_cap(data):
     return data.decode().split('\n')[1].split(',')

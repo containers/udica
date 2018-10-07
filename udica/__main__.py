@@ -8,10 +8,9 @@ from udica.policy import create_policy, load_policy
 
 def get_args():
     parser = argparse.ArgumentParser(description='Script generates SELinux policy for running container.')
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(
+    parser.add_argument(
         '-i', '--container-id', type=str, help='Running container ID', dest='ContainerID', default=None)
-    group.add_argument(
+    parser.add_argument(
         '-j', '--json', help='Load json from this file, use "-j -" for stdin', required=False, dest='JsonFile', default=None)
     parser.add_argument(
         '-n', '--name', type=str, help='Name for SELinux policy module', dest='ContainerName', required=True)
@@ -34,6 +33,9 @@ def main():
             print('Container with specified ID does not exits!')
             exit(2)
 
+        run_podman = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
+        container_inspect_data = run_podman.communicate()[0]
+
     if opts['JsonFile']:
         if opts['JsonFile'] == '-':
             import sys
@@ -46,9 +48,13 @@ def main():
             else:
                 print('Json file does not exists!')
                 exit(2)
-    else:
-        run_podman = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
-        container_inspect_data = run_podman.communicate()[0]
+
+    if (not opts['JsonFile']) and (not opts['ContainerID']):
+        try:
+            import sys
+            container_inspect_data = sys.stdin.read()
+        except:
+            exit(2)
 
     if opts['Caps']:
         if opts['Caps'] == 'None':
@@ -56,12 +62,8 @@ def main():
         else:
             container_caps = opts['Caps'].split(',')
     else:
-        if opts['JsonFile']:
             container_caps = []
-        else:
-            run_podman = subprocess.Popen(["podman", "top", opts['ContainerID'], "capeff"], stdout=subprocess.PIPE)
-            container_caps_data = run_podman.communicate()[0]
-            container_caps = parse_cap(container_caps_data)
+
     container_inspect = parse_inspect(container_inspect_data)
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']

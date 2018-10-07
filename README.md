@@ -115,6 +115,10 @@ To create policy for it **udica** tool could be used. Parameter '*-j*' is for *c
     # podman inspect 37a3635afb8f > container.json
     # udica -j container.json -n my_container
 
+or
+
+    # podman inspect 37a3635afb8f | udica -n my_container
+
     Policy my_container with container id 37a3635afb8f created!
 
     Please load these modules using:
