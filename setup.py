@@ -25,6 +25,7 @@ setuptools.setup(
         ('/usr/share/udica/templates', ['udica/templates/net_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/tmp_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/tty_container.cil']),
+        ('/usr/share/udica/templates', ['udica/templates/virt_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/x_container.cil']),
         ],
     # scripts=["bin/udica"],

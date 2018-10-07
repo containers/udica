@@ -70,6 +70,10 @@ def create_policy(opts,capabilities,mounts,ports):
         policy.write('    (blockinherit net_container)\n')
         add_template("net_container");
 
+    if opts['VirtAccess']:
+        policy.write('    (blockinherit virt_container)\n')
+        add_template("virt_container");
+
     if opts['XAccess']:
         policy.write('    (blockinherit x_container)\n')
         add_template("x_container");
