@@ -34,13 +34,20 @@ def main():
     opts = get_args()
 
     if opts['ContainerID']:
-        return_code = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        if return_code != 0:
+        return_code_podman = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        return_code_docker = subprocess.call(["docker", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+        if ((return_code_podman != 0) and (return_code_docker != 0)):
             print('Container with specified ID does not exits!')
             exit(2)
 
-        run_podman = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
-        container_inspect_data = run_podman.communicate()[0]
+        if (return_code_podman == 0):
+            run_inspect = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
+            container_inspect_data = run_inspect.communicate()[0]
+
+        if (return_code_docker == 0):
+            run_inspect = subprocess.Popen(["docker", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
+            container_inspect_data = run_inspect.communicate()[0]
 
     if opts['JsonFile']:
         if opts['JsonFile'] == '-':

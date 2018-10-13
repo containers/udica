@@ -97,7 +97,8 @@ def create_policy(opts,capabilities,mounts,ports):
 
     # ports
     for item in ports:
-        policy.write('    (allow process ' + list_ports(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
+        if 'hostPort' in item:
+            policy.write('    (allow process ' + list_ports(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
 
     # mounts
     for item in mounts:
