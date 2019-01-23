@@ -103,7 +103,11 @@ def create_policy(opts,capabilities,mounts,ports):
     if capabilities:
         caps=''
         for item in capabilities:
-            caps = caps + perms.cap[item]
+            # Capabilities parsed from podman inspection JSON file have prefix "CAP_", this should be removed
+            if "CAP_" in item:
+                caps = caps + perms.cap[item[4:]]
+            else:
+                 caps = caps + perms.cap[item]
 
         policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
         policy.write('\n')

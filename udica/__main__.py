@@ -84,17 +84,17 @@ def main():
         except:
             exit(2)
 
+    container_inspect = parse_inspect(container_inspect_data)
+    container_mounts = container_inspect[0]['Mounts']
+    container_ports = container_inspect[0]['NetworkSettings']['Ports']
+
     if opts['Caps']:
         if opts['Caps'] == 'None':
             container_caps = []
         else:
             container_caps = opts['Caps'].split(',')
     else:
-            container_caps = []
-
-    container_inspect = parse_inspect(container_inspect_data)
-    container_mounts = container_inspect[0]['Mounts']
-    container_ports = container_inspect[0]['NetworkSettings']['Ports']
+        container_caps = container_inspect[0]['EffectiveCaps']
 
     create_policy(opts, container_caps, container_mounts, container_ports)
 
