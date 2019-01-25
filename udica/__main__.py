@@ -18,7 +18,7 @@ import subprocess
 import argparse
 
 # import udica
-from udica.parse import parse_inspect, parse_cap
+from udica.parse import parse_inspect, parse_cap, parse_is_podman
 from udica.policy import create_policy, load_policy
 
 def get_args():
@@ -47,6 +47,9 @@ def get_args():
 def main():
 
     opts = get_args()
+
+    return_code_podman = 0
+    return_code_docker = 0
 
     if opts['ContainerID']:
         return_code_podman = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -88,13 +91,18 @@ def main():
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']
 
+    return_code_podman = parse_is_podman(container_inspect_data)
+
+    container_caps = []
+
     if opts['Caps']:
         if opts['Caps'] == 'None':
             container_caps = []
         else:
             container_caps = opts['Caps'].split(',')
     else:
-        container_caps = container_inspect[0]['EffectiveCaps']
+        if (return_code_podman == 0):
+            container_caps = container_inspect[0]['EffectiveCaps']
 
     create_policy(opts, container_caps, container_mounts, container_ports)
 

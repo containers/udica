@@ -44,3 +44,13 @@ def parse_inspect(data):
 
 def parse_cap(data):
     return data.decode().split('\n')[1].split(',')
+
+def parse_is_podman(data):
+    try:
+        json_rep = json.loads(data)
+        if 'container=podman' in json_rep[0]['Config']['Env']:
+            return 0
+        else:
+            return 1
+    except:
+        exit(2)
