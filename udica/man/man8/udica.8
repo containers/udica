@@ -15,7 +15,7 @@
 
 .\" Manpage for udica.
 .\" Contact lvrabec@redhat.com to correct errors or typos.
-.TH man 8 "07 October 2018" "1.0" "udica man page"
+.TH man 8 "17 February 2019" "1.1" "udica man page"
 
 .SH NAME
 udica \- The tool for generating SELinux security profiles for containers.
@@ -46,6 +46,7 @@ Load templates and module created by this tool
 .TP
 .I  \-c, \-\-caps CAPS
 List of capabilities, e.g "\-c AUDIT\_WRITE,CHOWN,DAC\_OVERRIDE,FOWNER,FSETID,KILL"
+(for docker engine mandatory to use, see BUGS section)
 
 .TP
 .I   \-\-full\-network\-access
@@ -66,14 +67,19 @@ Allow container to communicate with libvirt
 .SH EXAMPLES
 .nf
 # cat my_con.json | udica \-\-x\-access \-\-full\-network\-access my_container
-Creates new SELinux policy with name my_container based on inspecting container and adding access to X server and full network access.
+Creates new SELinux policy with name my_container based on inspecting container and adding access
+to X server and full network access.
 
 .SH SEE ALSO
 .BR selinux(8),
 .BR podman(1)
 
 .SH BUGS
-No known bugs.
+Not possible to detect capabilities used by container in docker engine,
+therefore you have to use '-c' to specify capabilities for docker container manually.
+
+.SH REPORTING BUGS
+Report bugs to <https://github.com/containers/udica/issues/>
 
 .SH AUTHOR
-Lukas Vrabec (lvrabec@redhat.com)
+Written by Lukas Vrabec (lvrabec@redhat.com)
