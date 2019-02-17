@@ -150,3 +150,7 @@ Proof that SELinux allows binding only to tcp/udp *21* port.
     Ncat: SHA-1 fingerprint: 6EEC 102E 6666 5F96 CC4F E5FA A1BE 4A5E 6C76 B6DC
     Ncat: bind to :::80: Permission denied. QUITTING.
 
+## Known issues
+
+It's not possible to detect capabilities used by container in docker engine, therefore you *have to* use '-c' to specify capabilities for docker container manually.
+
