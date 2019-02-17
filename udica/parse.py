@@ -21,9 +21,9 @@ def parse_inspect(data):
         if 'container=podman' not in json_rep[0]['Config']['Env']:
             for item in json_rep[0]['Mounts']:
                 item['source'] = item['Source']
-                if 'RW' in item:
+                if item['Mode'] == 'rw':
                     item['options'] = 'rw'
-                if 'RO' in item:
+                if item['Mode'] == 'ro':
                     item['options'] = 'ro'
 
             temp_ports = []
