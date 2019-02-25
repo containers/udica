@@ -16,6 +16,7 @@
 import sys
 import subprocess
 import argparse
+import shutil
 
 # import udica
 from udica.parse import parse_inspect, parse_cap, parse_is_podman
@@ -52,18 +53,20 @@ def main():
     return_code_docker = 0
 
     if opts['ContainerID']:
-        return_code_podman = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        return_code_docker = subprocess.call(["docker", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        if shutil.which("podman"):
+            return_code_podman = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        if shutil.which("docker"):
+            return_code_docker = subprocess.call(["docker", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
         if ((return_code_podman != 0) and (return_code_docker != 0)):
             print('Container with specified ID does not exits!')
             exit(2)
 
-        if (return_code_podman == 0):
+        if (return_code_podman == 0 and shutil.which("podman")):
             run_inspect = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
             container_inspect_data = run_inspect.communicate()[0]
 
-        if (return_code_docker == 0):
+        if (return_code_docker == 0 and shutil.which("docker")):
             run_inspect = subprocess.Popen(["docker", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
             container_inspect_data = run_inspect.communicate()[0]
 
