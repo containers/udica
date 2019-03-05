@@ -49,26 +49,24 @@ def main():
 
     opts = get_args()
 
-    return_code_podman = 0
-    return_code_docker = 0
-
     if opts['ContainerID']:
-        if shutil.which("podman"):
-            return_code_podman = subprocess.call(["podman", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        if shutil.which("docker"):
-            return_code_docker = subprocess.call(["docker", "inspect", opts['ContainerID']], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        container_inspect_data = None
+        for backend in ["podman", "docker"]:
+            try:
+                run_inspect = subprocess.Popen([backend, "inspect", opts['ContainerID']], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                inspect_data = run_inspect.communicate()[0]
+                if run_inspect.returncode != 0:
+                    inspect_data = None
+            except FileNotFoundError:
+                inspect_data = None
 
-        if ((return_code_podman != 0) and (return_code_docker != 0)):
+            if inspect_data:
+                container_inspect_data = inspect_data
+                break
+
+        if not container_inspect_data:
             print('Container with specified ID does not exits!')
             exit(2)
-
-        if (return_code_podman == 0 and shutil.which("podman")):
-            run_inspect = subprocess.Popen(["podman", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
-            container_inspect_data = run_inspect.communicate()[0]
-
-        if (return_code_docker == 0 and shutil.which("docker")):
-            run_inspect = subprocess.Popen(["docker", "inspect", opts['ContainerID']], stdout=subprocess.PIPE)
-            container_inspect_data = run_inspect.communicate()[0]
 
     if opts['JsonFile']:
         if opts['JsonFile'] == '-':
