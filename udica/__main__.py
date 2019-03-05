@@ -103,7 +103,7 @@ def main():
         else:
             container_caps = opts['Caps'].split(',')
     else:
-        if (return_code_podman == 0):
+        if return_code_podman == 0:
             container_caps = container_inspect[0]['EffectiveCaps']
 
     create_policy(opts, container_caps, container_mounts, container_ports)
