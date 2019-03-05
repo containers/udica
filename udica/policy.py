@@ -70,44 +70,44 @@ def list_ports(port_number):
         con = semanage.semanage_port_get_con(port)
         ctype = semanage.semanage_context_get_type(con)
         low = semanage.semanage_port_get_low(port)
-        if (low == port_number):
+        if low == port_number:
             return ctype
 
-def create_policy(opts,capabilities,mounts,ports):
+def create_policy(opts, capabilities, mounts, ports):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
-    add_template("base_container");
+    add_template("base_container")
 
     if opts['FullNetworkAccess']:
         policy.write('    (blockinherit net_container)\n')
-        add_template("net_container");
+        add_template("net_container")
 
     if opts['VirtAccess']:
         policy.write('    (blockinherit virt_container)\n')
-        add_template("virt_container");
+        add_template("virt_container")
 
     if opts['XAccess']:
         policy.write('    (blockinherit x_container)\n')
-        add_template("x_container");
+        add_template("x_container")
 
     if opts['TtyAccess']:
         policy.write('    (blockinherit tty_container)\n')
-        add_template("tty_container");
+        add_template("tty_container")
 
     if ports:
         policy.write('    (blockinherit restricted_net_container)\n')
-        add_template("net_container");
+        add_template("net_container")
 
     # capabilities
     if capabilities:
-        caps=''
+        caps = ''
         for item in capabilities:
             # Capabilities parsed from podman inspection JSON file have prefix "CAP_", this should be removed
             if "CAP_" in item:
                 caps = caps + perms.cap[item[4:]]
             else:
-                 caps = caps + perms.cap[item]
+                caps = caps + perms.cap[item]
 
         policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
         policy.write('\n')
@@ -122,43 +122,43 @@ def create_policy(opts,capabilities,mounts,ports):
         if not item['source'].find("/"):
             if (item['source'] == LOG_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit log_container)\n')
-                add_template("log_container");
-                continue;
+                add_template("log_container")
+                continue
 
             if (item['source'] == LOG_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit log_rw_container)\n')
-                add_template("log_container");
-                continue;
+                add_template("log_container")
+                continue
 
             if (item['source'] == HOME_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit home_container)\n')
-                add_template("home_container");
-                continue;
+                add_template("home_container")
+                continue
 
             if (item['source'] == HOME_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit home_rw_container)\n')
-                add_template("home_container");
-                continue;
+                add_template("home_container")
+                continue
 
             if (item['source'] == TMP_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit tmp_container)\n')
-                add_template("tmp_container");
-                continue;
+                add_template("tmp_container")
+                continue
 
             if (item['source'] == TMP_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit tmp_rw_container)\n')
-                add_template("tmp_container");
-                continue;
+                add_template("tmp_container")
+                continue
 
             if (item['source'] == CONFIG_CONTAINER and 'ro' in item['options']):
                 policy.write('    (blockinherit config_container)\n')
-                add_template("config_container");
-                continue;
+                add_template("config_container")
+                continue
 
             if (item['source'] == CONFIG_CONTAINER and 'rw' in item['options']):
                 policy.write('    (blockinherit config_rw_container)\n')
-                add_template("config_container");
-                continue;
+                add_template("config_container")
+                continue
 
             contexts = list_contexts(item['source'])
             for context in contexts:
@@ -192,7 +192,7 @@ def load_policy(opts):
         semanage.semanage_commit(handle)
     else:
         templates = list_templates_to_string(templates_to_load)
-        if (len(templates_to_load) > 1):
+        if len(templates_to_load) > 1:
             print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')
         else:
             print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/" + templates + '')
