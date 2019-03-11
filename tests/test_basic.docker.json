@@ -1,0 +1,215 @@
+[
+    {
+        "Id": "28ed0f82f8bca461d0c0e029067042178b3973d461584c76acfad5b877bd3b07",
+        "Created": "2019-03-06T12:48:02.419991511Z",
+        "Path": "bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 17574,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2019-03-06T12:48:02.984662576Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:d7372e6c93c6c7b925600981b655c94829515a37cf876ff9e6d0287ff2b739d9",
+        "ResolvConfPath": "/var/lib/docker/containers/28ed0f82f8bca461d0c0e029067042178b3973d461584c76acfad5b877bd3b07/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/28ed0f82f8bca461d0c0e029067042178b3973d461584c76acfad5b877bd3b07/hostname",
+        "HostsPath": "/var/lib/docker/containers/28ed0f82f8bca461d0c0e029067042178b3973d461584c76acfad5b877bd3b07/hosts",
+        "LogPath": "",
+        "Name": "/compassionate_mcclintock",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "MountLabel": "system_u:object_r:container_file_t:s0:c648,c780",
+        "ProcessLabel": "system_u:system_r:container_t:s0:c648,c780",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home:/home:ro",
+                "/var/spool:/var/spool:rw"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "journald",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "21/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "21"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "oci",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": -1,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0
+        },
+        "GraphDriver": {
+            "Name": "overlay2",
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/53cfa4316fa3f0daff8a2b5bf7d30a1a01f33163b9b1eddfb135188a0590114b-init/diff:/var/lib/docker/overlay2/03335b384d160af8a2d33330b4ea1440f87cbfab559a3ffd3102c031e14f3e20/diff",
+                "MergedDir": "/var/lib/docker/overlay2/53cfa4316fa3f0daff8a2b5bf7d30a1a01f33163b9b1eddfb135188a0590114b/merged",
+                "UpperDir": "/var/lib/docker/overlay2/53cfa4316fa3f0daff8a2b5bf7d30a1a01f33163b9b1eddfb135188a0590114b/diff",
+                "WorkDir": "/var/lib/docker/overlay2/53cfa4316fa3f0daff8a2b5bf7d30a1a01f33163b9b1eddfb135188a0590114b/work"
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home",
+                "Destination": "/home",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/spool",
+                "Destination": "/var/spool",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "28ed0f82f8bc",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "21/tcp": {}
+            },
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "DISTTAG=f29container",
+                "FGC=f29",
+                "FBR=f29"
+            ],
+            "Cmd": [
+                "bash"
+            ],
+            "Image": "fedora",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "Clement Verna <cverna@fedoraproject.org>"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "b880939c9e288f0105990445c79626778951846e27aa14a566ad8bebb84501dd",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "21/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "21"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/b880939c9e28",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "ab0f0ff865e69b01afc1734c53df4a5f14a6b64ed2bb5499539d0f8a3e067f69",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "565ce26d5e6f78b68b4c149109ab422575f2c2842ea5f5ed46977f08fcb75b91",
+                    "EndpointID": "ab0f0ff865e69b01afc1734c53df4a5f14a6b64ed2bb5499539d0f8a3e067f69",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02"
+                }
+            }
+        }
+    }
+]
+
