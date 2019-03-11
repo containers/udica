@@ -196,3 +196,5 @@ def load_policy(opts):
             print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')
         else:
             print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/" + templates + '')
+
+        chdir(PWD)
