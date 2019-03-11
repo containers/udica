@@ -31,6 +31,10 @@ Another way how to install udica is to use fedora repository:
 
     # dnf install udica -y
 
+Or you can use Python Package Index (Pypi):
+
+    # pip install udica
+
 Make sure that SELinux is in Enforcing mode
 
     # setenforce 1
