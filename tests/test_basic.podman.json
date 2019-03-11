@@ -1,0 +1,367 @@
+[
+    {
+        "ID": "2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5",
+        "Created": "2019-03-06T06:42:58.980482153-05:00",
+        "Path": "bash",
+        "Args": [
+            "bash"
+        ],
+        "State": {
+            "OciVersion": "1.0.1-dev",
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 17574,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2019-03-06T06:42:59.548275334-05:00",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "d7372e6c93c6c7b925600981b655c94829515a37cf876ff9e6d0287ff2b739d9",
+        "ImageName": "docker.io/library/fedora:latest",
+        "Rootfs": "",
+        "ResolvConfPath": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/resolv.conf",
+        "HostnamePath": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/hostname",
+        "HostsPath": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/hosts",
+        "StaticDir": "/var/lib/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata",
+        "LogPath": "/var/lib/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/ctr.log",
+        "Name": "upbeat_stonebraker",
+        "RestartCount": 0,
+        "Driver": "overlay",
+        "MountLabel": "system_u:object_r:container_file_t:s0:c444,c729",
+        "ProcessLabel": "system_u:system_r:container_t:s0:c444,c729",
+        "AppArmorProfile": "",
+        "EffectiveCaps": [
+            "CAP_CHOWN",
+            "CAP_DAC_OVERRIDE",
+            "CAP_FSETID",
+            "CAP_FOWNER",
+            "CAP_MKNOD",
+            "CAP_NET_RAW",
+            "CAP_SETGID",
+            "CAP_SETUID",
+            "CAP_SETFCAP",
+            "CAP_SETPCAP",
+            "CAP_NET_BIND_SERVICE",
+            "CAP_SYS_CHROOT",
+            "CAP_KILL",
+            "CAP_AUDIT_WRITE"
+        ],
+        "BoundingCaps": [
+            "CAP_CHOWN",
+            "CAP_DAC_OVERRIDE",
+            "CAP_FSETID",
+            "CAP_FOWNER",
+            "CAP_MKNOD",
+            "CAP_NET_RAW",
+            "CAP_SETGID",
+            "CAP_SETUID",
+            "CAP_SETFCAP",
+            "CAP_SETPCAP",
+            "CAP_NET_BIND_SERVICE",
+            "CAP_SYS_CHROOT",
+            "CAP_KILL",
+            "CAP_AUDIT_WRITE"
+        ],
+        "ExecIDs": [],
+        "GraphDriver": {
+            "Name": "overlay",
+            "Data": {
+                "LowerDir": "/var/lib/containers/storage/overlay/97b94d418dac4ec6da11f188c162831ddf674b08c496d1fd9ebaf5d497f94e08/diff",
+                "MergedDir": "/var/lib/containers/storage/overlay/a728e123baab45644fbd970ac95c5ebe064f4935149f0f1ea964e28de457bd16/merged",
+                "UpperDir": "/var/lib/containers/storage/overlay/a728e123baab45644fbd970ac95c5ebe064f4935149f0f1ea964e28de457bd16/diff",
+                "WorkDir": "/var/lib/containers/storage/overlay/a728e123baab45644fbd970ac95c5ebe064f4935149f0f1ea964e28de457bd16/work"
+            }
+        },
+        "Mounts": [
+            {
+                "destination": "/sys",
+                "type": "sysfs",
+                "source": "sysfs",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev",
+                    "ro"
+                ]
+            },
+            {
+                "destination": "/home",
+                "type": "bind",
+                "source": "/home",
+                "options": [
+                    "ro",
+                    "rbind",
+                    "rprivate"
+                ]
+            },
+            {
+                "destination": "/proc",
+                "type": "proc",
+                "source": "proc",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev"
+                ]
+            },
+            {
+                "destination": "/dev",
+                "type": "tmpfs",
+                "source": "tmpfs",
+                "options": [
+                    "nosuid",
+                    "strictatime",
+                    "mode=755",
+                    "size=65536k"
+                ]
+            },
+            {
+                "destination": "/run/.containerenv",
+                "type": "bind",
+                "source": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/.containerenv",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/dev/mqueue",
+                "type": "mqueue",
+                "source": "mqueue",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev"
+                ]
+            },
+            {
+                "destination": "/dev/pts",
+                "type": "devpts",
+                "source": "devpts",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "newinstance",
+                    "ptmxmode=0666",
+                    "mode=0620",
+                    "gid=5"
+                ]
+            },
+            {
+                "destination": "/var/spool",
+                "type": "bind",
+                "source": "/var/spool",
+                "options": [
+                    "rw",
+                    "rbind",
+                    "rprivate"
+                ]
+            },
+            {
+                "destination": "/run/secrets",
+                "type": "bind",
+                "source": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/run/secrets",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/resolv.conf",
+                "type": "bind",
+                "source": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/resolv.conf",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/hosts",
+                "type": "bind",
+                "source": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/hosts",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/dev/shm",
+                "type": "bind",
+                "source": "overlay-containers",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/hostname",
+                "type": "bind",
+                "source": "/var/run/containers/storage/overlay-containers/2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5/userdata/hostname",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/sys/fs/cgroup",
+                "type": "cgroup",
+                "source": "cgroup",
+                "options": [
+                    "rprivate",
+                    "nosuid",
+                    "noexec",
+                    "nodev",
+                    "relatime",
+                    "ro"
+                ]
+            }
+        ],
+        "Dependencies": [],
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": [
+                {
+                    "hostPort": 21,
+                    "containerPort": 21,
+                    "protocol": "tcp",
+                    "hostIP": ""
+                }
+            ],
+            "SandboxKey": "/var/run/netns/cni-0da27677-107f-73c8-9198-9b7db9318de3",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "10.88.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "10.88.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "a6:04:2c:f4:e3:74"
+        },
+        "ExitCommand": [
+            "/usr/bin/podman",
+            "--root",
+            "",
+            "--runroot",
+            "",
+            "--log-level",
+            "error",
+            "--cgroup-manager",
+            "systemd",
+            "--tmpdir",
+            "/var/run/libpod",
+            "container",
+            "cleanup",
+            "2bff3f4b191a0a34a1c48fb80eb456143c38cf9330a89683e9c093d2b27cb7a5"
+        ],
+        "Namespace": "",
+        "IsInfra": false,
+        "HostConfig": {
+            "ContainerIDFile": "",
+            "LogConfig": null,
+            "NetworkMode": "bridge",
+            "PortBindings": null,
+            "AutoRemove": false,
+            "CapAdd": [],
+            "CapDrop": [],
+            "DNS": [],
+            "DNSOptions": [],
+            "DNSSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "",
+            "Cgroup": "host",
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 65536000,
+            "Runtime": "runc",
+            "ConsoleSize": null,
+            "CpuShares": null,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": null,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": null,
+            "CpuQuota": null,
+            "CpuRealtimePeriod": null,
+            "CpuRealtimeRuntime": null,
+            "CpuSetCpus": "",
+            "CpuSetMems": "",
+            "Devices": null,
+            "DiskQuota": 0,
+            "KernelMemory": null,
+            "MemoryReservation": null,
+            "MemorySwap": null,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": [],
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "Tmpfs": []
+        },
+        "Config": {
+            "Hostname": "2bff3f4b191a",
+            "Domainname": "",
+            "User": {
+                "uid": 0,
+                "gid": 0
+            },
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "TERM=xterm",
+                "HOSTNAME=2bff3f4b191a",
+                "container=podman",
+                "DISTTAG=f29container",
+                "FGC=f29",
+                "FBR=f29"
+            ],
+            "Cmd": [
+                "bash"
+            ],
+            "Image": "docker.io/library/fedora:latest",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": "",
+            "Labels": {
+                "maintainer": "Clement Verna <cverna@fedoraproject.org>"
+            },
+            "Annotations": {
+                "io.kubernetes.cri-o.ContainerType": "sandbox",
+                "io.kubernetes.cri-o.Created": "2019-03-06T06:42:58.980482153-05:00",
+                "io.kubernetes.cri-o.TTY": "true",
+                "org.opencontainers.image.stopSignal": "15"
+            },
+            "StopSignal": 15
+        }
+    }
+]
+
