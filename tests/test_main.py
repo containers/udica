@@ -56,6 +56,7 @@ class TestMain(unittest.TestCase):
         templates -- check that these templates are part of udica output, e.g. 'base_container.cil'
             or '{base_container.cil,net_container.cil}'
         """
+        udica.policy.TEMPLATES_STORE = "../udica/templates"
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
         # FIXME: the load_policy function is not properly restoring current working directory
