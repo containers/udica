@@ -156,15 +156,10 @@ Proof that SELinux allows binding only to tcp/udp *21* port.
 
 ## Testing
 
-Udica repository contains units tests for basic functionality of the tool. Udica should be installed on the system (see [Installing](#Installing)).
+Udica repository contains units tests for basic functionality of the tool. To run tests follow these commands:
 
-To run tests follow these commands:
-
-    # cd tests
-    # python3 -m unittest
-
-The tests are intended to be run on Fedora machine as root. Tested on
-Fedora 29 and Fedora Rawhide.
+    $ cd tests
+    $ python3 -m unittest
 
 ## Known issues
 
