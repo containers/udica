@@ -1,4 +1,5 @@
 <a href="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/"><img src="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/status_image/last_build.png" /></a>
+[![Build Status](https://travis-ci.org/containers/udica.svg?branch=master)](https://travis-ci.org/containers/udica)
 
 # udica
 
