@@ -1,0 +1,20 @@
+sudo: required
+
+language: python
+
+services:
+    - docker
+
+before_install:
+    - docker pull fedora:rawhide
+    - docker pull fedora:latest
+
+script:
+    # test on Fedora Rawhide
+    - docker run -v $PWD:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; python3 ./setup.py install; cd tests; python3 -m unittest"
+    # test on the latest stable release of Fedora
+    - docker run -v $PWD:/root/build/ fedora:latest /bin/sh -c "cd /root/build; python3 ./setup.py install; cd tests; python3 -m unittest"
+
+notifications:
+    emails:
+        - lvrabec@redhat.com
