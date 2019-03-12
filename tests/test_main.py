@@ -16,6 +16,7 @@
 import os
 import sys
 import unittest
+import importlib
 from unittest.mock import patch
 
 sys.path.insert(0, os.path.abspath('..'))
@@ -59,6 +60,11 @@ class TestMain(unittest.TestCase):
         udica.policy.templates_to_load = []
         # FIXME: the load_policy function is not properly restoring current working directory
         self.cwd = os.getcwd()
+
+        import selinux
+        importlib.reload(selinux)
+        import semanage
+        importlib.reload(semanage)
 
         with patch('sys.argv', args):
             with patch('sys.stderr.write') as mock_err, patch('sys.stdout.write') as mock_out:
