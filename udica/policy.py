@@ -58,7 +58,7 @@ def list_contexts(directory):
     contexts.append(context.split(':')[2])
     return contexts
 
-def list_ports(port_number):
+def list_ports(port_number, port_proto):
 
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
@@ -66,11 +66,14 @@ def list_ports(port_number):
     (rc, plist) = semanage.semanage_port_list(handle)
     (rc, plocal) = semanage.semanage_port_list_local(handle)
 
-    for port in plist + plocal:
+    for port in plocal + plist:
         con = semanage.semanage_port_get_con(port)
         ctype = semanage.semanage_context_get_type(con)
+        proto = semanage.semanage_port_get_proto(port)
+        proto_str = semanage.semanage_port_get_proto_str(proto)
         low = semanage.semanage_port_get_low(port)
-        if low == port_number:
+        high = semanage.semanage_port_get_high(port)
+        if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
 def create_policy(opts, capabilities, mounts, ports):
@@ -115,7 +118,7 @@ def create_policy(opts, capabilities, mounts, ports):
     # ports
     for item in ports:
         if 'hostPort' in item:
-            policy.write('    (allow process ' + list_ports(item['hostPort']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
+            policy.write('    (allow process ' + list_ports(item['hostPort'], item['protocol']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
 
     # mounts
     for item in mounts:
