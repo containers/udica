@@ -38,7 +38,10 @@ ports_local = [
 semanage_port_list = Mock(return_value=(0, ports))
 semanage_port_list_local = Mock(return_value=(0, ports_local))
 semanage_port_get_con = Mock(side_effect=lambda x: x[0])
+semanage_port_get_proto = Mock(return_value="tcp")
+semanage_port_get_proto_str = Mock(side_effect=lambda x: x)
 semanage_port_get_low = Mock(side_effect=lambda x: x[1])
+semanage_port_get_high = Mock(side_effect=lambda x: x[1])
 
 fcontexts = [
     ('/var/spool(/.*)?', 'system_u:object_r:var_spool_t:s0'),
