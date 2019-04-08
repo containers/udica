@@ -47,6 +47,16 @@ class TestMain(unittest.TestCase):
         args = ['udica', '-j', 'test_default.docker.json', 'my_container']
         self.helper(args, 'test_default.docker.cil', 'base_container.cil')
 
+    def test_port_ranges_podman(self):
+        """podman run -p 63140:63140 fedora"""
+        args = ['udica', '-j', 'test_ports.podman.json', 'my_container']
+        self.helper(args, 'test_ports.podman.cil', '{base_container.cil,net_container.cil}')
+
+    def test_port_ranges_docker(self):
+        """docker run -p 63140:63140 fedora"""
+        args = ['udica', '-j', 'test_ports.docker.json', 'my_container']
+        self.helper(args, 'test_ports.docker.cil', '{base_container.cil,net_container.cil}')
+
     def helper(self, args, policy_file=None, templates=None):
         """Run udica with args, check output and used templates.
 

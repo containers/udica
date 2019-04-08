@@ -20,28 +20,43 @@ semanage_connect = Mock()
 semanage_context_get_type = Mock(side_effect=lambda x: x.split(':')[2])
 
 ports = [
-    ('system_u:object_r:inetd_child_port_t:s0', 1),
-    ('system_u:object_r:inetd_child_port_t:s0', 1),
-    ('system_u:object_r:echo_port_t:s0', 7),
-    ('system_u:object_r:echo_port_t:s0', 7),
-    ('system_u:object_r:inetd_child_port_t:s0', 9),
-    ('system_u:object_r:inetd_child_port_t:s0', 9),
-    ('system_u:object_r:inetd_child_port_t:s0', 13),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 1, 1),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 1, 1),
+    ('system_u:object_r:echo_port_t:s0', 'tcp', 7, 7),
+    ('system_u:object_r:echo_port_t:s0', 'tcp', 7, 7),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 9, 9),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 9, 9),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 13, 13),
+    # default ranges
+    ('system_u:object_r:reserved_port_t:s0', 'udp', 1, 511),
+    ('system_u:object_r:reserved_port_t:s0', 'tcp', 1, 511),
+    ('system_u:object_r:reserved_port_t:s0', 'sctp', 1, 511),
+    ('system_u:object_r:hi_reserved_port_t:s0', 'udp', 512, 1023),
+    ('system_u:object_r:hi_reserved_port_t:s0', 'tcp', 512, 1023),
+    ('system_u:object_r:hi_reserved_port_t:s0', 'sctp', 512, 1023),
+    ('system_u:object_r:unreserved_port_t:s0', 'udp', 61001, 65535),
+    ('system_u:object_r:unreserved_port_t:s0', 'tcp', 61001, 65535),
+    ('system_u:object_r:ephemeral_port_t:s0', 'udp', 32768, 60999),
+    ('system_u:object_r:ephemeral_port_t:s0', 'tcp', 32768, 60999),
+    ('system_u:object_r:unreserved_port_t:s0', 'udp', 1024, 32767),
+    ('system_u:object_r:unreserved_port_t:s0', 'tcp', 1024, 32767),
+    ('system_u:object_r:unreserved_port_t:s0', 'sctp', 1024, 65535),
 ]
 ports_local = [
-    ('system_u:object_r:inetd_child_port_t:s0', 13),
-    ('system_u:object_r:inetd_child_port_t:s0', 19),
-    ('system_u:object_r:inetd_child_port_t:s0', 19),
-    ('system_u:object_r:ftp_data_port_t:s0', 20),
-    ('system_u:object_r:ftp_port_t:s0', 21)
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 13, 13),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 19, 19),
+    ('system_u:object_r:inetd_child_port_t:s0', 'tcp', 19, 19),
+    ('system_u:object_r:ftp_data_port_t:s0', 'tcp', 20, 20),
+    ('system_u:object_r:ftp_port_t:s0', 'tcp', 21, 21),
+    ('system_u:object_r:mysqld_port_t:s0', 'tcp', 63132, 63164),
 ]
 semanage_port_list = Mock(return_value=(0, ports))
 semanage_port_list_local = Mock(return_value=(0, ports_local))
 semanage_port_get_con = Mock(side_effect=lambda x: x[0])
-semanage_port_get_proto = Mock(return_value="tcp")
+semanage_port_get_proto = Mock(side_effect=lambda x: x[1])
 semanage_port_get_proto_str = Mock(side_effect=lambda x: x)
-semanage_port_get_low = Mock(side_effect=lambda x: x[1])
-semanage_port_get_high = Mock(side_effect=lambda x: x[1])
+semanage_port_get_low = Mock(side_effect=lambda x: x[2])
+semanage_port_get_high = Mock(side_effect=lambda x: x[3])
 
 fcontexts = [
     ('/var/spool(/.*)?', 'system_u:object_r:var_spool_t:s0'),
