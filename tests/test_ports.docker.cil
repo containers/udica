@@ -1,0 +1,5 @@
+(block my_container
+    (blockinherit container)
+    (blockinherit restricted_net_container)
+    (allow process mysqld_port_t ( tcp_socket (  name_bind ))) 
+) 

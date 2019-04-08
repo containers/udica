@@ -1,0 +1,338 @@
+[
+    {
+        "ID": "d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73",
+        "Created": "2019-04-08T12:07:17.232424394+02:00",
+        "Path": "bash",
+        "Args": [
+            "bash"
+        ],
+        "State": {
+            "OciVersion": "1.0.1-dev",
+            "Status": "exited",
+            "Running": false,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 11133,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2019-04-08T12:07:35.644299556+02:00",
+            "FinishedAt": "2019-04-08T12:07:35.651393883+02:00",
+            "Healthcheck": {
+                "Status": "",
+                "FailingStreak": 0,
+                "Log": null
+            }
+        },
+        "Image": "c582c1438f27b3775e2534abc82d14974ecb00c2c53161d05ec73a73d35e1235",
+        "ImageName": "docker.io/library/fedora:latest",
+        "Rootfs": "",
+        "ResolvConfPath": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/resolv.conf",
+        "HostnamePath": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/hostname",
+        "HostsPath": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/hosts",
+        "StaticDir": "/home/jzarsky/.local/share/containers/storage/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata",
+        "LogPath": "/home/jzarsky/.local/share/containers/storage/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/ctr.log",
+        "ConmonPidFile": "/home/jzarsky/.local/share/containers/storage/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/conmon.pid",
+        "Name": "peaceful_goldstine",
+        "RestartCount": 0,
+        "Driver": "vfs",
+        "MountLabel": "system_u:object_r:container_file_t:s0:c577,c677",
+        "ProcessLabel": "system_u:system_r:container_t:s0:c577,c677",
+        "AppArmorProfile": "",
+        "EffectiveCaps": [
+            "CAP_CHOWN",
+            "CAP_DAC_OVERRIDE",
+            "CAP_FSETID",
+            "CAP_FOWNER",
+            "CAP_MKNOD",
+            "CAP_NET_RAW",
+            "CAP_SETGID",
+            "CAP_SETUID",
+            "CAP_SETFCAP",
+            "CAP_SETPCAP",
+            "CAP_NET_BIND_SERVICE",
+            "CAP_SYS_CHROOT",
+            "CAP_KILL",
+            "CAP_AUDIT_WRITE"
+        ],
+        "BoundingCaps": [
+            "CAP_CHOWN",
+            "CAP_DAC_OVERRIDE",
+            "CAP_FSETID",
+            "CAP_FOWNER",
+            "CAP_MKNOD",
+            "CAP_NET_RAW",
+            "CAP_SETGID",
+            "CAP_SETUID",
+            "CAP_SETFCAP",
+            "CAP_SETPCAP",
+            "CAP_NET_BIND_SERVICE",
+            "CAP_SYS_CHROOT",
+            "CAP_KILL",
+            "CAP_AUDIT_WRITE"
+        ],
+        "ExecIDs": [],
+        "GraphDriver": {
+            "Name": "vfs",
+            "Data": null
+        },
+        "Mounts": [
+            {
+                "destination": "/proc",
+                "type": "proc",
+                "source": "proc",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev"
+                ]
+            },
+            {
+                "destination": "/dev",
+                "type": "tmpfs",
+                "source": "tmpfs",
+                "options": [
+                    "nosuid",
+                    "strictatime",
+                    "mode=755",
+                    "size=65536k"
+                ]
+            },
+            {
+                "destination": "/sys",
+                "type": "sysfs",
+                "source": "sysfs",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev",
+                    "ro"
+                ]
+            },
+            {
+                "destination": "/dev/pts",
+                "type": "devpts",
+                "source": "devpts",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "newinstance",
+                    "ptmxmode=0666",
+                    "mode=0620",
+                    "gid=5"
+                ]
+            },
+            {
+                "destination": "/dev/mqueue",
+                "type": "mqueue",
+                "source": "mqueue",
+                "options": [
+                    "nosuid",
+                    "noexec",
+                    "nodev"
+                ]
+            },
+            {
+                "destination": "/dev/shm",
+                "type": "bind",
+                "source": "/home/jzarsky/.local/share/containers/storage/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/shm",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/hostname",
+                "type": "bind",
+                "source": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/hostname",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/resolv.conf",
+                "type": "bind",
+                "source": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/resolv.conf",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/etc/hosts",
+                "type": "bind",
+                "source": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/hosts",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/run/.containerenv",
+                "type": "bind",
+                "source": "/run/user/29497/run/vfs-containers/d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73/userdata/.containerenv",
+                "options": [
+                    "bind",
+                    "private"
+                ]
+            },
+            {
+                "destination": "/sys/fs/cgroup",
+                "type": "cgroup",
+                "source": "cgroup",
+                "options": [
+                    "rprivate",
+                    "nosuid",
+                    "noexec",
+                    "nodev",
+                    "relatime",
+                    "ro"
+                ]
+            }
+        ],
+        "Dependencies": [],
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": [
+                {
+                    "hostPort": 63140,
+                    "containerPort": 63140,
+                    "protocol": "tcp",
+                    "hostIP": ""
+                }
+            ],
+            "SandboxKey": "",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": ""
+        },
+        "ExitCommand": [
+            "/usr/bin/podman",
+            "--root",
+            "/home/jzarsky/.local/share/containers/storage",
+            "--runroot",
+            "/run/user/29497/run",
+            "--log-level",
+            "error",
+            "--cgroup-manager",
+            "cgroupfs",
+            "--tmpdir",
+            "/run/user/29497/libpod/tmp",
+            "--runtime",
+            "runc",
+            "--storage-driver",
+            "vfs",
+            "container",
+            "cleanup",
+            "d8afb959fe7f5bf14eba15b1b1630818be47da2d1c8fc7b257a7dc9800f74e73"
+        ],
+        "Namespace": "",
+        "IsInfra": false,
+        "HostConfig": {
+            "ContainerIDFile": "",
+            "LogConfig": null,
+            "NetworkMode": "slirp4netns",
+            "PortBindings": null,
+            "AutoRemove": false,
+            "CapAdd": [],
+            "CapDrop": [],
+            "DNS": [],
+            "DNSOptions": [],
+            "DNSSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "",
+            "Cgroup": "host",
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 65536000,
+            "Runtime": "runc",
+            "ConsoleSize": null,
+            "CpuShares": null,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": null,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": null,
+            "CpuQuota": null,
+            "CpuRealtimePeriod": null,
+            "CpuRealtimeRuntime": null,
+            "CpuSetCpus": "",
+            "CpuSetMems": "",
+            "Devices": null,
+            "DiskQuota": 0,
+            "KernelMemory": null,
+            "MemoryReservation": null,
+            "MemorySwap": null,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": [],
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "Tmpfs": []
+        },
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": {
+                "uid": 0,
+                "gid": 0
+            },
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "TERM=xterm",
+                "HOSTNAME=",
+                "container=podman",
+                "DISTTAG=f28container",
+                "FGC=f28",
+                "FBR=f28"
+            ],
+            "Cmd": [
+                "bash"
+            ],
+            "Image": "docker.io/library/fedora:latest",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": "",
+            "Labels": null,
+            "Annotations": {
+                "io.kubernetes.cri-o.ContainerType": "sandbox",
+                "io.kubernetes.cri-o.TTY": "false"
+            },
+            "StopSignal": 15
+        }
+    }
+]
