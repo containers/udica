@@ -119,3 +119,9 @@ class TestMain(unittest.TestCase):
             self.assertMultiLineEqual(policy, exp_policy)
 
         os.unlink('my_container.cil')
+
+if __name__ == "__main__":
+    if 'selinux_enabled' in sys.argv:
+        SELINUX_ENABLED = True
+        sys.argv.remove('selinux_enabled')
+    unittest.main()
