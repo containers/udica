@@ -22,6 +22,11 @@ from unittest.mock import patch
 sys.path.insert(0, os.path.abspath('..'))
 import udica.__main__
 
+# Use the selinux and semanage packages provided by the system instead of the mock ones. When
+# running on a system with SELinux disabled (e.g. in a container), it must be set to False.
+# On RHEL, CentOS or Fedora it may be set to True.
+SELINUX_ENABLED = False
+
 class TestMain(unittest.TestCase):
     """Test basic functionality of udica"""
 
@@ -72,10 +77,19 @@ class TestMain(unittest.TestCase):
         # FIXME: the load_policy function is not properly restoring current working directory
         self.cwd = os.getcwd()
 
+        # Remove current directory from sys.path so that the proper selinux and semanage modules are
+        # loaded (instead of the mock ones in this directory).
+        if SELINUX_ENABLED:
+            path_backup = sys.path
+            sys.path = [path for path in sys.path if path not in (os.getcwd(), '')]
+
         import selinux
         importlib.reload(selinux)
         import semanage
         importlib.reload(semanage)
+
+        if SELINUX_ENABLED:
+            sys.path = path_backup
 
         with patch('sys.argv', args):
             with patch('sys.stderr.write') as mock_err, patch('sys.stdout.write') as mock_out:
