@@ -162,6 +162,11 @@ Udica repository contains units tests for basic functionality of the tool. To ru
     $ cd tests
     $ python3 -m unittest
 
+On SELinux enabled systems you can run also (root access required):
+
+    $ cd tests
+    # python3 test_main.py selinux_enabled
+
 ## Known issues
 
    * It's not possible to detect capabilities used by container in docker engine, therefore you *have to* use '-c' to specify capabilities for docker container manually.
