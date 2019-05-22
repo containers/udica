@@ -19,7 +19,7 @@ import shutil
 
 # import udica
 from udica.parse import parse_inspect, parse_cap, parse_is_podman
-from udica.policy import create_policy, load_policy
+from udica.policy import create_policy, load_policy, generate_playbook
 
 def get_args():
     parser = argparse.ArgumentParser(description='Script generates SELinux policy for running container.')
@@ -41,6 +41,8 @@ def get_args():
         '-l', '--load-modules', help='Load templates and module created by this tool ', required=False, dest='LoadModules', action='store_true')
     parser.add_argument(
         '-c', '--caps', help='List of capabilities, e.g "-c AUDIT_WRITE,CHOWN,DAC_OVERRIDE,FOWNER,FSETID,KILL,MKNOD,NET_BIND_SERVICE,NET_RAW,SETFCAP,SETGID,SETPCAP,SETUID,SYS_CHROOT"', required=False, dest='Caps', default=None)
+    parser.add_argument(
+        '-d', '--ansible', help='Generate ansible playbook to deploy SELinux policy for containers ', required=False, dest='Ansible', action='store_true')
     args = parser.parse_args()
     return vars(args)
 
@@ -108,7 +110,10 @@ def main():
 
     print('\nPolicy ' + opts['ContainerName'] + ' created!')
 
-    load_policy(opts)
+    if opts['Ansible']:
+        generate_playbook(opts)
+    else:
+        load_policy(opts)
 
     print('\nRestart the container with: "--security-opt label=type:' + opts['ContainerName'] + '.process" parameter')
 
