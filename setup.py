@@ -33,6 +33,7 @@ setuptools.setup(
     packages=["udica"],
     data_files=[
         ('/usr/share/licenses/udica', ['LICENSE']),
+        ('/usr/share/udica/ansible', ['udica/ansible/deploy-module.yml']),
         ('/usr/share/udica/templates', ['udica/templates/base_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/config_container.cil']),
         ('/usr/share/udica/templates', ['udica/templates/home_container.cil']),

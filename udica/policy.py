@@ -16,16 +16,22 @@
 import selinux
 import semanage
 
-from os import chdir, getcwd
+from shutil import copy
+from os import chdir, getcwd, write, read, remove, replace
+
+import tarfile
 
 import udica.perms as perms
+
+TEMPLATES_STORE = '/usr/share/udica/templates'
 
 CONFIG_CONTAINER = '/etc'
 HOME_CONTAINER = '/home'
 LOG_CONTAINER = '/var/log'
 TMP_CONTAINER = '/tmp'
 
-TEMPLATES_STORE = '/usr/share/udica/templates'
+TEMPLATE_PLAYBOOK = '/usr/share/udica/ansible/deploy-module.yml'
+VARIABLE_FILE_NAME = 'variables-deploy-module.yml'
 
 templates_to_load = []
 
@@ -201,3 +207,25 @@ def load_policy(opts):
             print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/" + templates + '')
 
         chdir(PWD)
+
+def generate_playbook(opts):
+    src = TEMPLATE_PLAYBOOK
+    dst = "./"
+    copy(src,dst)
+
+    varsfile = open(VARIABLE_FILE_NAME ,'w')
+
+    varsfile.write('archive: ' + opts['ContainerName'] + '-policy.tar.gz\n')
+    varsfile.write('policy: ' + opts['ContainerName'] + '.cil ' + list_templates_to_string(templates_to_load).replace(',', ' ') + '\n')
+    varsfile.write('final_policy: ' + opts['ContainerName'] + '.cil')
+
+    varsfile.close()
+
+    tar = tarfile.open(opts['ContainerName'] + '-policy.tar.gz', 'w:gz')
+    for template in templates_to_load:
+        tar.add(TEMPLATES_STORE + '/' + template + '.cil', template + '.cil')
+    tar.add(opts['ContainerName'] + '.cil')
+    remove(opts['ContainerName'] +'.cil')
+    tar.close()
+
+    print('\nAnsible playbook and archive with udica policies generated! \nPlease run ansible play to deploy the policy.')
