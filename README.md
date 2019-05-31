@@ -11,6 +11,9 @@ This repository contains a tool for generating SELinux security profiles for con
 
 Final policy could be loaded immediately or moved to another system where it could be loaded via semodule.
 
+## What's with the weird name?
+The name of this tool is derived from the Slovak word "udica" *\[uɟit͡sa\]*, which means "fishing rod". It is a reference to the saying *"Give a man a fish and you feed him for a day; teach a man to fish and you feed him for a lifetime."* Here udica is the fishing rod that allows you to get the fish (container policy) yourself, instead of always having to ask your local fisherman (SELinux expert) to catch (create) it for you ;)
+
 ## State
 
 This tool is still in early phase of development. Any feedback, ideas, pull requests are welcome. We're still adding new features, parameters and policy blocks which could be used.
