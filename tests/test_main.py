@@ -19,6 +19,10 @@ import unittest
 import importlib
 from unittest.mock import patch
 
+# Import tarfile library to extract tarball with udica policy and templates when --ansible
+# parameter is used
+import tarfile
+
 sys.path.insert(0, os.path.abspath('..'))
 import udica.__main__
 
@@ -62,7 +66,18 @@ class TestMain(unittest.TestCase):
         args = ['udica', '-j', 'test_ports.docker.json', 'my_container']
         self.helper(args, 'test_ports.docker.cil', '{base_container.cil,net_container.cil}')
 
-    def helper(self, args, policy_file=None, templates=None):
+    def test_default_ansible_podman(self):
+        """podman run fedora"""
+        args = ['udica', '-j', 'test_default.podman.json', 'my_container', '--ansible']
+        self.helper(args, 'test_default.podman.cil', 'base_container.cil', 'test_default.ansible.podman.yml')
+
+    def test_basic_ansible_podman(self):
+        """podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
+        args = ['udica', '-j', 'test_basic.podman.json', 'my_container', '--ansible']
+        self.helper(args, 'test_basic.podman.cil',
+                    '{base_container.cil,net_container.cil,home_container.cil}', 'test_basic.ansible.podman.yml')
+
+    def helper(self, args, policy_file=None, templates=None, variables_file=None):
         """Run udica with args, check output and used templates.
 
         Arguments:
@@ -70,7 +85,9 @@ class TestMain(unittest.TestCase):
         policy_file -- check that output of udica matches this file
         templates -- check that these templates are part of udica output, e.g. 'base_container.cil'
             or '{base_container.cil,net_container.cil}'
+        variables_file -- check that output of udica matches variables file
         """
+        deploy_playbook="../udica/ansible/deploy-module.yml"
         udica.policy.TEMPLATES_STORE = "../udica/templates"
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
@@ -102,10 +119,18 @@ class TestMain(unittest.TestCase):
 
         self.assertRegex(mock_out.output, 'Policy my_container created')
         self.assertRegex(mock_out.output, '--security-opt label=type:my_container.process')
-        self.assertRegex(mock_out.output, 'semodule -i my_container')
 
-        if templates:
-            self.assertRegex(mock_out.output, udica.policy.TEMPLATES_STORE + '/' + templates)
+        if "--ansible" in args:
+            udica.policy.TEMPLATES_STORE = "./"
+            self.assertRegex(mock_out.output, 'Ansible playbook and archive with udica policies generated!')
+            archive = tarfile.open("my_container-policy.tar.gz")
+            archive.extractall()
+            archive.close()
+
+        else:
+            self.assertRegex(mock_out.output, 'semodule -i my_container')
+            if templates:
+                self.assertRegex(mock_out.output, udica.policy.TEMPLATES_STORE + '/' + templates)
 
         os.chdir(self.cwd)
 
@@ -119,6 +144,31 @@ class TestMain(unittest.TestCase):
             self.assertMultiLineEqual(policy, exp_policy)
 
         os.unlink('my_container.cil')
+
+        if "--ansible" in args:
+            self.assertTrue(os.path.isfile('deploy-module.yml'))
+
+            with open('deploy-module.yml') as cont:
+                playbook = cont.read().strip()
+            with open(deploy_playbook) as cont:
+                exp_playbook = cont.read().strip()
+            self.assertMultiLineEqual(playbook, exp_playbook)
+
+            self.assertTrue(os.path.isfile('variables-deploy-module.yml'))
+
+            with open('variables-deploy-module.yml') as cont:
+                variables_playbook = cont.read().strip()
+            with open(variables_file) as cont:
+                exp_variables_playbook = cont.read().strip()
+            self.assertMultiLineEqual(variables_playbook, exp_variables_playbook)
+
+            os.unlink('variables-deploy-module.yml')
+            os.unlink('my_container-policy.tar.gz')
+            os.unlink('deploy-module.yml')
+
+            list_templates = templates.strip('{,}').split(',')
+            for template in list_templates:
+                os.unlink(template)
 
 if __name__ == "__main__":
     if 'selinux_enabled' in sys.argv:

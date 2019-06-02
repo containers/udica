@@ -1,0 +1,3 @@
+archive: my_container-policy.tar.gz
+policy: my_container.cil base_container.cil net_container.cil home_container.cil
+final_policy: my_container.cil
