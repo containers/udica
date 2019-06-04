@@ -69,13 +69,15 @@ class TestMain(unittest.TestCase):
     def test_default_ansible_podman(self):
         """podman run fedora"""
         args = ['udica', '-j', 'test_default.podman.json', 'my_container', '--ansible']
-        self.helper(args, 'test_default.podman.cil', 'base_container.cil', 'test_default.ansible.podman.yml')
+        self.helper(args, 'test_default.podman.cil', 'base_container.cil',
+                    'test_default.ansible.podman.yml')
 
     def test_basic_ansible_podman(self):
         """podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
         args = ['udica', '-j', 'test_basic.podman.json', 'my_container', '--ansible']
         self.helper(args, 'test_basic.podman.cil',
-                    '{base_container.cil,net_container.cil,home_container.cil}', 'test_basic.ansible.podman.yml')
+                    '{base_container.cil,net_container.cil,home_container.cil}',
+                    'test_basic.ansible.podman.yml')
 
     def helper(self, args, policy_file=None, templates=None, variables_file=None):
         """Run udica with args, check output and used templates.
@@ -87,7 +89,8 @@ class TestMain(unittest.TestCase):
             or '{base_container.cil,net_container.cil}'
         variables_file -- check that output of udica matches variables file
         """
-        deploy_playbook="../udica/ansible/deploy-module.yml"
+        # Overwrite paths to files so that they do not have to be installed.
+        udica.policy.TEMPLATE_PLAYBOOK = "../udica/ansible/deploy-module.yml"
         udica.policy.TEMPLATES_STORE = "../udica/templates"
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
@@ -120,11 +123,10 @@ class TestMain(unittest.TestCase):
 
         if "--ansible" in args:
             udica.policy.TEMPLATES_STORE = "./"
-            self.assertRegex(mock_out.output, 'Ansible playbook and archive with udica policies generated!')
-            archive = tarfile.open("my_container-policy.tar.gz")
-            archive.extractall()
-            archive.close()
-
+            self.assertRegex(mock_out.output,
+                             'Ansible playbook and archive with udica policies generated!')
+            with tarfile.open("my_container-policy.tar.gz") as archive:
+                archive.extractall()
         else:
             self.assertRegex(mock_out.output, 'semodule -i my_container')
             if templates:
@@ -146,7 +148,7 @@ class TestMain(unittest.TestCase):
 
             with open('deploy-module.yml') as cont:
                 playbook = cont.read().strip()
-            with open(deploy_playbook) as cont:
+            with open(udica.policy.TEMPLATE_PLAYBOOK) as cont:
                 exp_playbook = cont.read().strip()
             self.assertMultiLineEqual(playbook, exp_playbook)
 

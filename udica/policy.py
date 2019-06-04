@@ -211,21 +211,19 @@ def load_policy(opts):
 def generate_playbook(opts):
     src = TEMPLATE_PLAYBOOK
     dst = "./"
-    copy(src,dst)
+    copy(src, dst)
 
-    varsfile = open(VARIABLE_FILE_NAME ,'w')
+    with open(VARIABLE_FILE_NAME, 'w') as varsfile:
+        varsfile.write('archive: ' + opts['ContainerName'] + '-policy.tar.gz\n')
+        varsfile.write('policy: ' + opts['ContainerName'] + '.cil ' +
+                       list_templates_to_string(templates_to_load).replace(',', ' ') + '\n')
+        varsfile.write('final_policy: ' + opts['ContainerName'] + '.cil')
 
-    varsfile.write('archive: ' + opts['ContainerName'] + '-policy.tar.gz\n')
-    varsfile.write('policy: ' + opts['ContainerName'] + '.cil ' + list_templates_to_string(templates_to_load).replace(',', ' ') + '\n')
-    varsfile.write('final_policy: ' + opts['ContainerName'] + '.cil')
+    with tarfile.open(opts['ContainerName'] + '-policy.tar.gz', 'w:gz') as tar:
+        for template in templates_to_load:
+            tar.add(TEMPLATES_STORE + '/' + template + '.cil', template + '.cil')
+        tar.add(opts['ContainerName'] + '.cil')
+        remove(opts['ContainerName'] +'.cil')
 
-    varsfile.close()
-
-    tar = tarfile.open(opts['ContainerName'] + '-policy.tar.gz', 'w:gz')
-    for template in templates_to_load:
-        tar.add(TEMPLATES_STORE + '/' + template + '.cil', template + '.cil')
-    tar.add(opts['ContainerName'] + '.cil')
-    remove(opts['ContainerName'] +'.cil')
-    tar.close()
-
-    print('\nAnsible playbook and archive with udica policies generated! \nPlease run ansible play to deploy the policy.')
+    print('\nAnsible playbook and archive with udica policies generated! \n' +
+          'Please run ansible play to deploy the policy.')
