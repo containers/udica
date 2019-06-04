@@ -74,8 +74,6 @@ class TestMain(unittest.TestCase):
         udica.policy.TEMPLATES_STORE = "../udica/templates"
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
-        # FIXME: the load_policy function is not properly restoring current working directory
-        self.cwd = os.getcwd()
 
         # Remove current directory from sys.path so that the proper selinux and semanage modules are
         # loaded (instead of the mock ones in this directory).
@@ -106,8 +104,6 @@ class TestMain(unittest.TestCase):
 
         if templates:
             self.assertRegex(mock_out.output, udica.policy.TEMPLATES_STORE + '/' + templates)
-
-        os.chdir(self.cwd)
 
         self.assertTrue(os.path.isfile('my_container.cil'))
 
