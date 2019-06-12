@@ -22,7 +22,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="udica",
-    version="0.1.6",
+    version="0.1.7",
     author="Lukas Vrabec",
     author_email="lvrabec@redhat.com",
     description="A tool for generating SELinux security policies for containers",
