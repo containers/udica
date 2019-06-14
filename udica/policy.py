@@ -18,6 +18,7 @@ import semanage
 
 from shutil import copy
 from os import chdir, getcwd, write, read, remove, replace
+from os.path import exists
 
 import tarfile
 
@@ -61,6 +62,10 @@ def list_contexts(directory):
 
     selabel = selinux.selabel_open(selinux.SELABEL_CTX_FILE, None, 0)
     (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
+    if context == None:
+        if exists(directory) == False:
+            exit(3)
+        context = selinux.getfilecon(directory)[1]
     contexts.append(context.split(':')[2])
     return contexts
 
