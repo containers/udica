@@ -18,4 +18,15 @@ from unittest.mock import Mock
 SELABEL_CTX_FILE = None
 
 selabel_open = Mock()
-selabel_lookup = Mock(return_value=(0, "system_u:object_r:var_spool_t:s0"))
+
+def selabel_lookup(selabel,directory,rc):
+    if directory == '/tmp/test':
+        return (0, None)
+    else:
+        return (0, "system_u:object_r:var_spool_t:s0")
+
+def getfilecon(directory):
+    if directory == '/tmp/test':
+        return (0, "system_u:object_r:user_tmp_t:s0")
+    else:
+        return (0, "system_u:object_r:var_spool_t:s0")
