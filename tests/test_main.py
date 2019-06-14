@@ -79,6 +79,12 @@ class TestMain(unittest.TestCase):
                     '{base_container.cil,net_container.cil,home_container.cil}',
                     'test_basic.ansible.podman.yml')
 
+    def test_nocontext_podman(self):
+        """podman run -v /tmp/test:/tmp/test:rw fedora"""
+        args = ['udica', '-j', 'test_nocontext.podman.json', 'my_container']
+        self.helper(args, 'test_nocontext.podman.cil',
+                    'base_container.cil')
+
     def helper(self, args, policy_file=None, templates=None, variables_file=None):
         """Run udica with args, check output and used templates.
 
@@ -94,6 +100,9 @@ class TestMain(unittest.TestCase):
         udica.policy.TEMPLATES_STORE = "../udica/templates"
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
+
+        # Create /tmp/test directory for proper testing objects without SELinux context specified
+        os.makedirs("/tmp/test", exist_ok=True)
 
         # Remove current directory from sys.path so that the proper selinux and semanage modules are
         # loaded (instead of the mock ones in this directory).
@@ -167,6 +176,9 @@ class TestMain(unittest.TestCase):
             list_templates = templates.strip('{,}').split(',')
             for template in list_templates:
                 os.unlink(template)
+
+        # Delete /tmp/test directory for proper testing objects without SELinux context specified
+        os.rmdir("/tmp/test")
 
 if __name__ == "__main__":
     if 'selinux_enabled' in sys.argv:
