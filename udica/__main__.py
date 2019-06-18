@@ -86,14 +86,23 @@ def main():
         try:
             import sys
             container_inspect_data = sys.stdin.read()
-        except:
+        except Exception as e:
+            print('Couldn\'t parse inspect data from stdin:', e)
             exit(2)
 
-    container_inspect = parse_inspect(container_inspect_data)
+    try:
+        container_inspect = parse_inspect(container_inspect_data)
+    except Exception as e:
+        print('Couldn\'t parse inspect data:', e)
+        exit(2)
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']
 
-    return_code_podman = parse_is_podman(container_inspect_data)
+    try:
+        return_code_podman = parse_is_podman(container_inspect_data)
+    except Exception as e:
+        print('Couldn\'t parse podman:', e)
+        exit(2)
 
     container_caps = []
 
