@@ -44,7 +44,4 @@ def parse_cap(data):
 
 def parse_is_podman(data):
     json_rep = json.loads(data)
-    if 'container=podman' in json_rep[0]['Config']['Env']:
-        return 0
-    else:
-        return 1
+    return 'container=podman' in json_rep[0]['Config']['Env']

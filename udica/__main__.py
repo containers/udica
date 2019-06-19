@@ -67,7 +67,7 @@ def main():
 
         if not container_inspect_data:
             print('Container with specified ID does not exits!')
-            exit(2)
+            exit(3)
 
     if opts['JsonFile']:
         if opts['JsonFile'] == '-':
@@ -80,7 +80,7 @@ def main():
                     container_inspect_data = f.read()
             else:
                 print('Json file does not exists!')
-                exit(2)
+                exit(3)
 
     if (not opts['JsonFile']) and (not opts['ContainerID']):
         try:
@@ -88,21 +88,21 @@ def main():
             container_inspect_data = sys.stdin.read()
         except Exception as e:
             print('Couldn\'t parse inspect data from stdin:', e)
-            exit(2)
+            exit(3)
 
     try:
         container_inspect = parse_inspect(container_inspect_data)
     except Exception as e:
         print('Couldn\'t parse inspect data:', e)
-        exit(2)
+        exit(3)
     container_mounts = container_inspect[0]['Mounts']
     container_ports = container_inspect[0]['NetworkSettings']['Ports']
 
     try:
-        return_code_podman = parse_is_podman(container_inspect_data)
+        is_podman = parse_is_podman(container_inspect_data)
     except Exception as e:
         print('Couldn\'t parse podman:', e)
-        exit(2)
+        exit(3)
 
     container_caps = []
 
@@ -112,10 +112,14 @@ def main():
         else:
             container_caps = opts['Caps'].split(',')
     else:
-        if return_code_podman == 0:
+        if is_podman:
             container_caps = container_inspect[0]['EffectiveCaps']
 
-    create_policy(opts, container_caps, container_mounts, container_ports)
+    try:
+        create_policy(opts, container_caps, container_mounts, container_ports)
+    except Exception as e:
+        print('Couldn\'t create policy:', e)
+        exit(4)
 
     print('\nPolicy ' + opts['ContainerName'] + ' created!')
 
