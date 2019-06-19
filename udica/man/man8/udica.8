@@ -64,6 +64,23 @@ Allow a container to communicate with the X server
 .I   \-\-virt\-access
 Allow a container to communicate with libvirt
 
+.SH EXIT STATUS
+.TP
+.B 0
+no errors encountered.
+.TP
+.B 1
+other errors.
+.TP
+.B 2
+error while parsing options.
+.TP
+.B 3
+error while getting container info.
+.TP
+.B 4
+error while creating an SELinux policy.
+
 .SH EXAMPLES
 .nf
 # cat my_con.json | udica \-\-x\-access \-\-full\-network\-access my_container

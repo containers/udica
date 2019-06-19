@@ -64,7 +64,7 @@ def list_contexts(directory):
     (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
     if context == None:
         if exists(directory) == False:
-            exit(3)
+            exit(1)
         context = selinux.getfilecon(directory)[1]
     contexts.append(context.split(':')[2])
     return contexts
