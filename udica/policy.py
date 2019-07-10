@@ -133,59 +133,59 @@ def create_policy(opts, capabilities, mounts, ports):
 
     # mounts
     for item in mounts:
-        if not item['source'].find("/"):
-            if (item['source'] == LOG_CONTAINER and 'ro' in item['options']):
+        if not item['Source'].find("/"):
+            if (item['Source'] == LOG_CONTAINER and item['RW'] is False):
                 policy.write('    (blockinherit log_container)\n')
                 add_template("log_container")
                 continue
 
-            if (item['source'] == LOG_CONTAINER and 'rw' in item['options']):
+            if (item['Source'] == LOG_CONTAINER and item['RW'] is True):
                 policy.write('    (blockinherit log_rw_container)\n')
                 add_template("log_container")
                 continue
 
-            if (item['source'] == HOME_CONTAINER and 'ro' in item['options']):
+            if (item['Source'] == HOME_CONTAINER and item['RW'] is False):
                 policy.write('    (blockinherit home_container)\n')
                 add_template("home_container")
                 continue
 
-            if (item['source'] == HOME_CONTAINER and 'rw' in item['options']):
+            if (item['Source'] == HOME_CONTAINER and item['RW'] is True):
                 policy.write('    (blockinherit home_rw_container)\n')
                 add_template("home_container")
                 continue
 
-            if (item['source'] == TMP_CONTAINER and 'ro' in item['options']):
+            if (item['Source'] == TMP_CONTAINER and item['RW'] is False):
                 policy.write('    (blockinherit tmp_container)\n')
                 add_template("tmp_container")
                 continue
 
-            if (item['source'] == TMP_CONTAINER and 'rw' in item['options']):
+            if (item['Source'] == TMP_CONTAINER and item['RW'] is True):
                 policy.write('    (blockinherit tmp_rw_container)\n')
                 add_template("tmp_container")
                 continue
 
-            if (item['source'] == CONFIG_CONTAINER and 'ro' in item['options']):
+            if (item['Source'] == CONFIG_CONTAINER and item['RW'] is False):
                 policy.write('    (blockinherit config_container)\n')
                 add_template("config_container")
                 continue
 
-            if (item['source'] == CONFIG_CONTAINER and 'rw' in item['options']):
+            if (item['Source'] == CONFIG_CONTAINER and item['RW'] is True):
                 policy.write('    (blockinherit config_rw_container)\n')
                 add_template("config_container")
                 continue
 
-            contexts = list_contexts(item['source'])
+            contexts = list_contexts(item['Source'])
             for context in contexts:
-                if 'rw' in item['options']:
+                if item['RW'] is True:
                     policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['srw'] + ' ))) \n')
-                if 'ro' in item['options']:
+                if item['RW'] is False:
                     policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
 
-    policy.write(') ')
+    policy.write(')')
     policy.close()
 
 def load_policy(opts):
