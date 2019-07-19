@@ -1,0 +1,96 @@
+---
+
+# Default timeout for each task
+timeout_in: 30m
+
+# Main collection of env. vars to set for all tasks and scripts.
+env:
+    ####
+    #### Global variables used for all tasks
+    ####
+    # Name of the ultimate destination branch for this CI run, PR or post-merge.
+    DEST_BRANCH: "master"
+    CIRRUS_SHELL: "/bin/bash"
+    # Save a little typing (path relative to $CIRRUS_WORKING_DIR)
+    SCRIPT_BASE: "./contrib/cirrus"
+    CIRRUS_CLONE_DEPTH: 50
+
+    ####
+    #### Cache-image names to test with
+    ####
+    # GCE project where images live
+    IMAGE_PROJECT: "libpod-218412"
+    _BUILT_IMAGE_SUFFIX: "libpod-5721842587795456"
+    FEDORA_CACHE_IMAGE_NAME: "fedora-30-${_BUILT_IMAGE_SUFFIX}"
+    PRIOR_FEDORA_CACHE_IMAGE_NAME: "fedora-29-${_BUILT_IMAGE_SUFFIX}"
+
+    ####
+    #### Command variables to help avoid duplication
+    ####
+    # Command to prefix every output line with a timestamp
+    # (can't do inline awk script, Cirrus-CI or YAML mangles quoting)
+    _TIMESTAMP: 'awk --file ${CIRRUS_WORKING_DIR}/${SCRIPT_BASE}/timestamp.awk'
+    _DFCMD: 'df -lhTx tmpfs'
+    _AUDITCMD: 'cat /var/log/audit/audit.log'
+    _JOURNALCMD: 'journalctl -b'
+
+gcp_credentials: ENCRYPTED[00f012db520bc341804da84ba135d10db0540571e08a0cd00f05636dcd0824240d9277509514f0075c0533b889c4fe35]
+
+# Default timeout for each task
+timeout_in: 120m
+
+
+# Default VM to use unless set or modified by task
+gce_instance:
+    image_project: "${IMAGE_PROJECT}"
+    zone: "us-central1-c"  # Required by Cirrus for the time being
+    cpu: 2
+    memory: "4Gb"
+    disk: 200  # Gigabytes, do not set less than 200 per obscure GCE docs re: I/O performance
+    image_name: "${FEDORA_CACHE_IMAGE_NAME}"
+
+
+# Each 'task' runs in parallel, '_task' suffix required on name.
+test_upstream_podman_task:
+
+    gce_instance:  # Only need to specify differences from defaults (above)
+        matrix:  # Duplicate this task for each matrix product.
+            image_name: "${FEDORA_CACHE_IMAGE_NAME}"
+            image_name: "${PRIOR_FEDORA_CACHE_IMAGE_NAME}"
+
+    env:
+        # Which branch, tag, or sha of podman repository to test against
+        PODMAN_FROM: 'master'  # see build script below
+
+    # Each 'script' runs in sequence, '_script' suffix required on name.
+    setup_script: '${SCRIPT_BASE}/setup.sh |& ${_TIMESTAMP}'
+    build_script: '${SCRIPT_BASE}/build.sh |& ${_TIMESTAMP}'
+    test_script: '${SCRIPT_BASE}/test.sh |& ${_TIMESTAMP}'
+
+    always:
+        df_script: '$_DFCMD'
+        audit_log_script: '$_AUDITCMD'
+        journal_script: '$_JOURNALCMD'
+
+
+# Update metadata on VM images to record last-used-on timestamps
+meta_task:
+
+    container:
+        image: "quay.io/libpod/imgts:latest"  # defined in libpod repo
+        cpu: 1
+        memory: 1
+
+    env:
+        # Space-separated list of ALL images used by automation in this repository
+        IMGNAMES: |-
+            ${FEDORA_CACHE_IMAGE_NAME}
+            ${PRIOR_FEDORA_CACHE_IMAGE_NAME}
+        BUILDID: "${CIRRUS_BUILD_ID}"
+        REPOREF: "${CIRRUS_CHANGE_IN_REPO}"
+        GCPJSON: ENCRYPTED[fe4e7707e2af4e1c0ad2e2c705d641fb8d20a02370130a5c111abe91edcaad909ba1f7866c51d0afea9c0f15fe7734c4]
+        GCPNAME: ENCRYPTED[67d54cd5b7f3cf1915707b13f4af9f127336c3866794e1f9ee53b0c723d0024e4d1eb2fd98ce3df5ef28babd5335cacc]
+        GCPPROJECT: ENCRYPTED[5f21a274da2d5b7b410e9402da1b583c2054d4da5a0c13caca89f1be155db6581b804373c1e8f7f75246d3067f3fd3c9]
+        CIRRUS_CLONE_DEPTH: 1  # source not used
+
+    script: '/usr/local/bin/entrypoint.sh |& ${_TIMESTAMP}'
