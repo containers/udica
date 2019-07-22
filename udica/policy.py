@@ -24,7 +24,9 @@ import tarfile
 
 import udica.perms as perms
 
-TEMPLATES_STORE = '/usr/share/udica/templates'
+# Check if templates are present in current directory
+# if yes, the templates directory is used instead of system one.
+TEMPLATES_STORE = './templates' if exists('./templates') else '/usr/share/udica/templates'
 
 CONFIG_CONTAINER = '/etc'
 HOME_CONTAINER = '/home'
