@@ -117,6 +117,30 @@ class TestMain(unittest.TestCase):
         self.assert_policy('test_nocontext.podman.cil')
         os.rmdir("/tmp/test")
 
+    def test_fullnetworkaccess_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json', '--full-network-access', 'my_container'])
+        self.assert_templates(output, ['base_container', 'net_container'])
+        self.assert_policy('test_fullnetworkaccess.podman.cil')
+
+    def test_virtaccess_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json','--virt-access', 'my_container'])
+        self.assert_templates(output, ['base_container', 'virt_container'])
+        self.assert_policy('test_virtaccess.podman.cil')
+
+    def test_xaccess_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json','--X-access', 'my_container'])
+        self.assert_templates(output, ['base_container', 'x_container'])
+        self.assert_policy('test_xaccess.podman.cil')
+
+    def test_ttyaccess_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json','--tty-access', 'my_container'])
+        self.assert_templates(output, ['base_container', 'tty_container'])
+        self.assert_policy('test_ttyaccess.podman.cil')
+
     def run_udica(self, args):
         with patch('sys.argv', args):
             with patch('sys.stderr.write') as mock_err, patch('sys.stdout.write') as mock_out:
