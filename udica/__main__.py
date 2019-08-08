@@ -38,6 +38,8 @@ def get_args():
     parser.add_argument(
         '--virt-access', help='Allow container to communicate with libvirt ', required=False, dest='VirtAccess', action='store_true')
     parser.add_argument(
+        '-s','--stream-connect', help='Allow container to stream connect with given SELinux domain ', required=False, dest='StreamConnect')
+    parser.add_argument(
         '-l', '--load-modules', help='Load templates and module created by this tool ', required=False, dest='LoadModules', action='store_true')
     parser.add_argument(
         '-c', '--caps', help='List of capabilities, e.g "-c AUDIT_WRITE,CHOWN,DAC_OVERRIDE,FOWNER,FSETID,KILL,MKNOD,NET_BIND_SERVICE,NET_RAW,SETFCAP,SETGID,SETPCAP,SETUID,SYS_CHROOT"', required=False, dest='Caps', default=None)

@@ -117,6 +117,12 @@ class TestMain(unittest.TestCase):
         self.assert_policy('test_nocontext.podman.cil')
         os.rmdir("/tmp/test")
 
+    def test_stream_connect_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json', '--stream-connect', 'network_container', 'my_container'])
+        self.assert_templates(output, ['base_container'])
+        self.assert_policy('test_stream_connect.podman.cil')
+
     def test_fullnetworkaccess_podman(self):
         """podman run fedora"""
         output = self.run_udica(['udica', '-j', 'test_default.podman.json', '--full-network-access', 'my_container'])

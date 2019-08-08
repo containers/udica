@@ -115,6 +115,10 @@ def create_policy(opts, capabilities, mounts, ports, append_rules):
         policy.write('    (blockinherit restricted_net_container)\n')
         add_template("net_container")
 
+    if opts['StreamConnect']:
+        policy.write('    (allow process ' + opts['StreamConnect'] + '.process ( unix_stream_socket ( connectto ))) \n')
+        policy.write('    (allow process ' + opts['StreamConnect'] + '.socket ( sock_file ( getattr write open append ))) \n')
+
     # capabilities
     if capabilities:
         caps = ''
