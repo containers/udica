@@ -1,0 +1,7 @@
+time->Fri Aug  9 22:29:36 2019
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { open } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0:c0.c1023 tclass=file permissive=0
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { getattr } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0:c0.c1023 tclass=file permissive=0
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { write } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:tmp_t:s0:c0.c1023 tclass=file permissive=0
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { add_name } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:tmp_t:s0:c0.c1023 tclass=dir permissive=0
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { read } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0:c0.c1023 tclass=file permissive=0
+type=AVC msg=audit(1565382576.178:800): avc:  denied  { read } for  pid=1503 comm=container_test scontext=system_u:system_r:my_container.process:s0:c0.c1023 tcontext=system_u:object_r:etc_t:s0:c0.c1023 tclass=file permissive=0

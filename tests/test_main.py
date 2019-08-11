@@ -141,6 +141,12 @@ class TestMain(unittest.TestCase):
         self.assert_templates(output, ['base_container', 'tty_container'])
         self.assert_policy('test_ttyaccess.podman.cil')
 
+    def test_append_more_rules_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(['udica', '-j', 'test_default.podman.json','-a', 'append_avc_file', 'my_container'])
+        self.assert_templates(output, ['base_container'])
+        self.assert_policy('test_append_avc.podman.cil')
+
     def run_udica(self, args):
         with patch('sys.argv', args):
             with patch('sys.stderr.write') as mock_err, patch('sys.stdout.write') as mock_out:

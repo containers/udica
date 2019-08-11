@@ -18,7 +18,7 @@ import argparse
 import shutil
 
 # import udica
-from udica.parse import parse_inspect, parse_cap, parse_is_podman
+from udica.parse import parse_inspect, parse_cap, parse_is_podman, parse_avc_file
 from udica.policy import create_policy, load_policy, generate_playbook
 
 def get_args():
@@ -43,6 +43,8 @@ def get_args():
         '-c', '--caps', help='List of capabilities, e.g "-c AUDIT_WRITE,CHOWN,DAC_OVERRIDE,FOWNER,FSETID,KILL,MKNOD,NET_BIND_SERVICE,NET_RAW,SETFCAP,SETGID,SETPCAP,SETUID,SYS_CHROOT"', required=False, dest='Caps', default=None)
     parser.add_argument(
         '-d', '--ansible', help='Generate ansible playbook to deploy SELinux policy for containers ', required=False, dest='Ansible', action='store_true')
+    parser.add_argument(
+        '-a', '--append-rules', type=str, help='Append more SELinux allow rules from file', dest='FileAVCS', required=False, default=None)
     args = parser.parse_args()
     return vars(args)
 
@@ -104,6 +106,22 @@ def main():
         print('Couldn\'t parse podman:', e)
         exit(3)
 
+    # Append allow rules if AVCs log is provided
+    append_rules = None
+    if opts['FileAVCS']:
+        import os.path
+        if os.path.isfile(opts['FileAVCS']):
+            with open(opts['FileAVCS'], 'r') as f:
+                try:
+                    append_rules = parse_avc_file(f.read())
+                except Exception as e:
+                    print('Couldn\'t parse inspect data:', e)
+                    exit(3)
+            f.close()
+        else:
+            print('AVC file does not exists!')
+            exit(3)
+
     container_caps = []
 
     if opts['Caps']:
@@ -116,7 +134,7 @@ def main():
             container_caps = container_inspect[0]['EffectiveCaps']
 
     try:
-        create_policy(opts, container_caps, container_mounts, container_ports)
+        create_policy(opts, container_caps, container_mounts, container_ports, append_rules)
     except Exception as e:
         print('Couldn\'t create policy:', e)
         exit(4)

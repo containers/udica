@@ -89,7 +89,7 @@ def list_ports(port_number, port_proto):
         if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
-def create_policy(opts, capabilities, mounts, ports):
+def create_policy(opts, capabilities, mounts, ports, append_rules):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
@@ -186,6 +186,13 @@ def create_policy(opts, capabilities, mounts, ports):
                     policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
+
+    if append_rules != None:
+        for rule in append_rules:
+            if opts['ContainerName'] in rule[0]:
+                policy.write('    (allow process ' + rule[1] + ' ( ' + rule[2] + ' ( ' + rule[3] + ' ))) \n')
+            else:
+                print('WARNING: process type: ' + rule[0] + ' seems to be unrelated to this container policy. Skipping allow rule.')
 
     policy.write(')')
     policy.close()
