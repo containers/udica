@@ -156,7 +156,6 @@ fcontexts_homedirs = [
     ('/var/spool/fcron/new\\.systab', 'system_u:object_r:system_cron_spool_t:s0'),
     ('/var/spool/fcron/systab\\.orig', 'system_u:object_r:system_cron_spool_t:s0'),
     ('/var/spool/postfix/etc/localtime', 'system_u:object_r:locale_t:s0'),
-    ('/var/spool/cron', 'system_u:object_r:user_cron_spool_t:s0'),
     ('/var/spool/cron/user', 'system_u:object_r:user_cron_spool_t:s0')
 ]
 
