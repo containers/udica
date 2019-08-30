@@ -89,7 +89,7 @@ def list_ports(port_number, port_proto):
         if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
-def create_policy(opts, capabilities, mounts, ports, append_rules):
+def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_format):
     policy = open(opts['ContainerName'] +'.cil', 'w')
     policy.write('(block ' + opts['ContainerName'] + '\n')
     policy.write('    (blockinherit container)\n')
@@ -138,6 +138,74 @@ def create_policy(opts, capabilities, mounts, ports, append_rules):
             policy.write('    (allow process ' + list_ports(item['hostPort'], item['protocol']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
 
     # mounts
+    if inspect_format == "CRI-O":
+        write_policy_for_crio_mounts(mounts, policy)
+    else:
+        write_policy_for_podman_mounts(mounts, policy)
+
+    if append_rules != None:
+        for rule in append_rules:
+            if opts['ContainerName'] in rule[0]:
+                policy.write('    (allow process ' + rule[1] + ' ( ' + rule[2] + ' ( ' + rule[3] + ' ))) \n')
+            else:
+                print('WARNING: process type: ' + rule[0] + ' seems to be unrelated to this container policy. Skipping allow rule.')
+
+    policy.write(')')
+    policy.close()
+
+
+def write_policy_for_crio_mounts(mounts, policy):
+    for item in mounts:
+        if item['hostPath'].startswith('/var/lib/kubelet'):
+            # These should already have the right context
+            continue
+        if item['hostPath'] == LOG_CONTAINER:
+            if item['readonly']:
+                policy.write('    (blockinherit log_container)\n')
+            else:
+                policy.write('    (blockinherit log_rw_container)\n')
+            add_template("log_container")
+            continue
+
+        if item['hostPath'] == HOME_CONTAINER:
+            if item['readonly']:
+                policy.write('    (blockinherit home_container)\n')
+            else:
+                policy.write('    (blockinherit home_rw_container)\n')
+            add_template("home_container")
+            continue
+
+        if item['hostPath'] == TMP_CONTAINER:
+            if item['readonly']:
+                policy.write('    (blockinherit tmp_container)\n')
+            else:
+                policy.write('    (blockinherit tmp_rw_container)\n')
+            add_template("tmp_container")
+            continue
+
+        if item['hostPath'] == CONFIG_CONTAINER:
+            if item['readonly']:
+                policy.write('    (blockinherit config_container)\n')
+            else:
+                policy.write('    (blockinherit config_rw_container)\n')
+            add_template("config_container")
+            continue
+
+        # TODO(jaosorior): Add prefix-dir to path. This way we could call this
+        # from a container in kubernetes
+        contexts = list_contexts(item['hostPath'])
+        for context in contexts:
+            if item['readonly']:
+                policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
+                policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
+                policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['srw'] + ' ))) \n')
+            else:
+                policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
+                policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
+                policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
+
+
+def write_policy_for_podman_mounts(mounts, policy):
     for item in mounts:
         if not item['Source'].find("/"):
             if (item['Source'] == LOG_CONTAINER and item['RW'] is False):
@@ -190,16 +258,6 @@ def create_policy(opts, capabilities, mounts, ports, append_rules):
                     policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
                     policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
-
-    if append_rules != None:
-        for rule in append_rules:
-            if opts['ContainerName'] in rule[0]:
-                policy.write('    (allow process ' + rule[1] + ' ( ' + rule[2] + ' ( ' + rule[3] + ' ))) \n')
-            else:
-                print('WARNING: process type: ' + rule[0] + ' seems to be unrelated to this container policy. Skipping allow rule.')
-
-    policy.write(')')
-    policy.close()
 
 def load_policy(opts):
     PWD = getcwd()

@@ -18,7 +18,8 @@ import argparse
 import shutil
 
 # import udica
-from udica.parse import parse_inspect, parse_cap, parse_is_podman, parse_avc_file
+from udica.parse import parse_inspect, parse_cap, json_is_podman_format, parse_avc_file
+from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook
 
 def get_args():
@@ -55,7 +56,7 @@ def main():
     opts = get_args()
 
     if opts['ContainerID']:
-        container_inspect_data = None
+        container_inspect_raw = None
         for backend in ["podman", "docker"]:
             try:
                 run_inspect = subprocess.Popen([backend, "inspect", opts['ContainerID']], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -66,22 +67,22 @@ def main():
                 inspect_data = None
 
             if inspect_data:
-                container_inspect_data = inspect_data
+                container_inspect_raw = inspect_data
                 break
 
-        if not container_inspect_data:
+        if not container_inspect_raw:
             print('Container with specified ID does not exits!')
             exit(3)
 
     if opts['JsonFile']:
         if opts['JsonFile'] == '-':
             import sys
-            container_inspect_data = sys.stdin.read()
+            container_inspect_raw = sys.stdin.read()
         else:
             import os.path
             if os.path.isfile(opts['JsonFile']):
                 with open(opts['JsonFile'], 'r') as f:
-                    container_inspect_data = f.read()
+                    container_inspect_raw = f.read()
             else:
                 print('Json file does not exists!')
                 exit(3)
@@ -89,24 +90,20 @@ def main():
     if (not opts['JsonFile']) and (not opts['ContainerID']):
         try:
             import sys
-            container_inspect_data = sys.stdin.read()
+            container_inspect_raw = sys.stdin.read()
         except Exception as e:
             print('Couldn\'t parse inspect data from stdin:', e)
             exit(3)
 
+
     try:
-        container_inspect = parse_inspect(container_inspect_data)
+        inspect_format = parse.get_inspect_format(container_inspect_raw)
     except Exception as e:
         print('Couldn\'t parse inspect data:', e)
         exit(3)
-    container_mounts = container_inspect[0]['Mounts']
-    container_ports = container_inspect[0]['NetworkSettings']['Ports']
-
-    try:
-        is_podman = parse_is_podman(container_inspect_data)
-    except Exception as e:
-        print('Couldn\'t parse podman:', e)
-        exit(3)
+    container_inspect = parse_inspect(container_inspect_raw)
+    container_mounts = parse.get_mounts(container_inspect, inspect_format)
+    container_ports = parse.get_ports(container_inspect, inspect_format)
 
     # Append allow rules if AVCs log is provided
     append_rules = None
@@ -117,7 +114,7 @@ def main():
                 try:
                     append_rules = parse_avc_file(f.read())
                 except Exception as e:
-                    print('Couldn\'t parse inspect data:', e)
+                    print('Couldn\'t parse AVC file:', e)
                     exit(3)
             f.close()
         else:
@@ -126,17 +123,11 @@ def main():
 
     container_caps = []
 
-    if opts['Caps']:
-        if opts['Caps'] == 'None':
-            container_caps = []
-        else:
-            container_caps = opts['Caps'].split(',')
-    else:
-        if is_podman:
-            container_caps = container_inspect[0]['EffectiveCaps']
+    container_caps = parse.get_caps(container_inspect, opts, inspect_format)
 
     try:
-        create_policy(opts, container_caps, container_mounts, container_ports, append_rules)
+        create_policy(opts, container_caps, container_mounts, container_ports,
+                      append_rules, inspect_format)
     except Exception as e:
         print('Couldn\'t create policy:', e)
         exit(4)
