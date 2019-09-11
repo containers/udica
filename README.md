@@ -169,6 +169,27 @@ Proof that SELinux allows binding only to tcp/udp *21* port.
     Ncat: SHA-1 fingerprint: 6EEC 102E 6666 5F96 CC4F E5FA A1BE 4A5E 6C76 B6DC
     Ncat: bind to :::80: Permission denied. QUITTING.
 
+## Running from a container
+
+To build the udica container to your local registry, run the following command:
+
+    $ make image
+
+Once having the image built, it's possible to run udica from whithin a
+container. The necessary directories to bind-mount are:
+
+* `/sys/fs/selinux`
+* `/etc/selinux/`
+* `/var/lib/selinux/`
+
+For reference, this would be a way to call the container via podman:
+
+    podman run --user root --privileged -ti \
+        -v /sys/fs/selinux:/sys/fs/selinux \
+        -v /etc/selinux/:/etc/selinux/ \
+        -v /var/lib/selinux/:/var/lib/selinux/ \
+        --rm --name=udica udica
+
 ## Testing
 
 Udica repository contains units tests for basic functionality of the tool. To run tests follow these commands:
