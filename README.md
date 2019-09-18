@@ -23,6 +23,12 @@ This tool is still in early phase of development. Any feedback, ideas, pull requ
 Tool was created based on following PoC where process of creating policy is described:
 https://github.com/fedora-selinux/container-selinux-customization
 
+## Supported container engines
+
+Udica supports following container engines:
+   * podman v1.4+
+   * docker v1.13+
+
 ## Installing
 
 Install udica tool with all dependencies
