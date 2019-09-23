@@ -195,7 +195,7 @@ def write_policy_for_crio_mounts(mounts, policy):
         # from a container in kubernetes
         contexts = list_contexts(item['hostPath'])
         for context in contexts:
-            if item['readonly']:
+            if item['readonly'] is False:
                 policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
                 policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
                 policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['srw'] + ' ))) \n')
