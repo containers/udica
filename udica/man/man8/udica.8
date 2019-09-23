@@ -27,8 +27,9 @@ udica [options] container_name
 A tool for generating SELinux security profiles for containers. The whole concept is based on the "block inheritance" feature inside the CIL intermediate language supported by the SELinux user space. The tool creates a policy which combines rules inherited from specified CIL blocks (templates) and rules discovered by inspection of the container JSON file with mount points and port definitions.
 
 .SH SUPPORTED CONTAINER ENGINES
-podman v1.4+,
+CRI-O v1.14.10+
 docker v1.13+
+podman v1.4+,
 
 .SH OPTIONS
 .TP

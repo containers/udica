@@ -26,8 +26,9 @@ https://github.com/fedora-selinux/container-selinux-customization
 ## Supported container engines
 
 Udica supports following container engines:
-   * podman v1.4+
+   * CRI-O v1.14.10+
    * docker v1.13+
+   * podman v1.4+
 
 ## Installing
 
@@ -179,6 +180,17 @@ On SELinux enabled systems you can run also (root access required):
 
     $ cd tests
     # python3 test_main.py selinux_enabled
+
+## Udica in OpenShift
+
+Udica could run in OpenShift and generate SELinux policies for pods in the same instance.
+[SELinux policy helper operator](https://github.com/JAORMX/selinux-policy-helper-operator) is a controller that listens to all pods in the system. It will attempt to generate a policy for pods when the pod is annotated with a specific tag "generate-selinux-policy" and the pod is in a running state. In order to generate the policy, it spawns a pod with the [selinux-k8s](https://github.com/JAORMX/selinux-k8s) tool which uses udica to generate the policy. It will spit out a configmap with the appropriate policy.
+
+Real example is demonstrated in following demo.
+
+### Demo
+
+[![asciicast](https://asciinema.org/a/RnjsiiQYRDiLcB8hbhKiIJF5B.svg)](https://asciinema.org/a/RnjsiiQYRDiLcB8hbhKiIJF5B)
 
 ## Known issues
 
