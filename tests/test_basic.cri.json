@@ -1,0 +1,73 @@
+{
+  "status": {
+    "id": "ffae333ef3dc2d80311090fd239055c9d045b837240e41affb9d7ae7f2b5d237",
+    "metadata": {
+      "attempt": 0,
+      "name": "spoolerrorlogger"
+    },
+    "state": "CONTAINER_RUNNING",
+    "createdAt": "2019-09-23T13:52:39.968798859Z",
+    "startedAt": "2019-09-23T13:52:40.044502422Z",
+    "finishedAt": "1970-01-01T00:00:00Z",
+    "exitCode": 0,
+    "image": {
+      "image": "registry.access.redhat.com/ubi8/ubi:latest"
+    },
+    "imageRef": "registry.access.redhat.com/ubi8/ubi@sha256:8275e2ad7f458e329bdc8c0e7543cff1729998fe515a281d49638246de8e39ee",
+    "reason": "",
+    "message": "",
+    "labels": {
+      "io.kubernetes.container.name": "spoolerrorlogger",
+      "io.kubernetes.pod.name": "spoolerrorlogger",
+      "io.kubernetes.pod.namespace": "default",
+      "io.kubernetes.pod.uid": "59ecb6eb-de09-11e9-8ebe-02e4204e049a"
+    },
+    "annotations": {
+      "io.kubernetes.container.hash": "113e3fda",
+      "io.kubernetes.container.restartCount": "0",
+      "io.kubernetes.container.terminationMessagePath": "/dev/termination-log",
+      "io.kubernetes.container.terminationMessagePolicy": "File",
+      "io.kubernetes.pod.terminationGracePeriod": "30"
+    },
+    "mounts": [
+      {
+        "containerPath": "/home",
+        "hostPath": "/var/home",
+        "propagation": "PROPAGATION_PRIVATE",
+        "readonly": true,
+        "selinuxRelabel": false
+      },
+      {
+        "containerPath": "/var/spool",
+        "hostPath": "/var/spool",
+        "propagation": "PROPAGATION_PRIVATE",
+        "readonly": false,
+        "selinuxRelabel": false
+      },
+      {
+        "containerPath": "/etc/hosts",
+        "hostPath": "/var/lib/kubelet/pods/59ecb6eb-de09-11e9-8ebe-02e4204e049a/etc-hosts",
+        "propagation": "PROPAGATION_PRIVATE",
+        "readonly": false,
+        "selinuxRelabel": false
+      },
+      {
+        "containerPath": "/dev/termination-log",
+        "hostPath": "/var/lib/kubelet/pods/59ecb6eb-de09-11e9-8ebe-02e4204e049a/containers/spoolerrorlogger/9e6bce3f",
+        "propagation": "PROPAGATION_PRIVATE",
+        "readonly": false,
+        "selinuxRelabel": false
+      },
+      {
+        "containerPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+        "hostPath": "/var/lib/kubelet/pods/59ecb6eb-de09-11e9-8ebe-02e4204e049a/volumes/kubernetes.io~secret/default-token-rssn6",
+        "propagation": "PROPAGATION_PRIVATE",
+        "readonly": true,
+        "selinuxRelabel": false
+      }
+    ],
+    "logPath": "/var/log/pods/default_spoolerrorlogger_59ecb6eb-de09-11e9-8ebe-02e4204e049a/spoolerrorlogger/0.log"
+  },
+  "pid": 47737,
+  "sandboxId": "426ba7380ad7efdcf207f0df107d5c9d7389755a2a89372d24199350c70861d6"
+}
