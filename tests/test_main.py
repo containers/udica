@@ -70,6 +70,12 @@ class TestMain(unittest.TestCase):
         self.assert_templates(output, ['base_container', 'net_container', 'home_container'])
         self.assert_policy('test_basic.docker.cil')
 
+    def test_basic_cri(self):
+        """Start CRI-O mounting /var/spool with read/write perms and /home with readonly perms"""
+        output = self.run_udica(['udica', '-j', 'test_basic.cri.json', '--full-network-access', 'my_container'])
+        self.assert_templates(output, ['base_container', 'net_container', 'home_container'])
+        self.assert_policy('test_basic.cri.cil')
+
     def test_default_podman(self):
         """podman run fedora"""
         output = self.run_udica(['udica', '-j', 'test_default.podman.json', 'my_container'])

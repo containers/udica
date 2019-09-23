@@ -32,7 +32,7 @@
     "mounts": [
       {
         "containerPath": "/home",
-        "hostPath": "/var/home",
+        "hostPath": "/home",
         "propagation": "PROPAGATION_PRIVATE",
         "readonly": true,
         "selinuxRelabel": false
