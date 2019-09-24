@@ -14,17 +14,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-import sys
 import unittest
-import importlib
 from unittest.mock import patch
 
 # Import tarfile library to extract tarball with udica policy and templates when --ansible
 # parameter is used
 import tarfile
-
-import tests.selinux as mocked_selinux
-import tests.semanage as mocked_semanage
 
 # Use the selinux and semanage packages provided by the system instead of the mock ones. When
 # running on a system with SELinux disabled (e.g. in a container), it must be set to False.
@@ -39,19 +34,10 @@ TEST_DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 def test_file(path):
     return os.path.join(TEST_DIR_PATH, path)
 
-class TestMain(unittest.TestCase):
+class TestBase(unittest.TestCase):
     """Test basic functionality of udica"""
 
     def setUp(self):
-        if not SELINUX_ENABLED:
-            self.selinux_patch = patch.dict('sys.modules',
-                                            selinux=mocked_selinux)
-            self.selinux_patch.start()
-
-            self.semanage_patch = patch.dict('sys.modules',
-                                            semanage=mocked_semanage)
-            self.semanage_patch.start()
-
         # NOTE: We import udica here so the above mocked modules take place.
         global udica
         udica = __import__("udica.__main__")
@@ -65,9 +51,6 @@ class TestMain(unittest.TestCase):
         udica.policy.templates_to_load = []
 
     def tearDown(self):
-        if not SELINUX_ENABLED:
-            self.selinux_patch.stop()
-            self.semanage_patch.stop()
         os.unlink('my_container.cil')
 
         global udica
@@ -237,9 +220,3 @@ class TestMain(unittest.TestCase):
 
         for temp in templates:
             os.unlink(temp + '.cil')
-
-if __name__ == "__main__":
-    if 'selinux_enabled' in sys.argv:
-        SELINUX_ENABLED = True
-        sys.argv.remove('selinux_enabled')
-    unittest.main()

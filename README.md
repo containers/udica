@@ -173,13 +173,11 @@ Proof that SELinux allows binding only to tcp/udp *21* port.
 
 Udica repository contains units tests for basic functionality of the tool. To run tests follow these commands:
 
-    $ cd tests
-    $ python3 -m unittest
+    $ make test
 
 On SELinux enabled systems you can run also (root access required):
 
-    $ cd tests
-    # python3 test_main.py selinux_enabled
+    # python3 tests/test_integration.py
 
 ## Udica in OpenShift
 
