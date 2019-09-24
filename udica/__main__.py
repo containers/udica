@@ -15,10 +15,9 @@
 
 import subprocess
 import argparse
-import shutil
 
 # import udica
-from udica.parse import parse_inspect, parse_cap, json_is_podman_format, parse_avc_file
+from udica.parse import parse_inspect, parse_avc_file
 from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook
 
