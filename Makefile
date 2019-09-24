@@ -4,4 +4,4 @@ install:
 
 .PHONY: test
 test:
-	python3 -m unittest -v tests/test_main.py
+	python3 -m unittest -v tests/test_unit.py
