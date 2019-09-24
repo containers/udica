@@ -13,14 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from shutil import copy
+from os import chdir, getcwd, remove
+from os.path import exists
+import tarfile
+
 import selinux
 import semanage
-
-from shutil import copy
-from os import chdir, getcwd, write, read, remove, replace
-from os.path import exists
-
-import tarfile
 
 import udica.perms as perms
 
