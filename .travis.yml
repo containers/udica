@@ -11,9 +11,9 @@ before_install:
 
 script:
     # test on Fedora Rawhide
-    - docker run -v $PWD:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; python3 ./setup.py install; cd tests; python3 -m unittest"
+    - docker run -v $PWD:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; python3 -m unittest -v tests/test_main.py"
     # test on the latest stable release of Fedora
-    - docker run -v $PWD:/root/build/ fedora:latest /bin/sh -c "cd /root/build; python3 ./setup.py install; cd tests; python3 -m unittest"
+    - docker run -v $PWD:/root/build/ fedora:latest /bin/sh -c "cd /root/build; python3 -m unittest -v tests/test_main.py"
 
 notifications:
     emails:
