@@ -8,6 +8,7 @@ services:
 before_install:
     - docker pull fedora:rawhide
     - docker pull fedora:latest
+    - docker pull centos:centos8
     - sudo apt-get install -y build-essential
     - pip3 install pyflakes
 
@@ -17,6 +18,8 @@ script:
     - docker run -v $PWD:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; python3 -m unittest -v tests/test_unit.py"
     # test on the latest stable release of Fedora
     - docker run -v $PWD:/root/build/ fedora:latest /bin/sh -c "cd /root/build; python3 -m unittest -v tests/test_unit.py"
+    # test on the stable release of Centos 8
+    - docker run -v $PWD:/root/build/ centos:centos8 /bin/sh -c "yum install python3 -y; cd /root/build; python3 -m unittest -v tests/test_unit.py"
 
 notifications:
     emails:
