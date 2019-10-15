@@ -11,8 +11,10 @@ before_install:
     - docker pull centos:centos8
     - sudo apt-get install -y build-essential
     - pip3 install pyflakes
+    - pip3 install black
 
 script:
+    - make format-check
     - make lint
     # test on Fedora Rawhide
     - docker run -v $PWD:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; python3 -m unittest -v tests/test_unit.py"

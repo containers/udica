@@ -10,8 +10,16 @@ install:
 lint:
 	pyflakes udica
 
+.PHONY:
+format:
+	black *.py udica/*.py tests/*.py
+
+.PHONY:
+format-check:
+	black --check *.py udica/*.py tests/*.py
+
 .PHONY: test
-test: lint
+test: lint format-check
 	python3 -m unittest -v tests/test_unit.py
 
 .PHONY: image
