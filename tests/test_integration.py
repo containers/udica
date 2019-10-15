@@ -19,8 +19,10 @@ import sys
 
 import test_main
 
+
 class TestIntegration(test_main.TestBase):
     """Test basic functionality of udica"""
+
 
 if __name__ == "__main__":
     # Very similar to our basic tests, but we don't overwrite the SELinux

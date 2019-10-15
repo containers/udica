@@ -31,8 +31,10 @@ udica = None
 
 TEST_DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
+
 def test_file(path):
     return os.path.join(TEST_DIR_PATH, path)
+
 
 class TestBase(unittest.TestCase):
     """Test basic functionality of udica"""
@@ -44,148 +46,245 @@ class TestBase(unittest.TestCase):
 
         # Overwrite paths to files so that they do not have to be installed.
         udica.policy.TEMPLATE_PLAYBOOK = os.path.join(
-            TEST_DIR_PATH, "../", "udica/ansible/deploy-module.yml")
+            TEST_DIR_PATH, "../", "udica/ansible/deploy-module.yml"
+        )
         udica.policy.TEMPLATES_STORE = os.path.join(
-            TEST_DIR_PATH, "../", "udica/templates")
+            TEST_DIR_PATH, "../", "udica/templates"
+        )
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
 
     def tearDown(self):
-        os.unlink('my_container.cil')
+        os.unlink("my_container.cil")
 
         global udica
         udica = None
 
     def test_basic_podman(self):
         """podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_basic.podman.json', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container', 'home_container'])
-        self.assert_policy(test_file('test_basic.podman.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_basic.podman.json", "my_container"]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.podman.cil"))
 
     def test_basic_docker(self):
         """docker run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_basic.docker.json', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container', 'home_container'])
-        self.assert_policy(test_file('test_basic.docker.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_basic.docker.json", "my_container"]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.docker.cil"))
 
     def test_basic_cri(self):
         """Start CRI-O mounting /var/spool with read/write perms and /home with readonly perms"""
-        output = self.run_udica(['udica', '-j', 'tests/test_basic.cri.json', '--full-network-access', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container', 'home_container'])
-        self.assert_policy(test_file('test_basic.cri.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_basic.cri.json",
+                "--full-network-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.cri.cil"))
 
     def test_default_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json', 'my_container'])
-        self.assert_templates(output, ['base_container'])
-        self.assert_policy(test_file('test_default.podman.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_default.podman.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_default.podman.cil"))
 
     def test_default_docker(self):
         """docker run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.docker.json', 'my_container'])
-        self.assert_templates(output, ['base_container'])
-        self.assert_policy(test_file('test_default.docker.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_default.docker.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_default.docker.cil"))
 
     def test_port_ranges_podman(self):
         """podman run -p 63140:63140 fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_ports.podman.json', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container'])
-        self.assert_policy(test_file('test_ports.podman.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_ports.podman.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container", "net_container"])
+        self.assert_policy(test_file("test_ports.podman.cil"))
 
     def test_port_ranges_docker(self):
         """docker run -p 63140:63140 fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_ports.docker.json', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container'])
-        self.assert_policy(test_file('test_ports.docker.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_ports.docker.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container", "net_container"])
+        self.assert_policy(test_file("test_ports.docker.cil"))
 
     def test_default_ansible_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json', 'my_container',
-                                 '--ansible'])
-        self.assert_ansible(output, ['base_container'],
-                            test_file('test_default.ansible.podman.yml'))
-        self.assert_policy(test_file('test_default.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "my_container",
+                "--ansible",
+            ]
+        )
+        self.assert_ansible(
+            output, ["base_container"], test_file("test_default.ansible.podman.yml")
+        )
+        self.assert_policy(test_file("test_default.podman.cil"))
 
     def test_basic_ansible_podman(self):
         """podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_basic.podman.json', 'my_container',
-                                 '--ansible'])
-        self.assert_ansible(output, ['base_container', 'net_container', 'home_container'],
-                            test_file('test_basic.ansible.podman.yml'))
-        self.assert_policy(test_file('test_basic.podman.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_basic.podman.json", "my_container", "--ansible"]
+        )
+        self.assert_ansible(
+            output,
+            ["base_container", "net_container", "home_container"],
+            test_file("test_basic.ansible.podman.yml"),
+        )
+        self.assert_policy(test_file("test_basic.podman.cil"))
 
     def test_nocontext_podman(self):
         """podman run -v /tmp/test:/tmp/test:rw fedora"""
         os.makedirs("/tmp/test", exist_ok=True)
-        output = self.run_udica(['udica', '-j', 'tests/test_nocontext.podman.json', 'my_container'])
-        self.assert_templates(output, ['base_container'])
-        self.assert_policy(test_file('test_nocontext.podman.cil'))
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_nocontext.podman.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_nocontext.podman.cil"))
         os.rmdir("/tmp/test")
 
     def test_stream_connect_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json', '--stream-connect', 'network_container', 'my_container'])
-        self.assert_templates(output, ['base_container'])
-        self.assert_policy(test_file('test_stream_connect.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--stream-connect",
+                "network_container",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_stream_connect.podman.cil"))
 
     def test_fullnetworkaccess_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json', '--full-network-access', 'my_container'])
-        self.assert_templates(output, ['base_container', 'net_container'])
-        self.assert_policy(test_file('test_fullnetworkaccess.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--full-network-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container", "net_container"])
+        self.assert_policy(test_file("test_fullnetworkaccess.podman.cil"))
 
     def test_virtaccess_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json','--virt-access', 'my_container'])
-        self.assert_templates(output, ['base_container', 'virt_container'])
-        self.assert_policy(test_file('test_virtaccess.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--virt-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container", "virt_container"])
+        self.assert_policy(test_file("test_virtaccess.podman.cil"))
 
     def test_xaccess_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json','--X-access', 'my_container'])
-        self.assert_templates(output, ['base_container', 'x_container'])
-        self.assert_policy(test_file('test_xaccess.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--X-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container", "x_container"])
+        self.assert_policy(test_file("test_xaccess.podman.cil"))
 
     def test_ttyaccess_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json','--tty-access', 'my_container'])
-        self.assert_templates(output, ['base_container', 'tty_container'])
-        self.assert_policy(test_file('test_ttyaccess.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--tty-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container", "tty_container"])
+        self.assert_policy(test_file("test_ttyaccess.podman.cil"))
 
     def test_append_more_rules_podman(self):
         """podman run fedora"""
-        output = self.run_udica(['udica', '-j', 'tests/test_default.podman.json',
-                                 '-a', 'tests/append_avc_file', 'my_container'])
-        self.assert_templates(output, ['base_container'])
-        self.assert_policy(test_file('test_append_avc.podman.cil'))
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "-a",
+                "tests/append_avc_file",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_append_avc.podman.cil"))
 
     def run_udica(self, args):
-        with patch('sys.argv', args):
-            with patch('sys.stderr.write') as mock_err, patch('sys.stdout.write') as mock_out:
+        with patch("sys.argv", args):
+            with patch("sys.stderr.write") as mock_err, patch(
+                "sys.stdout.write"
+            ) as mock_out:
                 mock_out.output = ""
+
                 def store_output(output):
                     mock_out.output += output
+
                 mock_out.side_effect = store_output
                 udica.__main__.main()
                 mock_err.assert_not_called()
 
-        self.assertRegex(mock_out.output, 'Policy my_container created')
-        self.assertRegex(mock_out.output, '--security-opt label=type:my_container.process')
+        self.assertRegex(mock_out.output, "Policy my_container created")
+        self.assertRegex(
+            mock_out.output, "--security-opt label=type:my_container.process"
+        )
 
         return mock_out.output
 
     def assert_templates(self, output, templates):
-        self.assertRegex(output, 'semodule -i my_container')
+        self.assertRegex(output, "semodule -i my_container")
         if templates:
             if len(templates) > 1:
-                templ_str = '{%s.cil}' % '.cil,'.join(templates)
+                templ_str = "{%s.cil}" % ".cil,".join(templates)
             else:
-                templ_str = templates[0] + '.cil'
-            self.assertRegex(output, udica.policy.TEMPLATES_STORE + '/' + templ_str)
+                templ_str = templates[0] + ".cil"
+            self.assertRegex(output, udica.policy.TEMPLATES_STORE + "/" + templ_str)
 
     def assert_policy(self, policy_file):
-        self.assertTrue(os.path.isfile('my_container.cil'))
-        with open('my_container.cil') as cont:
+        self.assertTrue(os.path.isfile("my_container.cil"))
+        with open("my_container.cil") as cont:
             policy = cont.read().strip()
         with open(policy_file) as cont:
             exp_policy = cont.read().strip()
@@ -193,30 +292,31 @@ class TestBase(unittest.TestCase):
 
     def assert_ansible(self, output, templates, variables_file):
         udica.policy.TEMPLATES_STORE = "./"
-        self.assertRegex(output,
-                         'Ansible playbook and archive with udica policies generated!')
+        self.assertRegex(
+            output, "Ansible playbook and archive with udica policies generated!"
+        )
         with tarfile.open("my_container-policy.tar.gz") as archive:
             archive.extractall()
 
-        self.assertTrue(os.path.isfile('deploy-module.yml'))
+        self.assertTrue(os.path.isfile("deploy-module.yml"))
 
-        with open('deploy-module.yml') as cont:
+        with open("deploy-module.yml") as cont:
             playbook = cont.read().strip()
         with open(udica.policy.TEMPLATE_PLAYBOOK) as cont:
             exp_playbook = cont.read().strip()
         self.assertMultiLineEqual(playbook, exp_playbook)
 
-        self.assertTrue(os.path.isfile('variables-deploy-module.yml'))
+        self.assertTrue(os.path.isfile("variables-deploy-module.yml"))
 
-        with open('variables-deploy-module.yml') as cont:
+        with open("variables-deploy-module.yml") as cont:
             variables_playbook = cont.read().strip()
         with open(variables_file) as cont:
             exp_variables_playbook = cont.read().strip()
         self.assertMultiLineEqual(variables_playbook, exp_variables_playbook)
 
-        os.unlink('variables-deploy-module.yml')
-        os.unlink('my_container-policy.tar.gz')
-        os.unlink('deploy-module.yml')
+        os.unlink("variables-deploy-module.yml")
+        os.unlink("my_container-policy.tar.gz")
+        os.unlink("deploy-module.yml")
 
         for temp in templates:
-            os.unlink(temp + '.cil')
+            os.unlink(temp + ".cil")

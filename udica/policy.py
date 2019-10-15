@@ -25,26 +25,31 @@ import udica.perms as perms
 
 # Check if templates are present in current directory
 # if yes, the templates directory is used instead of system one.
-TEMPLATES_STORE = './templates' if exists('./templates') else '/usr/share/udica/templates'
+TEMPLATES_STORE = (
+    "./templates" if exists("./templates") else "/usr/share/udica/templates"
+)
 
-CONFIG_CONTAINER = '/etc'
-HOME_CONTAINER = '/home'
-LOG_CONTAINER = '/var/log'
-TMP_CONTAINER = '/tmp'
+CONFIG_CONTAINER = "/etc"
+HOME_CONTAINER = "/home"
+LOG_CONTAINER = "/var/log"
+TMP_CONTAINER = "/tmp"
 
-TEMPLATE_PLAYBOOK = '/usr/share/udica/ansible/deploy-module.yml'
-VARIABLE_FILE_NAME = 'variables-deploy-module.yml'
+TEMPLATE_PLAYBOOK = "/usr/share/udica/ansible/deploy-module.yml"
+VARIABLE_FILE_NAME = "variables-deploy-module.yml"
 
 templates_to_load = []
+
 
 def add_template(template):
     templates_to_load.append(template)
 
+
 def list_templates_to_string(templates_to_load):
-    return '.cil,'.join(map(str, templates_to_load)) + '.cil'
+    return ".cil,".join(map(str, templates_to_load)) + ".cil"
+
 
 def list_contexts(directory):
-    directory_len = (len(directory))
+    directory_len = len(directory)
 
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
@@ -67,8 +72,9 @@ def list_contexts(directory):
         if exists(directory) == False:
             exit(1)
         context = selinux.getfilecon(directory)[1]
-    contexts.append(context.split(':')[2])
+    contexts.append(context.split(":")[2])
     return contexts
+
 
 def list_ports(port_number, port_proto):
 
@@ -88,39 +94,48 @@ def list_ports(port_number, port_proto):
         if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
+
 def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_format):
-    policy = open(opts['ContainerName'] +'.cil', 'w')
-    policy.write('(block ' + opts['ContainerName'] + '\n')
-    policy.write('    (blockinherit container)\n')
+    policy = open(opts["ContainerName"] + ".cil", "w")
+    policy.write("(block " + opts["ContainerName"] + "\n")
+    policy.write("    (blockinherit container)\n")
     add_template("base_container")
 
-    if opts['FullNetworkAccess']:
-        policy.write('    (blockinherit net_container)\n')
+    if opts["FullNetworkAccess"]:
+        policy.write("    (blockinherit net_container)\n")
         add_template("net_container")
 
-    if opts['VirtAccess']:
-        policy.write('    (blockinherit virt_container)\n')
+    if opts["VirtAccess"]:
+        policy.write("    (blockinherit virt_container)\n")
         add_template("virt_container")
 
-    if opts['XAccess']:
-        policy.write('    (blockinherit x_container)\n')
+    if opts["XAccess"]:
+        policy.write("    (blockinherit x_container)\n")
         add_template("x_container")
 
-    if opts['TtyAccess']:
-        policy.write('    (blockinherit tty_container)\n')
+    if opts["TtyAccess"]:
+        policy.write("    (blockinherit tty_container)\n")
         add_template("tty_container")
 
     if ports:
-        policy.write('    (blockinherit restricted_net_container)\n')
+        policy.write("    (blockinherit restricted_net_container)\n")
         add_template("net_container")
 
-    if opts['StreamConnect']:
-        policy.write('    (allow process ' + opts['StreamConnect'] + '.process ( unix_stream_socket ( connectto ))) \n')
-        policy.write('    (allow process ' + opts['StreamConnect'] + '.socket ( sock_file ( getattr write open append ))) \n')
+    if opts["StreamConnect"]:
+        policy.write(
+            "    (allow process "
+            + opts["StreamConnect"]
+            + ".process ( unix_stream_socket ( connectto ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + opts["StreamConnect"]
+            + ".socket ( sock_file ( getattr write open append ))) \n"
+        )
 
     # capabilities
     if capabilities:
-        caps = ''
+        caps = ""
         for item in capabilities:
             # Capabilities parsed from podman inspection JSON file have prefix "CAP_", this should be removed
             if "CAP_" in item:
@@ -128,13 +143,19 @@ def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_forma
             else:
                 caps = caps + perms.cap[item]
 
-        policy.write('    (allow process process ( capability ( ' + caps  + '))) \n')
-        policy.write('\n')
+        policy.write("    (allow process process ( capability ( " + caps + "))) \n")
+        policy.write("\n")
 
     # ports
     for item in ports:
-        if 'hostPort' in item:
-            policy.write('    (allow process ' + list_ports(item['hostPort'], item['protocol']) + ' ( ' + perms.socket[item['protocol']] + ' (  name_bind ))) \n')
+        if "hostPort" in item:
+            policy.write(
+                "    (allow process "
+                + list_ports(item["hostPort"], item["protocol"])
+                + " ( "
+                + perms.socket[item["protocol"]]
+                + " (  name_bind ))) \n"
+            )
 
     # mounts
     if inspect_format == "CRI-O":
@@ -144,161 +165,270 @@ def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_forma
 
     if append_rules != None:
         for rule in append_rules:
-            if opts['ContainerName'] in rule[0]:
-                policy.write('    (allow process ' + rule[1] + ' ( ' + rule[2] + ' ( ' + rule[3] + ' ))) \n')
+            if opts["ContainerName"] in rule[0]:
+                policy.write(
+                    "    (allow process "
+                    + rule[1]
+                    + " ( "
+                    + rule[2]
+                    + " ( "
+                    + rule[3]
+                    + " ))) \n"
+                )
             else:
-                print('WARNING: process type: ' + rule[0] + ' seems to be unrelated to this container policy. Skipping allow rule.')
+                print(
+                    "WARNING: process type: "
+                    + rule[0]
+                    + " seems to be unrelated to this container policy. Skipping allow rule."
+                )
 
-    policy.write(')')
+    policy.write(")")
     policy.close()
 
 
 def write_policy_for_crio_mounts(mounts, policy):
     for item in mounts:
-        if item['hostPath'].startswith('/var/lib/kubelet'):
+        if item["hostPath"].startswith("/var/lib/kubelet"):
             # These should already have the right context
             continue
-        if item['hostPath'] == LOG_CONTAINER:
-            if item['readonly']:
-                policy.write('    (blockinherit log_container)\n')
+        if item["hostPath"] == LOG_CONTAINER:
+            if item["readonly"]:
+                policy.write("    (blockinherit log_container)\n")
             else:
-                policy.write('    (blockinherit log_rw_container)\n')
+                policy.write("    (blockinherit log_rw_container)\n")
             add_template("log_container")
             continue
 
-        if item['hostPath'] == HOME_CONTAINER:
-            if item['readonly']:
-                policy.write('    (blockinherit home_container)\n')
+        if item["hostPath"] == HOME_CONTAINER:
+            if item["readonly"]:
+                policy.write("    (blockinherit home_container)\n")
             else:
-                policy.write('    (blockinherit home_rw_container)\n')
+                policy.write("    (blockinherit home_rw_container)\n")
             add_template("home_container")
             continue
 
-        if item['hostPath'] == TMP_CONTAINER:
-            if item['readonly']:
-                policy.write('    (blockinherit tmp_container)\n')
+        if item["hostPath"] == TMP_CONTAINER:
+            if item["readonly"]:
+                policy.write("    (blockinherit tmp_container)\n")
             else:
-                policy.write('    (blockinherit tmp_rw_container)\n')
+                policy.write("    (blockinherit tmp_rw_container)\n")
             add_template("tmp_container")
             continue
 
-        if item['hostPath'] == CONFIG_CONTAINER:
-            if item['readonly']:
-                policy.write('    (blockinherit config_container)\n')
+        if item["hostPath"] == CONFIG_CONTAINER:
+            if item["readonly"]:
+                policy.write("    (blockinherit config_container)\n")
             else:
-                policy.write('    (blockinherit config_rw_container)\n')
+                policy.write("    (blockinherit config_rw_container)\n")
             add_template("config_container")
             continue
 
         # TODO(jaosorior): Add prefix-dir to path. This way we could call this
         # from a container in kubernetes
-        contexts = list_contexts(item['hostPath'])
+        contexts = list_contexts(item["hostPath"])
         for context in contexts:
-            if item['readonly'] is False:
-                policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
-                policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
-                policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['srw'] + ' ))) \n')
+            if item["readonly"] is False:
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( dir ( "
+                    + perms.perm["drw"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( file ( "
+                    + perms.perm["frw"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( sock_file ( "
+                    + perms.perm["srw"]
+                    + " ))) \n"
+                )
             else:
-                policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
-                policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
-                policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( dir ( "
+                    + perms.perm["dro"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( file ( "
+                    + perms.perm["fro"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( sock_file ( "
+                    + perms.perm["sro"]
+                    + " ))) \n"
+                )
 
 
 def write_policy_for_podman_mounts(mounts, policy):
     for item in mounts:
-        if not item['Source'].find("/"):
-            if (item['Source'] == LOG_CONTAINER and item['RW'] is False):
-                policy.write('    (blockinherit log_container)\n')
+        if not item["Source"].find("/"):
+            if item["Source"] == LOG_CONTAINER and item["RW"] is False:
+                policy.write("    (blockinherit log_container)\n")
                 add_template("log_container")
                 continue
 
-            if (item['Source'] == LOG_CONTAINER and item['RW'] is True):
-                policy.write('    (blockinherit log_rw_container)\n')
+            if item["Source"] == LOG_CONTAINER and item["RW"] is True:
+                policy.write("    (blockinherit log_rw_container)\n")
                 add_template("log_container")
                 continue
 
-            if (item['Source'] == HOME_CONTAINER and item['RW'] is False):
-                policy.write('    (blockinherit home_container)\n')
+            if item["Source"] == HOME_CONTAINER and item["RW"] is False:
+                policy.write("    (blockinherit home_container)\n")
                 add_template("home_container")
                 continue
 
-            if (item['Source'] == HOME_CONTAINER and item['RW'] is True):
-                policy.write('    (blockinherit home_rw_container)\n')
+            if item["Source"] == HOME_CONTAINER and item["RW"] is True:
+                policy.write("    (blockinherit home_rw_container)\n")
                 add_template("home_container")
                 continue
 
-            if (item['Source'] == TMP_CONTAINER and item['RW'] is False):
-                policy.write('    (blockinherit tmp_container)\n')
+            if item["Source"] == TMP_CONTAINER and item["RW"] is False:
+                policy.write("    (blockinherit tmp_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if (item['Source'] == TMP_CONTAINER and item['RW'] is True):
-                policy.write('    (blockinherit tmp_rw_container)\n')
+            if item["Source"] == TMP_CONTAINER and item["RW"] is True:
+                policy.write("    (blockinherit tmp_rw_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if (item['Source'] == CONFIG_CONTAINER and item['RW'] is False):
-                policy.write('    (blockinherit config_container)\n')
+            if item["Source"] == CONFIG_CONTAINER and item["RW"] is False:
+                policy.write("    (blockinherit config_container)\n")
                 add_template("config_container")
                 continue
 
-            if (item['Source'] == CONFIG_CONTAINER and item['RW'] is True):
-                policy.write('    (blockinherit config_rw_container)\n')
+            if item["Source"] == CONFIG_CONTAINER and item["RW"] is True:
+                policy.write("    (blockinherit config_rw_container)\n")
                 add_template("config_container")
                 continue
 
-            contexts = list_contexts(item['Source'])
+            contexts = list_contexts(item["Source"])
             for context in contexts:
-                if item['RW'] is True:
-                    policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['drw'] + ' ))) \n')
-                    policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['frw'] + ' ))) \n')
-                    policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['srw'] + ' ))) \n')
-                if item['RW'] is False:
-                    policy.write('    (allow process ' + context + ' ( dir ( ' + perms.perm['dro'] + ' ))) \n')
-                    policy.write('    (allow process ' + context + ' ( file ( ' + perms.perm['fro'] + ' ))) \n')
-                    policy.write('    (allow process ' + context + ' ( sock_file ( ' + perms.perm['sro'] + ' ))) \n')
+                if item["RW"] is True:
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( dir ( "
+                        + perms.perm["drw"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( file ( "
+                        + perms.perm["frw"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( sock_file ( "
+                        + perms.perm["srw"]
+                        + " ))) \n"
+                    )
+                if item["RW"] is False:
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( dir ( "
+                        + perms.perm["dro"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( file ( "
+                        + perms.perm["fro"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( sock_file ( "
+                        + perms.perm["sro"]
+                        + " ))) \n"
+                    )
+
 
 def load_policy(opts):
     PWD = getcwd()
     chdir(TEMPLATES_STORE)
 
-    if opts['LoadModules']:
+    if opts["LoadModules"]:
         handle = semanage.semanage_handle_create()
         semanage.semanage_connect(handle)
 
         for template in templates_to_load:
-            semanage.semanage_module_install_file(handle, template + '.cil')
+            semanage.semanage_module_install_file(handle, template + ".cil")
 
         chdir(PWD)
 
-        semanage.semanage_module_install_file(handle, opts['ContainerName'] + '.cil')
+        semanage.semanage_module_install_file(handle, opts["ContainerName"] + ".cil")
 
         semanage.semanage_commit(handle)
     else:
         templates = list_templates_to_string(templates_to_load)
         if len(templates_to_load) > 1:
-            print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/{" + templates + '}')
+            print(
+                "\nPlease load these modules using: \n# semodule -i "
+                + opts["ContainerName"]
+                + ".cil "
+                + TEMPLATES_STORE
+                + "/{"
+                + templates
+                + "}"
+            )
         else:
-            print('\nPlease load these modules using: \n# semodule -i ' + opts['ContainerName'] + '.cil ' + TEMPLATES_STORE + "/" + templates + '')
+            print(
+                "\nPlease load these modules using: \n# semodule -i "
+                + opts["ContainerName"]
+                + ".cil "
+                + TEMPLATES_STORE
+                + "/"
+                + templates
+                + ""
+            )
 
         chdir(PWD)
+
 
 def generate_playbook(opts):
     src = TEMPLATE_PLAYBOOK
     dst = "./"
     copy(src, dst)
 
-    with open(VARIABLE_FILE_NAME, 'w') as varsfile:
-        varsfile.write('archive: ' + opts['ContainerName'] + '-policy.tar.gz\n')
-        varsfile.write('policy: ' + opts['ContainerName'] + '.cil ' +
-                       list_templates_to_string(templates_to_load).replace(',', ' ') + '\n')
-        varsfile.write('final_policy: ' + opts['ContainerName'] + '.cil')
+    with open(VARIABLE_FILE_NAME, "w") as varsfile:
+        varsfile.write("archive: " + opts["ContainerName"] + "-policy.tar.gz\n")
+        varsfile.write(
+            "policy: "
+            + opts["ContainerName"]
+            + ".cil "
+            + list_templates_to_string(templates_to_load).replace(",", " ")
+            + "\n"
+        )
+        varsfile.write("final_policy: " + opts["ContainerName"] + ".cil")
 
-    with tarfile.open(opts['ContainerName'] + '-policy.tar.gz', 'w:gz') as tar:
+    with tarfile.open(opts["ContainerName"] + "-policy.tar.gz", "w:gz") as tar:
         for template in templates_to_load:
-            tar.add(TEMPLATES_STORE + '/' + template + '.cil', template + '.cil')
-        tar.add(opts['ContainerName'] + '.cil')
-        remove(opts['ContainerName'] +'.cil')
+            tar.add(TEMPLATES_STORE + "/" + template + ".cil", template + ".cil")
+        tar.add(opts["ContainerName"] + ".cil")
+        remove(opts["ContainerName"] + ".cil")
 
-    print('\nAnsible playbook and archive with udica policies generated! \n' +
-          'Please run ansible play to deploy the policy.')
+    print(
+        "\nAnsible playbook and archive with udica policies generated! \n"
+        + "Please run ansible play to deploy the policy."
+    )

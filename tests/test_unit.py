@@ -20,16 +20,15 @@ import tests.test_main
 import tests.selinux as mocked_selinux
 import tests.semanage as mocked_semanage
 
+
 class TestUnit(tests.test_main.TestBase):
     """Test basic functionality of udica"""
 
     def setUp(self):
-        self.selinux_patch = patch.dict('sys.modules',
-                                        selinux=mocked_selinux)
+        self.selinux_patch = patch.dict("sys.modules", selinux=mocked_selinux)
         self.selinux_patch.start()
 
-        self.semanage_patch = patch.dict('sys.modules',
-                                         semanage=mocked_semanage)
+        self.semanage_patch = patch.dict("sys.modules", semanage=mocked_semanage)
         self.semanage_patch.start()
 
         super().setUp()
