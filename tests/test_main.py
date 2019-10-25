@@ -106,6 +106,24 @@ class TestBase(unittest.TestCase):
         )
         self.assert_policy(test_file("test_basic.cri.cil"))
 
+    def test_basic_specified_engine_cri(self):
+        """Start CRI-O mounting /var/spool with read/write perms and /home with readonly perms"""
+        output = self.run_udica(
+            [
+                "udica",
+                "--container-engine",
+                "CRI-O",
+                "-j",
+                "tests/test_basic.cri.json",
+                "--full-network-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.cri.cil"))
+
     def test_default_podman(self):
         """podman run fedora"""
         output = self.run_udica(
@@ -114,10 +132,40 @@ class TestBase(unittest.TestCase):
         self.assert_templates(output, ["base_container"])
         self.assert_policy(test_file("test_default.podman.cil"))
 
+    def test_default_specified_engine_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(
+            [
+                "udica",
+                "-e",
+                "podman",
+                "-j",
+                "tests/test_default.podman.json",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_default.podman.cil"))
+
     def test_default_docker(self):
         """docker run fedora"""
         output = self.run_udica(
             ["udica", "-j", "tests/test_default.docker.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_default.docker.cil"))
+
+    def test_default_specified_engine_docker(self):
+        """docker run fedora"""
+        output = self.run_udica(
+            [
+                "udica",
+                "-e",
+                "docker",
+                "-j",
+                "tests/test_default.docker.json",
+                "my_container",
+            ]
         )
         self.assert_templates(output, ["base_container"])
         self.assert_policy(test_file("test_default.docker.cil"))

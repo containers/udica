@@ -113,6 +113,15 @@ def get_args():
         required=False,
         default=None,
     )
+    parser.add_argument(
+        "-e",
+        "--container-engine",
+        type=str,
+        help="Specify which container engine is used for the inspected container (supports: CRI-O, docker, podman)",
+        dest="ContainerEngine",
+        required=False,
+        default="-",
+    )
     args = parser.parse_args()
     return vars(args)
 
@@ -169,11 +178,13 @@ def main():
             exit(3)
 
     try:
-        inspect_format = parse.get_inspect_format(container_inspect_raw)
+        inspect_format = parse.get_inspect_format(
+            container_inspect_raw, opts["ContainerEngine"]
+        )
     except Exception as e:
         print("Couldn't parse inspect data:", e)
         exit(3)
-    container_inspect = parse_inspect(container_inspect_raw)
+    container_inspect = parse_inspect(container_inspect_raw, opts["ContainerEngine"])
     container_mounts = parse.get_mounts(container_inspect, inspect_format)
     container_ports = parse.get_ports(container_inspect, inspect_format)
 
