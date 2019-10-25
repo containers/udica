@@ -26,9 +26,9 @@ def json_is_podman_or_docker_format(json_rep):
 
 def json_is_podman_format(json_rep):
     """Check if the inspected file is in a format from podman. """
-    return (
-        isinstance(json_rep, list)
-        and "container=podman" in json_rep[0]["Config"]["Env"]
+    return isinstance(json_rep, list) and (
+        "container=oci" in json_rep[0]["Config"]["Env"]
+        or "container=podman" in json_rep[0]["Config"]["Env"]
     )
 
 

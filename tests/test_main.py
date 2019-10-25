@@ -70,6 +70,16 @@ class TestBase(unittest.TestCase):
         )
         self.assert_policy(test_file("test_basic.podman.cil"))
 
+    def test_basic_oci(self):
+        """podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 ubi8"""
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_basic.oci.json", "my_container"]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.podman.cil"))
+
     def test_basic_docker(self):
         """docker run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""
         output = self.run_udica(
@@ -111,6 +121,14 @@ class TestBase(unittest.TestCase):
         )
         self.assert_templates(output, ["base_container"])
         self.assert_policy(test_file("test_default.docker.cil"))
+
+    def test_default_oci(self):
+        """podman run ubi8"""
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_default.oci.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_default.podman.cil"))
 
     def test_port_ranges_podman(self):
         """podman run -p 63140:63140 fedora"""
