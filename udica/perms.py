@@ -63,4 +63,4 @@ perm = {
     "sro": "getattr read open ",
 }
 
-socket = {"tcp": "tcp_socket", "udp": "udp_socket"}
+socket = {"tcp": "tcp_socket", "udp": "udp_socket", "sctp": "sctp_socket"}
