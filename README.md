@@ -38,7 +38,7 @@ Install udica tool with all dependencies
     $ git clone https://github.com/containers/udica
     $ cd udica && sudo python3 ./setup.py install
 
-Alternatively tou can run udica directly from git:
+Alternatively you can run udica directly from git:
 
     $ python3 -m udica --help
 
