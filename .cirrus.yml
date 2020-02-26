@@ -20,9 +20,9 @@ env:
     ####
     # GCE project where images live
     IMAGE_PROJECT: "libpod-218412"
-    _BUILT_IMAGE_SUFFIX: "libpod-5751722641719296"
-    FEDORA_CACHE_IMAGE_NAME: "fedora-30-${_BUILT_IMAGE_SUFFIX}"
-    PRIOR_FEDORA_CACHE_IMAGE_NAME: "fedora-29-${_BUILT_IMAGE_SUFFIX}"
+    _BUILT_IMAGE_SUFFIX: "libpod-5874660151656448"
+    FEDORA_CACHE_IMAGE_NAME: "fedora-31-${_BUILT_IMAGE_SUFFIX}"
+    PRIOR_FEDORA_CACHE_IMAGE_NAME: "fedora-30-${_BUILT_IMAGE_SUFFIX}"
 
     ####
     #### Command variables to help avoid duplication
@@ -77,7 +77,7 @@ test_upstream_podman_task:
 meta_task:
 
     container:
-        image: "quay.io/libpod/imgts:latest"  # defined in libpod repo
+        image: "quay.io/libpod/imgts:master"  # defined in libpod repo
         cpu: 1
         memory: 1
 
