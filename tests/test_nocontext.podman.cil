@@ -2,7 +2,7 @@
     (blockinherit container)
     (allow process process ( capability ( chown dac_override fsetid fowner mknod net_raw setgid setuid setfcap setpcap net_bind_service sys_chroot kill audit_write ))) 
 
-    (allow process user_tmp_t ( dir ( open read getattr lock search ioctl add_name remove_name write ))) 
-    (allow process user_tmp_t ( file ( getattr read write append ioctl lock map open create  ))) 
-    (allow process user_tmp_t ( sock_file ( getattr read write append open  ))) 
+    (allow process user_tmp_t ( dir ( add_name create getattr ioctl lock open read remove_name rmdir search setattr write ))) 
+    (allow process user_tmp_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 
+    (allow process user_tmp_t ( sock_file ( append getattr open read write ))) 
 )
