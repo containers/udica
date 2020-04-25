@@ -26,4 +26,3 @@ script:
 notifications:
     emails:
         - lvrabec@redhat.com
-        - jzarsky@redhat.com
