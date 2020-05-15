@@ -15,6 +15,18 @@
 
 import json
 
+#: Constant for the podman engine
+ENGINE_PODMAN = "podman"
+
+#: Constant for the cri-o engine
+ENGINE_CRIO = "CRI-O"
+
+#: Constant for the docker engine
+ENGINE_DOCKER = "docker"
+
+#: All supported engines
+ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER]
+
 
 def json_is_podman_or_docker_format(json_rep):
     """Check if the inspected file is in a format from docker or podman.
@@ -69,7 +81,7 @@ def parse_inspect(data, ContainerEngine):
             if not json_is_podman_format(json_rep):
                 adjust_json_from_docker(json_rep)
 
-    if engine == "docker":
+    if engine == ENGINE_DOCKER:
         adjust_json_from_docker(json_rep)
 
     return json_rep
@@ -81,25 +93,25 @@ def get_inspect_format(data, ContainerEngine):
         json_rep = json.loads(data)
         if json_is_podman_or_docker_format(json_rep):
             if json_is_podman_format(json_rep):
-                return "podman"
-            return "docker"
-        return "CRI-O"
+                return ENGINE_PODMAN
+            return ENGINE_DOCKER
+        return ENGINE_CRIO
     else:
         return engine
 
 
 def get_mounts(data, inspect_format):
-    if inspect_format in ["podman", "docker"]:
+    if inspect_format in [ENGINE_PODMAN, ENGINE_DOCKER]:
         return data[0]["Mounts"]
-    if inspect_format == "CRI-O" and not json_is_podman_or_docker_format(data):
+    if inspect_format == ENGINE_CRIO and not json_is_podman_or_docker_format(data):
         return data["status"]["mounts"]
     raise Exception("Error getting mounts from unknown format %s" % inspect_format)
 
 
 def get_ports(data, inspect_format):
-    if inspect_format in ["podman", "docker"]:
+    if inspect_format in [ENGINE_PODMAN, ENGINE_DOCKER]:
         return data[0]["NetworkSettings"]["Ports"]
-    if inspect_format == "CRI-O":
+    if inspect_format == ENGINE_CRIO:
         # Not applicable in the CRI-O case, since this is handled by the
         # kube-proxy/CNI.
         return []
@@ -112,7 +124,7 @@ def get_caps(data, opts, inspect_format):
             return []
         return opts["Caps"].split(",")
 
-    if inspect_format == "podman":
+    if inspect_format == ENGINE_PODMAN:
         return data[0]["EffectiveCaps"]
     return []
 
@@ -167,10 +179,10 @@ def parse_avc_file(data):
 
 
 def validate_container_engine(ContainerEngine):
-    supported_engines = ["docker", "podman", "CRI-O", "CRIO", "-"]
-    if ContainerEngine in supported_engines:
+    if ContainerEngine in ENGINE_ALL + ["CRIO", "-"]:
+        # Fix CRIO reference to use ENGINE_CRIO
         if ContainerEngine == "CRIO":
-            return "CRI-O"
+            return ENGINE_CRIO
         return ContainerEngine
     else:
         raise Exception("Container Engine %s is not supported." % ContainerEngine)
