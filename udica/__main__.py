@@ -18,6 +18,7 @@ import argparse
 
 # import udica
 from udica.parse import parse_inspect, parse_avc_file
+from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER
 from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook
 
@@ -117,7 +118,9 @@ def get_args():
         "-e",
         "--container-engine",
         type=str,
-        help="Specify which container engine is used for the inspected container (supports: CRI-O, docker, podman)",
+        help="Specify which container engine is used for the inspected container (supports: {})".format(
+            ", ".join(ENGINE_ALL)
+        ),
         dest="ContainerEngine",
         required=False,
         default="-",
@@ -132,7 +135,7 @@ def main():
 
     if opts["ContainerID"]:
         container_inspect_raw = None
-        for backend in ["podman", "docker"]:
+        for backend in [ENGINE_PODMAN, ENGINE_DOCKER]:
             try:
                 run_inspect = subprocess.Popen(
                     [backend, "inspect", opts["ContainerID"]],
