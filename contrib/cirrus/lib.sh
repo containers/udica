@@ -9,6 +9,11 @@ export HOME="$(getent passwd $USER | cut -d : -f 6)"
 [[ -n "$UID" ]] || export UID=$(getent passwd $USER | cut -d : -f 3)
 export GID=$(getent passwd $USER | cut -d : -f 4)
 
+# Automation environment doesn't automatically load under all conditions :(
+if [[ -r '/usr/share/automation/environment' ]]; then
+    source '/usr/share/automation/environment'
+fi
+
 OS_RELEASE_ID="$(source /etc/os-release; echo $ID)"
 # GCE image-name compatible string representation of distribution _major_ version
 OS_RELEASE_VER="$(source /etc/os-release; echo $VERSION_ID | cut -d '.' -f 1)"
