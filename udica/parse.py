@@ -60,18 +60,6 @@ def adjust_json_from_docker(json_rep):
         if item["Mode"] == "ro":
             item["options"] = "ro"
 
-    temp_ports = []
-
-    for item in json_rep[0]["NetworkSettings"]["Ports"]:
-        container_port = item.split("/")
-        host_port = json_rep[0]["NetworkSettings"]["Ports"][item][0]["HostPort"]
-        new_port = {"hostPort": int(host_port), "protocol": container_port[1]}
-        temp_ports.append(new_port)
-
-    del json_rep[0]["NetworkSettings"]["Ports"]
-
-    json_rep[0]["NetworkSettings"]["Ports"] = temp_ports
-
 
 def parse_inspect(data, ContainerEngine):
     json_rep = json.loads(data)
@@ -110,7 +98,14 @@ def get_mounts(data, inspect_format):
 
 def get_ports(data, inspect_format):
     if inspect_format in [ENGINE_PODMAN, ENGINE_DOCKER]:
-        return data[0]["NetworkSettings"]["Ports"]
+        ports = []
+        for key, value in data[0]["NetworkSettings"]["Ports"].items():
+            container_port = str(key).split("/")
+            host_port = value[0]["HostPort"]
+            new_port = {"hostPort": int(host_port), "protocol": container_port[1]}
+            ports.append(new_port)
+        return ports
+
     if inspect_format == ENGINE_CRIO:
         # Not applicable in the CRI-O case, since this is handled by the
         # kube-proxy/CNI.
