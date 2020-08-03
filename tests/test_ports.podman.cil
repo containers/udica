@@ -1,7 +1,7 @@
 (block my_container
     (blockinherit container)
     (blockinherit restricted_net_container)
-    (allow process process ( capability ( chown dac_override fsetid fowner mknod net_raw setgid setuid setfcap setpcap net_bind_service sys_chroot kill audit_write ))) 
+    (allow process process ( capability ( audit_write chown dac_override fowner fsetid kill mknod net_bind_service net_raw setfcap setgid setpcap setuid sys_chroot ))) 
 
     (allow process mysqld_port_t ( tcp_socket (  name_bind ))) 
 )
