@@ -78,7 +78,7 @@ class TestBase(unittest.TestCase):
         self.assert_templates(
             output, ["base_container", "net_container", "home_container"]
         )
-        self.assert_policy(test_file("test_basic.podman.cil"))
+        self.assert_policy(test_file("test_basic.oci.cil"))
 
     def test_basic_docker(self):
         """docker run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora"""

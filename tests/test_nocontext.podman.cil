@@ -1,6 +1,6 @@
 (block my_container
     (blockinherit container)
-    (allow process process ( capability ( chown dac_override fsetid fowner mknod net_raw setgid setuid setfcap setpcap net_bind_service sys_chroot kill audit_write ))) 
+    (allow process process ( capability ( audit_write chown dac_override fowner fsetid kill mknod net_bind_service net_raw setfcap setgid setpcap setuid sys_chroot ))) 
 
     (allow process user_tmp_t ( dir ( add_name create getattr ioctl lock open read remove_name rmdir search setattr write ))) 
     (allow process user_tmp_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 

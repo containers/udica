@@ -1,24 +1,24 @@
 [
     {
-        "Id": "4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41",
-        "Created": "2020-04-25T06:23:17.776735698-04:00",
+        "Id": "7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab",
+        "Created": "2020-08-03T16:47:19.726770951+02:00",
         "Path": "/bin/bash",
         "Args": [
             "/bin/bash"
         ],
         "State": {
-            "OciVersion": "1.0.1-dev",
+            "OciVersion": "1.0.2-dev",
             "Status": "running",
             "Running": true,
             "Paused": false,
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 18861,
-            "ConmonPid": 18857,
+            "Pid": 531879,
+            "ConmonPid": 531875,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2020-04-25T06:23:18.302789152-04:00",
+            "StartedAt": "2020-08-03T16:47:20.210132783+02:00",
             "FinishedAt": "0001-01-01T00:00:00Z",
             "Healthcheck": {
                 "Status": "",
@@ -26,24 +26,24 @@
                 "Log": null
             }
         },
-        "Image": "8121a9f5303be173ae054b7032613d5917d953d7353ff0540d692b2eaa089fbe",
+        "Image": "a1f8c969978652a6d1b2dfb265ae0c6c346da69000160cd3ecd5f619e26fa9f3",
         "ImageName": "registry.access.redhat.com/ubi8:latest",
         "Rootfs": "",
         "Pod": "",
-        "ResolvConfPath": "/var/run/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/resolv.conf",
-        "HostnamePath": "/var/run/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/hostname",
-        "HostsPath": "/var/run/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/hosts",
-        "StaticDir": "/var/lib/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata",
-        "OCIConfigPath": "/var/lib/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/config.json",
+        "ResolvConfPath": "/var/run/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/resolv.conf",
+        "HostnamePath": "/var/run/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/hostname",
+        "HostsPath": "/var/run/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/hosts",
+        "StaticDir": "/var/lib/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata",
+        "OCIConfigPath": "/var/lib/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/config.json",
         "OCIRuntime": "crun",
-        "LogPath": "/var/lib/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/ctr.log",
+        "LogPath": "/var/lib/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/ctr.log",
         "LogTag": "",
-        "ConmonPidFile": "/var/run/containers/storage/overlay-containers/4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41/userdata/conmon.pid",
-        "Name": "infallible_franklin",
+        "ConmonPidFile": "/var/run/containers/storage/overlay-containers/7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab/userdata/conmon.pid",
+        "Name": "hardcore_pasteur",
         "RestartCount": 0,
         "Driver": "overlay",
-        "MountLabel": "system_u:object_r:container_file_t:s0:c190,c225",
-        "ProcessLabel": "system_u:system_r:container_t:s0:c190,c225",
+        "MountLabel": "system_u:object_r:container_file_t:s0:c392,c449",
+        "ProcessLabel": "system_u:system_r:container_t:s0:c392,c449",
         "AppArmorProfile": "",
         "EffectiveCaps": [
             "CAP_AUDIT_WRITE",
@@ -81,26 +81,13 @@
         "GraphDriver": {
             "Name": "overlay",
             "Data": {
-                "LowerDir": "/var/lib/containers/storage/overlay/af22ae5347517fcfca76e94c2f059e9646e9b1757762460c91594ba9a2dadf13/diff:/var/lib/containers/storage/overlay/d3ada5af5602bd0da378e4f0144f8fe8bdbe3f5a65f367dd9ebe759756bada68/diff",
-                "MergedDir": "/var/lib/containers/storage/overlay/e608addd4c45b81a5ccb92b0b4f30f1ab4e8feb16d23aa4b234adc23afcbbba2/merged",
-                "UpperDir": "/var/lib/containers/storage/overlay/e608addd4c45b81a5ccb92b0b4f30f1ab4e8feb16d23aa4b234adc23afcbbba2/diff",
-                "WorkDir": "/var/lib/containers/storage/overlay/e608addd4c45b81a5ccb92b0b4f30f1ab4e8feb16d23aa4b234adc23afcbbba2/work"
+                "LowerDir": "/var/lib/containers/storage/overlay/1da86dd5dbd9e4d52991b5846320796527b223a8bc5c770caa644281a94fd828/diff:/var/lib/containers/storage/overlay/226bfaae015f1d5712cfced3b5b628206618eaacf72f4a44d0e4084071996319/diff",
+                "MergedDir": "/var/lib/containers/storage/overlay/64de02e5f10fe4fda85204ff24420b0b5297428593d57702ea9ffbb67321958a/merged",
+                "UpperDir": "/var/lib/containers/storage/overlay/64de02e5f10fe4fda85204ff24420b0b5297428593d57702ea9ffbb67321958a/diff",
+                "WorkDir": "/var/lib/containers/storage/overlay/64de02e5f10fe4fda85204ff24420b0b5297428593d57702ea9ffbb67321958a/work"
             }
         },
         "Mounts": [
-            {
-                "Type": "bind",
-                "Name": "",
-                "Source": "/home",
-                "Destination": "/home",
-                "Driver": "",
-                "Mode": "",
-                "Options": [
-                    "rbind"
-                ],
-                "RW": false,
-                "Propagation": "rprivate"
-            },
             {
                 "Type": "bind",
                 "Name": "",
@@ -113,32 +100,45 @@
                 ],
                 "RW": true,
                 "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Name": "",
+                "Source": "/home",
+                "Destination": "/home",
+                "Driver": "",
+                "Mode": "",
+                "Options": [
+                    "rbind"
+                ],
+                "RW": false,
+                "Propagation": "rprivate"
             }
         ],
         "Dependencies": [],
         "NetworkSettings": {
             "EndpointID": "",
             "Gateway": "10.88.0.1",
-            "IPAddress": "10.88.0.3",
+            "IPAddress": "10.88.0.243",
             "IPPrefixLen": 16,
             "IPv6Gateway": "",
             "GlobalIPv6Address": "",
             "GlobalIPv6PrefixLen": 0,
-            "MacAddress": "9a:69:01:98:05:9c",
+            "MacAddress": "0e:84:aa:21:e1:07",
             "Bridge": "",
             "SandboxID": "",
             "HairpinMode": false,
             "LinkLocalIPv6Address": "",
             "LinkLocalIPv6PrefixLen": 0,
-            "Ports": [
-                {
-                    "hostPort": 21,
-                    "containerPort": 21,
-                    "protocol": "tcp",
-                    "hostIP": ""
-                }
-            ],
-            "SandboxKey": "/var/run/netns/cni-aa425835-c747-1ecd-b10f-0d4cad649a9f"
+            "Ports": {
+                "21/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "21"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/netns/cni-018f2c1c-8be6-b1c3-bb5e-2a1a490dcf16"
         },
         "ExitCommand": [
             "/usr/bin/podman",
@@ -159,15 +159,15 @@
             "--storage-opt",
             "overlay.mountopt=nodev,metacopy=on",
             "--events-backend",
-            "journald",
+            "file",
             "container",
             "cleanup",
-            "4e343dffff27589e4db7dc58472223032382e0cd44fad3ec8c2e487053919e41"
+            "7da70fec290da5be378289039941c70cb2f01cab93b712c31b50fce5bc824dab"
         ],
         "Namespace": "",
         "IsInfra": false,
         "Config": {
-            "Hostname": "4e343dffff27",
+            "Hostname": "7da70fec290d",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -179,8 +179,8 @@
             "Env": [
                 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                 "TERM=xterm",
-                "container=oci",
-                "HOSTNAME=4e343dffff27",
+                "container=podman",
+                "HOSTNAME=7da70fec290d",
                 "HOME=/root"
             ],
             "Cmd": [
@@ -193,8 +193,7 @@
             "OnBuild": null,
             "Labels": {
                 "architecture": "x86_64",
-                "authoritative-source-url": "registry.access.redhat.com",
-                "build-date": "2020-03-31T14:54:13.907559",
+                "build-date": "2020-07-22T12:11:33.547097",
                 "com.redhat.build-host": "cpt-1007.osbs.prod.upshift.rdu2.redhat.com",
                 "com.redhat.component": "ubi8-container",
                 "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
@@ -206,17 +205,17 @@
                 "io.openshift.tags": "base rhel8",
                 "maintainer": "Red Hat, Inc.",
                 "name": "ubi8",
-                "release": "408",
+                "release": "343",
                 "summary": "Provides the latest release of Red Hat Universal Base Image 8.",
-                "url": "https://access.redhat.com/containers/#/registry.access.redhat.com/ubi8/images/8.1-408",
-                "vcs-ref": "26f36bfa3e3a04c8c866b250924c1aefc34f01c9",
+                "url": "https://access.redhat.com/containers/#/registry.access.redhat.com/ubi8/images/8.2-343",
+                "vcs-ref": "0fede9a6ae85a36962206913c66bfe9965c49940",
                 "vcs-type": "git",
                 "vendor": "Red Hat, Inc.",
-                "version": "8.1"
+                "version": "8.2"
             },
             "Annotations": {
                 "io.container.manager": "libpod",
-                "io.kubernetes.cri-o.Created": "2020-04-25T06:23:17.776735698-04:00",
+                "io.kubernetes.cri-o.Created": "2020-08-03T16:47:19.726770951+02:00",
                 "io.kubernetes.cri-o.TTY": "true",
                 "io.podman.annotations.autoremove": "FALSE",
                 "io.podman.annotations.init": "FALSE",
@@ -226,7 +225,7 @@
             },
             "StopSignal": 15,
             "CreateCommand": [
-                "podman",
+                "/bin/podman",
                 "run",
                 "-it",
                 "-v",
@@ -240,15 +239,16 @@
         },
         "HostConfig": {
             "Binds": [
-                "/home:/home:ro,rprivate,rbind",
-                "/var/spool:/var/spool:rw,rprivate,rbind"
+                "/var/spool:/var/spool:rw,rprivate,rbind",
+                "/home:/home:ro,rprivate,rbind"
             ],
+            "CgroupMode": "private",
             "ContainerIDFile": "",
             "LogConfig": {
                 "Type": "k8s-file",
                 "Config": null
             },
-            "NetworkMode": "default",
+            "NetworkMode": "bridge",
             "PortBindings": {
                 "21/tcp": [
                     {
@@ -271,18 +271,18 @@
             "DnsSearch": [],
             "ExtraHosts": [],
             "GroupAdd": [],
-            "IpcMode": "",
+            "IpcMode": "private",
             "Cgroup": "",
             "Cgroups": "default",
             "Links": null,
             "OomScoreAdj": 0,
-            "PidMode": "",
+            "PidMode": "private",
             "Privileged": false,
             "PublishAllPorts": false,
             "ReadonlyRootfs": false,
             "SecurityOpt": [],
             "Tmpfs": {},
-            "UTSMode": "",
+            "UTSMode": "private",
             "UsernsMode": "",
             "ShmSize": 65536000,
             "Runtime": "oci",
@@ -312,9 +312,9 @@
             "KernelMemory": 0,
             "MemoryReservation": 0,
             "MemorySwap": 0,
-            "MemorySwappiness": -1,
+            "MemorySwappiness": 0,
             "OomKillDisable": false,
-            "PidsLimit": 4096,
+            "PidsLimit": 2048,
             "Ulimits": [
                 {
                     "Name": "RLIMIT_NOFILE",
