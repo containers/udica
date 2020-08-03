@@ -28,7 +28,7 @@ https://github.com/fedora-selinux/container-selinux-customization
 Udica supports following container engines:
    * CRI-O v1.14.10+
    * docker v1.13+
-   * podman v1.4+
+   * podman v2.0+
 
 ## Installing
 
