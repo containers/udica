@@ -44,60 +44,55 @@ def json_is_podman_format(json_rep):
     )
 
 
-def adjust_json_from_docker(json_rep):
-    """If the json comes from a docker call, we need to adjust it to make use
-    of it. """
-
-    if not isinstance(json_rep[0]["NetworkSettings"]["Ports"], dict):
-        raise Exception(
-            "Error parsing docker engine inspection JSON structure, try to specify container engine using '--container-engine' parameter"
-        )
-
-    for item in json_rep[0]["Mounts"]:
-        item["source"] = item["Source"]
-        if item["Mode"] == "rw":
-            item["options"] = "rw"
-        if item["Mode"] == "ro":
-            item["options"] = "ro"
-
-
-def parse_inspect(data, ContainerEngine):
-    json_rep = json.loads(data)
-    engine = validate_container_engine(ContainerEngine)
-    if engine == "-":
-        if json_is_podman_or_docker_format(json_rep):
-            if not json_is_podman_format(json_rep):
-                adjust_json_from_docker(json_rep)
-
-    if engine == ENGINE_DOCKER:
-        adjust_json_from_docker(json_rep)
-
-    return json_rep
-
-
-def get_inspect_format(data, ContainerEngine):
+def get_engine_helper(data, ContainerEngine):
     engine = validate_container_engine(ContainerEngine)
     if engine == "-":
         json_rep = json.loads(data)
         if json_is_podman_or_docker_format(json_rep):
             if json_is_podman_format(json_rep):
-                return ENGINE_PODMAN
-            return ENGINE_DOCKER
-        return ENGINE_CRIO
+                return PodmanHelper()
+            return DockerHelper()
+        return CrioHelper()
     else:
-        return engine
+        if engine == ENGINE_DOCKER:
+            return DockerHelper()
+        elif engine == ENGINE_PODMAN:
+            return PodmanHelper()
+        elif engine == ENGINE_CRIO:
+            return CrioHelper()
+        raise RuntimeError("Unkown engine")
 
 
-def get_mounts(data, inspect_format):
-    if inspect_format in [ENGINE_PODMAN, ENGINE_DOCKER]:
+class EngineHelper(object):
+    def __init__(self, container_engine):
+        self.container_engine = container_engine
+
+    def parse_inspect(self, data):
+        return json.loads(data)
+
+    def get_mounts(self, data):
+        raise Exception(
+            "Error getting mounts from unknown format %s" % self.container_engine
+        )
+
+    def get_ports(self, data):
+        raise Exception(
+            "Error getting ports from unknown format %s" % self.container_engine
+        )
+
+    def get_caps(self, data, opts):
+        if opts["Caps"]:
+            if opts["Caps"] == "None":
+                return []
+            return opts["Caps"].split(",")
+        return []
+
+
+class PodmanDockerHelper(EngineHelper):
+    def get_mounts(self, data):
         return data[0]["Mounts"]
-    if inspect_format == ENGINE_CRIO and not json_is_podman_or_docker_format(data):
-        return data["status"]["mounts"]
-    raise Exception("Error getting mounts from unknown format %s" % inspect_format)
 
-
-def get_ports(data, inspect_format):
-    if inspect_format in [ENGINE_PODMAN, ENGINE_DOCKER]:
+    def get_ports(self, data):
         ports = []
         for key, value in data[0]["NetworkSettings"]["Ports"].items():
             container_port = str(key).split("/")
@@ -106,22 +101,54 @@ def get_ports(data, inspect_format):
             ports.append(new_port)
         return ports
 
-    if inspect_format == ENGINE_CRIO:
+
+class PodmanHelper(PodmanDockerHelper):
+    def __init__(self):
+        super().__init__(ENGINE_PODMAN)
+
+    def get_caps(self, data, opts):
+        if not opts["Caps"]:
+            return data[0]["EffectiveCaps"]
+        return []
+
+
+class DockerHelper(PodmanDockerHelper):
+    def __init__(self):
+        super().__init__(ENGINE_DOCKER)
+
+    def parse_inspect(self, data):
+        json_rep = super().parse_inspect(data)
+        self.adjust_json_from_docker(json_rep)
+        return json_rep
+
+    def adjust_json_from_docker(self, json_rep):
+        """If the json comes from a docker call, we need to adjust it to make use
+        of it. """
+
+        if not isinstance(json_rep[0]["NetworkSettings"]["Ports"], dict):
+            raise Exception(
+                "Error parsing docker engine inspection JSON structure, try to specify container engine using '--container-engine' parameter"
+            )
+
+        for item in json_rep[0]["Mounts"]:
+            item["source"] = item["Source"]
+            if item["Mode"] == "rw":
+                item["options"] = "rw"
+            if item["Mode"] == "ro":
+                item["options"] = "ro"
+
+
+class CrioHelper(EngineHelper):
+    def __init__(self):
+        super().__init__(ENGINE_CRIO)
+
+    def get_mounts(self, data):
+        return data["status"]["mounts"]
+
+    def get_ports(self, data):
         # Not applicable in the CRI-O case, since this is handled by the
         # kube-proxy/CNI.
         return []
-    raise Exception("Error getting ports from unknown format %s" % inspect_format)
-
-
-def get_caps(data, opts, inspect_format):
-    if opts["Caps"]:
-        if opts["Caps"] == "None":
-            return []
-        return opts["Caps"].split(",")
-
-    if inspect_format == ENGINE_PODMAN:
-        return data[0]["EffectiveCaps"]
-    return []
 
 
 def parse_cap(data):

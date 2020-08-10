@@ -17,7 +17,7 @@ import subprocess
 import argparse
 
 # import udica
-from udica.parse import parse_inspect, parse_avc_file
+from udica.parse import parse_avc_file
 from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER
 from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook
@@ -181,15 +181,15 @@ def main():
             exit(3)
 
     try:
-        inspect_format = parse.get_inspect_format(
+        engine_helper = parse.get_engine_helper(
             container_inspect_raw, opts["ContainerEngine"]
         )
     except Exception as e:
         print("Couldn't parse inspect data:", e)
         exit(3)
-    container_inspect = parse_inspect(container_inspect_raw, opts["ContainerEngine"])
-    container_mounts = parse.get_mounts(container_inspect, inspect_format)
-    container_ports = parse.get_ports(container_inspect, inspect_format)
+    container_inspect = engine_helper.parse_inspect(container_inspect_raw)
+    container_mounts = engine_helper.get_mounts(container_inspect)
+    container_ports = engine_helper.get_ports(container_inspect)
 
     # Append allow rules if AVCs log is provided
     append_rules = None
@@ -210,7 +210,7 @@ def main():
 
     container_caps = []
 
-    container_caps = parse.get_caps(container_inspect, opts, inspect_format)
+    container_caps = engine_helper.get_caps(container_inspect, opts)
 
     try:
         create_policy(
@@ -219,7 +219,7 @@ def main():
             container_mounts,
             container_ports,
             append_rules,
-            inspect_format,
+            engine_helper.container_engine,
         )
     except Exception as e:
         print("Couldn't create policy:", e)
