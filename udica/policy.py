@@ -148,10 +148,10 @@ def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_forma
 
     # ports
     for item in ports:
-        if "hostPort" in item:
+        if "portNumber" in item:
             policy.write(
                 "    (allow process "
-                + list_ports(item["hostPort"], item["protocol"])
+                + list_ports(item["portNumber"], item["protocol"])
                 + " ( "
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"

@@ -96,8 +96,10 @@ class PodmanDockerHelper(EngineHelper):
         ports = []
         for key, value in data[0]["NetworkSettings"]["Ports"].items():
             container_port = str(key).split("/")
-            host_port = value[0]["HostPort"]
-            new_port = {"hostPort": int(host_port), "protocol": container_port[1]}
+            new_port = {
+                "portNumber": int(container_port[0]),
+                "protocol": container_port[1],
+            }
             ports.append(new_port)
         return ports
 
