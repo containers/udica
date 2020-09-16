@@ -5,6 +5,7 @@
 (typeattributeset domain (process ))
 (typeattributeset container_domain (process ))
 (typeattributeset svirt_sandbox_domain (process ))
+(typeattributeset mcs_constrained_type (process ))
 (typeattributeset file_type (socket ))
 (allow process socket (sock_file (create open getattr setattr read write rename link unlink ioctl lock append)))
 (allow process proc_type (file (getattr open read)))
