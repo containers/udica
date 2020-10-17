@@ -125,7 +125,7 @@ class DockerHelper(PodmanDockerHelper):
 
     def adjust_json_from_docker(self, json_rep):
         """If the json comes from a docker call, we need to adjust it to make use
-        of it. """
+        of it."""
 
         if not isinstance(json_rep[0]["NetworkSettings"]["Ports"], dict):
             raise Exception(
