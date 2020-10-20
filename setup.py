@@ -33,7 +33,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/containers/udica",
     packages=["udica"],
-    python_requires=">=3, <4",
+    python_requires=">=3.4, <4",
     data_files=[
         ("/usr/share/licenses/udica", ["LICENSE"]),
         ("/usr/share/udica/ansible", ["udica/ansible/deploy-module.yml"]),

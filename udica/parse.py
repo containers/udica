@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import abc
 import json
 
 #: Constant for the podman engine
@@ -63,20 +64,22 @@ def get_engine_helper(data, ContainerEngine):
         raise RuntimeError("Unkown engine")
 
 
-class EngineHelper(object):
+class EngineHelper(abc.ABC):
     def __init__(self, container_engine):
         self.container_engine = container_engine
 
     def parse_inspect(self, data):
         return json.loads(data)
 
+    @abc.abstractmethod
     def get_mounts(self, data):
-        raise Exception(
+        raise NotImplementedError(
             "Error getting mounts from unknown format %s" % self.container_engine
         )
 
+    @abc.abstractmethod
     def get_ports(self, data):
-        raise Exception(
+        raise NotImplementedError(
             "Error getting ports from unknown format %s" % self.container_engine
         )
 
