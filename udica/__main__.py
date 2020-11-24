@@ -190,6 +190,7 @@ def main():
         print("Couldn't parse inspect data:", e)
         exit(3)
     container_inspect = engine_helper.parse_inspect(container_inspect_raw)
+    container_devices = engine_helper.get_devices(container_inspect)
     container_mounts = engine_helper.get_mounts(container_inspect)
     container_ports = engine_helper.get_ports(container_inspect)
 
@@ -218,6 +219,7 @@ def main():
         create_policy(
             opts,
             container_caps,
+            container_devices,
             container_mounts,
             container_ports,
             append_rules,

@@ -318,6 +318,14 @@ class TestBase(unittest.TestCase):
         self.assert_templates(output, ["base_container"])
         self.assert_policy(test_file("test_append_avc.podman.cil"))
 
+    def test_devices_podman(self):
+        """podman run --device /dev/fb0 fedora"""
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_devices.podman.json", "my_container"]
+        )
+        self.assert_templates(output, ["base_container"])
+        self.assert_policy(test_file("test_devices.podman.cil"))
+
     def run_udica(self, args):
         with patch("sys.argv", args):
             with patch("sys.stderr.write") as mock_err, patch(

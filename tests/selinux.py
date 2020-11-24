@@ -23,6 +23,8 @@ selabel_open = Mock()
 def selabel_lookup(selabel, directory, rc):
     if directory == "/tmp/test":
         return (0, None)
+    elif directory == "/dev/fb0":
+        return (0, "system_u:object_r:framebuf_device_t:s0")
     else:
         return (0, "system_u:object_r:var_spool_t:s0")
 

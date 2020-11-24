@@ -72,6 +72,12 @@ class EngineHelper(abc.ABC):
         return json.loads(data)
 
     @abc.abstractmethod
+    def get_devices(self, data):
+        raise NotImplementedError(
+            "Error getting devices from unknown format %s" % self.container_engine
+        )
+
+    @abc.abstractmethod
     def get_mounts(self, data):
         raise NotImplementedError(
             "Error getting mounts from unknown format %s" % self.container_engine
@@ -92,6 +98,9 @@ class EngineHelper(abc.ABC):
 
 
 class PodmanDockerHelper(EngineHelper):
+    def get_devices(self, data):
+        return data[0]["HostConfig"]["Devices"]
+
     def get_mounts(self, data):
         return data[0]["Mounts"]
 
@@ -146,6 +155,11 @@ class DockerHelper(PodmanDockerHelper):
 class CrioHelper(EngineHelper):
     def __init__(self):
         super().__init__(ENGINE_CRIO)
+
+    def get_devices(self, data):
+        # Not applicable in the CRI-O case, since this is handled by the
+        # bind mounting device on the container
+        return []
 
     def get_mounts(self, data):
         return data["status"]["mounts"]

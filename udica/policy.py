@@ -95,7 +95,9 @@ def list_ports(port_number, port_proto):
             return ctype
 
 
-def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_format):
+def create_policy(
+    opts, capabilities, devices, mounts, ports, append_rules, inspect_format
+):
     policy = open(opts["ContainerName"] + ".cil", "w")
     policy.write("(block " + opts["ContainerName"] + "\n")
     policy.write("    (blockinherit container)\n")
@@ -156,6 +158,11 @@ def create_policy(opts, capabilities, mounts, ports, append_rules, inspect_forma
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"
             )
+
+    # devices
+    # Not applicable for CRI-O container engine
+    if inspect_format != "CRI-O":
+        write_policy_for_podman_devices(devices, policy)
 
     # mounts
     if inspect_format == "CRI-O":
@@ -271,6 +278,26 @@ def write_policy_for_crio_mounts(mounts, policy):
                     + perms.perm["sro"]
                     + " ))) \n"
                 )
+
+
+def write_policy_for_podman_devices(devices, policy):
+    for item in devices:
+        contexts = list_contexts(item["PathOnHost"])
+        for context in contexts:
+            policy.write(
+                "    (allow process "
+                + context
+                + " ( blk_file ( "
+                + perms.perm["devrw"]
+                + " ))) \n"
+            )
+            policy.write(
+                "    (allow process "
+                + context
+                + " ( chr_file ( "
+                + perms.perm["devrw"]
+                + " ))) \n"
+            )
 
 
 def write_policy_for_podman_mounts(mounts, policy):
