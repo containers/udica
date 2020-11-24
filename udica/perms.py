@@ -55,6 +55,7 @@ cap = {
 }
 
 perm = {
+    "devrw": "getattr read write append ioctl lock open",
     "drw": "add_name create getattr ioctl lock open read remove_name rmdir search setattr write",
     "dro": "getattr ioctl lock open read search",
     "frw": "append create getattr ioctl lock map open read rename setattr unlink write",
