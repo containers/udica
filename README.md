@@ -3,7 +3,7 @@
 # udica - Generate SELinux policies for containers!
 
 <a href="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/"><img src="https://copr.fedorainfracloud.org/coprs/lvrabec/udica/package/udica/status_image/last_build.png" /></a>
-[![Build Status](https://travis-ci.org/containers/udica.svg?branch=master)](https://travis-ci.org/containers/udica)
+[![Build Status](https://github.com/containers/udica/workflows/checks/badge.svg)](https://github.com/containers/udica/actions)
 
 # Overview
 
