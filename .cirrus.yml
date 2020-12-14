@@ -21,7 +21,7 @@ env:
     # GCE project where images live
     IMAGE_PROJECT: "libpod-218412"
     # VM Image built in containers/automation_images
-    _BUILT_IMAGE_SUFFIX: "c6110627968057344"
+    _BUILT_IMAGE_SUFFIX: "c6233039174893568"
     FEDORA_CACHE_IMAGE_NAME: "fedora-${_BUILT_IMAGE_SUFFIX}"
     PRIOR_FEDORA_CACHE_IMAGE_NAME: "prior-fedora-${_BUILT_IMAGE_SUFFIX}"
 
@@ -78,7 +78,7 @@ test_upstream_podman_task:
 meta_task:
 
     container:
-        image: "quay.io/libpod/imgts:master"  # defined in libpod repo
+        image: "quay.io/libpod/imgts:${_BUILT_IMAGE_SUFFIX}"
         cpu: 1
         memory: 1
 
@@ -88,7 +88,7 @@ meta_task:
             ${FEDORA_CACHE_IMAGE_NAME}
             ${PRIOR_FEDORA_CACHE_IMAGE_NAME}
         BUILDID: "${CIRRUS_BUILD_ID}"
-        REPOREF: "${CIRRUS_CHANGE_IN_REPO}"
+        REPOREF: "${CIRRUS_REPO_NAME}"
         GCPJSON: ENCRYPTED[5279a6043ee3852dabbf477cda0565183d3f0d887dde63a19ebe19eb00f9b279a8a5f4d2d7395672cb7d7046b9da11d2]
         GCPNAME: ENCRYPTED[67d54cd5b7f3cf1915707b13f4af9f127336c3866794e1f9ee53b0c723d0024e4d1eb2fd98ce3df5ef28babd5335cacc]
         GCPPROJECT: libpod-218412

@@ -4,7 +4,7 @@ set -eo pipefail
 
 source $(dirname $0)/lib.sh
 
-req_env_var GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM
+req_env_vars GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM
 
 showrun python3 -m udica --help
 

@@ -4,7 +4,7 @@ set -eo pipefail
 
 source $(dirname $0)/lib.sh
 
-req_env_var GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM OS_RELEASE_ID
+req_env_vars GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM OS_RELEASE_ID
 
 [[ "$PODMAN_FROM" == 'master' ]] || \
     die 1 "Unsupported \$PODMAN_FROM value: $PODMAN_FROM"
