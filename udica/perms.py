@@ -60,6 +60,8 @@ perm = {
     "dir_ro": "getattr ioctl lock open read search",
     "file_rw": "append create getattr ioctl lock map open read rename setattr unlink write",
     "file_ro": "getattr ioctl lock open read",
+    "fifo_rw": "getattr read write append ioctl lock open",
+    "fifo_ro": "getattr open read lock ioctl",
     "socket_rw": "append getattr open read write",
     "socket_ro": "getattr open read",
 }

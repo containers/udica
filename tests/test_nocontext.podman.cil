@@ -4,5 +4,6 @@
 
     (allow process user_tmp_t ( dir ( add_name create getattr ioctl lock open read remove_name rmdir search setattr write ))) 
     (allow process user_tmp_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 
+    (allow process user_tmp_t ( fifo_file ( getattr read write append ioctl lock open ))) 
     (allow process user_tmp_t ( sock_file ( append getattr open read write ))) 
 )

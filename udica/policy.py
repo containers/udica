@@ -252,6 +252,13 @@ def write_policy_for_crio_mounts(mounts, policy):
                 policy.write(
                     "    (allow process "
                     + context
+                    + " ( fifo_file ( "
+                    + perms.perm["fifo_rw"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
                     + " ( sock_file ( "
                     + perms.perm["socket_rw"]
                     + " ))) \n"
@@ -269,6 +276,13 @@ def write_policy_for_crio_mounts(mounts, policy):
                     + context
                     + " ( file ( "
                     + perms.perm["file_ro"]
+                    + " ))) \n"
+                )
+                policy.write(
+                    "    (allow process "
+                    + context
+                    + " ( fifo_file ( "
+                    + perms.perm["fifo_ro"]
                     + " ))) \n"
                 )
                 policy.write(
@@ -363,6 +377,13 @@ def write_policy_for_podman_mounts(mounts, policy):
                     policy.write(
                         "    (allow process "
                         + context
+                        + " ( fifo_file ( "
+                        + perms.perm["fifo_rw"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
                         + " ( sock_file ( "
                         + perms.perm["socket_rw"]
                         + " ))) \n"
@@ -380,6 +401,13 @@ def write_policy_for_podman_mounts(mounts, policy):
                         + context
                         + " ( file ( "
                         + perms.perm["file_ro"]
+                        + " ))) \n"
+                    )
+                    policy.write(
+                        "    (allow process "
+                        + context
+                        + " ( fifo_file ( "
+                        + perms.perm["fifo_ro"]
                         + " ))) \n"
                     )
                     policy.write(
