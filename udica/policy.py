@@ -239,21 +239,21 @@ def write_policy_for_crio_mounts(mounts, policy):
                     "    (allow process "
                     + context
                     + " ( dir ( "
-                    + perms.perm["drw"]
+                    + perms.perm["dir_rw"]
                     + " ))) \n"
                 )
                 policy.write(
                     "    (allow process "
                     + context
                     + " ( file ( "
-                    + perms.perm["frw"]
+                    + perms.perm["file_rw"]
                     + " ))) \n"
                 )
                 policy.write(
                     "    (allow process "
                     + context
                     + " ( sock_file ( "
-                    + perms.perm["srw"]
+                    + perms.perm["socket_rw"]
                     + " ))) \n"
                 )
             else:
@@ -261,21 +261,21 @@ def write_policy_for_crio_mounts(mounts, policy):
                     "    (allow process "
                     + context
                     + " ( dir ( "
-                    + perms.perm["dro"]
+                    + perms.perm["dir_ro"]
                     + " ))) \n"
                 )
                 policy.write(
                     "    (allow process "
                     + context
                     + " ( file ( "
-                    + perms.perm["fro"]
+                    + perms.perm["file_ro"]
                     + " ))) \n"
                 )
                 policy.write(
                     "    (allow process "
                     + context
                     + " ( sock_file ( "
-                    + perms.perm["sro"]
+                    + perms.perm["socket_ro"]
                     + " ))) \n"
                 )
 
@@ -288,14 +288,14 @@ def write_policy_for_podman_devices(devices, policy):
                 "    (allow process "
                 + context
                 + " ( blk_file ( "
-                + perms.perm["devrw"]
+                + perms.perm["device_rw"]
                 + " ))) \n"
             )
             policy.write(
                 "    (allow process "
                 + context
                 + " ( chr_file ( "
-                + perms.perm["devrw"]
+                + perms.perm["device_rw"]
                 + " ))) \n"
             )
 
@@ -350,21 +350,21 @@ def write_policy_for_podman_mounts(mounts, policy):
                         "    (allow process "
                         + context
                         + " ( dir ( "
-                        + perms.perm["drw"]
+                        + perms.perm["dir_rw"]
                         + " ))) \n"
                     )
                     policy.write(
                         "    (allow process "
                         + context
                         + " ( file ( "
-                        + perms.perm["frw"]
+                        + perms.perm["file_rw"]
                         + " ))) \n"
                     )
                     policy.write(
                         "    (allow process "
                         + context
                         + " ( sock_file ( "
-                        + perms.perm["srw"]
+                        + perms.perm["socket_rw"]
                         + " ))) \n"
                     )
                 if item["RW"] is False:
@@ -372,21 +372,21 @@ def write_policy_for_podman_mounts(mounts, policy):
                         "    (allow process "
                         + context
                         + " ( dir ( "
-                        + perms.perm["dro"]
+                        + perms.perm["dir_ro"]
                         + " ))) \n"
                     )
                     policy.write(
                         "    (allow process "
                         + context
                         + " ( file ( "
-                        + perms.perm["fro"]
+                        + perms.perm["file_ro"]
                         + " ))) \n"
                     )
                     policy.write(
                         "    (allow process "
                         + context
                         + " ( sock_file ( "
-                        + perms.perm["sro"]
+                        + perms.perm["socket_ro"]
                         + " ))) \n"
                     )
 
