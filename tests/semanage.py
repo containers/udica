@@ -141,6 +141,8 @@ fcontexts = [
     ("/var/spool/postfix/deferred(/.*)?", "system_u:object_r:postfix_spool_t:s0"),
     ("/var/spool/postfix/maildrop(/.*)?", "system_u:object_r:postfix_spool_t:s0"),
     ("/var/spool/postfix/postgrey(/.*)?", "system_u:object_r:postgrey_spool_t:s0"),
+    ("/var/log/boot\.log.*", "system_u:object_r:plymouthd_var_log_t:s0"),
+    ("/var/spool/plymouth/boot\.log.*", "system_u:object_r:plymouthd_var_log_t:s0"),
     ("/var/spool/zoneminder-upload(/.*)?", "system_u:object_r:zoneminder_spool_t:s0"),
 ]
 fcontexts_local = [
@@ -157,6 +159,7 @@ fcontexts_homedirs = [
     ("/var/spool/fcron/systab\\.orig", "system_u:object_r:system_cron_spool_t:s0"),
     ("/var/spool/postfix/etc/localtime", "system_u:object_r:locale_t:s0"),
     ("/var/spool/cron/user", "system_u:object_r:user_cron_spool_t:s0"),
+    ("/var/spool/cron/[^/]+", "system_u:object_r:user_cron_spool_t:s0"),
 ]
 
 semanage_fcontext_list = Mock(return_value=(0, fcontexts))
