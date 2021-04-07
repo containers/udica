@@ -55,13 +55,13 @@ cap = {
 }
 
 perm = {
-    "devrw": "getattr read write append ioctl lock open",
-    "drw": "add_name create getattr ioctl lock open read remove_name rmdir search setattr write",
-    "dro": "getattr ioctl lock open read search",
-    "frw": "append create getattr ioctl lock map open read rename setattr unlink write",
-    "fro": "getattr ioctl lock open read",
-    "srw": "append getattr open read write",
-    "sro": "getattr open read",
+    "device_rw": "getattr read write append ioctl lock open",
+    "dir_rw": "add_name create getattr ioctl lock open read remove_name rmdir search setattr write",
+    "dir_ro": "getattr ioctl lock open read search",
+    "file_rw": "append create getattr ioctl lock map open read rename setattr unlink write",
+    "file_ro": "getattr ioctl lock open read",
+    "socket_rw": "append getattr open read write",
+    "socket_ro": "getattr open read",
 }
 
 socket = {"tcp": "tcp_socket", "udp": "udp_socket", "sctp": "sctp_socket"}
