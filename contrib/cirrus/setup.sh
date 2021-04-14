@@ -8,7 +8,10 @@ show_env_vars
 
 case "${OS_RELEASE_ID}" in
     fedora)
-        echo "Installing necessary additional packages"
+        msg "Expanding root disk space"
+        growpart /dev/sda 1
+        resize2fs /dev/sda1
+        msg "Installing necessary additional packages"
         ooe.sh dnf install -y \
             python3 \
             setools-console \
@@ -20,5 +23,3 @@ esac
 echo "Configuring git for access to podman pull-requests"
 NEWREF='+refs/pull/*/head:refs/remotes/upstream/pr/*'
 git config --global --replace-all remote.origin.fetch "$NEWREF"
-# helpful when debugging w/ hack/get_ci_vm.sh
-git config --global --replace-all remote.upstream.fetch "$NEWREF"

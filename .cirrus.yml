@@ -18,12 +18,13 @@ env:
     ####
     #### Cache-image names to test with
     ####
-    # GCE project where images live
-    IMAGE_PROJECT: "libpod-218412"
-    # VM Image built in containers/automation_images
-    _BUILT_IMAGE_SUFFIX: "c5032481331085312"
-    FEDORA_CACHE_IMAGE_NAME: "fedora-${_BUILT_IMAGE_SUFFIX}"
-    PRIOR_FEDORA_CACHE_IMAGE_NAME: "prior-fedora-${_BUILT_IMAGE_SUFFIX}"
+    FEDORA_NAME: "fedora-34beta"
+    PRIOR_FEDORA_NAME: "fedora-33"
+
+    # Google-cloud VM Images
+    IMAGE_SUFFIX: "c5032481331085312"
+    FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
+    PRIOR_FEDORA_CACHE_IMAGE_NAME: "prior-fedora-${IMAGE_SUFFIX}"
 
     ####
     #### Command variables to help avoid duplication
@@ -43,7 +44,7 @@ timeout_in: 120m
 
 # Default VM to use unless set or modified by task
 gce_instance:
-    image_project: "${IMAGE_PROJECT}"
+    image_project: "libpod-218412"
     zone: "us-central1-c"  # Required by Cirrus for the time being
     cpu: 2
     memory: "4Gb"
@@ -53,11 +54,15 @@ gce_instance:
 
 # Each 'task' runs in parallel, '_task' suffix required on name.
 test_upstream_podman_task:
+    alias: test_upstream_podman
 
-    gce_instance:  # Only need to specify differences from defaults (above)
-        matrix:  # Duplicate this task for each matrix product.
-            image_name: "${FEDORA_CACHE_IMAGE_NAME}"
-            image_name: "${PRIOR_FEDORA_CACHE_IMAGE_NAME}"
+    matrix:
+        - name: "Test podman on ${FEDORA_NAME}"
+          gce_instance:
+              image_name: "${FEDORA_CACHE_IMAGE_NAME}"
+        - name: "Test podman on ${PRIOR_FEDORA_NAME}"
+          gce_instance:
+              image_name: "${PRIOR_FEDORA_CACHE_IMAGE_NAME}"
 
     env:
         # Which branch, tag, or sha of podman repository to test against
@@ -78,7 +83,7 @@ test_upstream_podman_task:
 meta_task:
 
     container:
-        image: "quay.io/libpod/imgts:${_BUILT_IMAGE_SUFFIX}"
+        image: "quay.io/libpod/imgts:latest"
         cpu: 1
         memory: 1
 
