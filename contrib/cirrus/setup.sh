@@ -4,6 +4,8 @@ set -eo pipefail
 
 source "$(dirname $0)/lib.sh"
 
+show_env_vars
+
 case "${OS_RELEASE_ID}" in
     fedora)
         echo "Installing necessary additional packages"
