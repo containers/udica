@@ -18,11 +18,11 @@ env:
     ####
     #### Cache-image names to test with
     ####
-    FEDORA_NAME: "fedora-34beta"
+    FEDORA_NAME: "fedora-34"
     PRIOR_FEDORA_NAME: "fedora-33"
 
     # Google-cloud VM Images
-    IMAGE_SUFFIX: "c5032481331085312"
+    IMAGE_SUFFIX: "c6032583541653504"
     FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
     PRIOR_FEDORA_CACHE_IMAGE_NAME: "prior-fedora-${IMAGE_SUFFIX}"
 
