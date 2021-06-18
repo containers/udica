@@ -8,8 +8,6 @@ env:
     ####
     #### Global variables used for all tasks
     ####
-    # Name of the ultimate destination branch for this CI run, PR or post-merge.
-    DEST_BRANCH: "master"
     CIRRUS_SHELL: "/bin/bash"
     # Save a little typing (path relative to $CIRRUS_WORKING_DIR)
     SCRIPT_BASE: "./contrib/cirrus"
