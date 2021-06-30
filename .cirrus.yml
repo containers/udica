@@ -64,7 +64,7 @@ test_upstream_podman_task:
 
     env:
         # Which branch, tag, or sha of podman repository to test against
-        PODMAN_FROM: 'master'  # see build script below
+        PODMAN_FROM: 'main'  # see build script below
 
     # Each 'script' runs in sequence, '_script' suffix required on name.
     setup_script: '${SCRIPT_BASE}/setup.sh |& ${_TIMESTAMP}'
