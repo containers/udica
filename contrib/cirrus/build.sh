@@ -6,7 +6,7 @@ source $(dirname $0)/lib.sh
 
 req_env_vars GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM OS_RELEASE_ID
 
-[[ "$PODMAN_FROM" == 'master' ]] || \
+[[ "$PODMAN_FROM" == 'main' ]] || \
     die 1 "Unsupported \$PODMAN_FROM value: $PODMAN_FROM"
 
 remove_packaged_podman_files
