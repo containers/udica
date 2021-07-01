@@ -141,9 +141,9 @@ def create_policy(
         for item in capabilities:
             # Capabilities parsed from podman inspection JSON file have prefix "CAP_", this should be removed
             if "CAP_" in item:
-                caps = caps + perms.cap[item[4:]]
+                caps = caps + item[4:].lower() + " "
             else:
-                caps = caps + perms.cap[item]
+                caps = caps + item.lower() + " "
 
         policy.write("    (allow process process ( capability ( " + caps + "))) \n")
         policy.write("\n")
