@@ -4,6 +4,7 @@
     (allow process process ( capability ( audit_write chown dac_override fowner fsetid kill mknod net_bind_service net_raw setfcap setgid setpcap setuid sys_chroot ))) 
 
     (allow process ftp_port_t ( tcp_socket (  name_bind ))) 
+    (blockinherit home_container)
     (allow process var_spool_t ( dir ( add_name create getattr ioctl lock open read remove_name rmdir search setattr write ))) 
     (allow process var_spool_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 
     (allow process var_spool_t ( fifo_file ( getattr read write append ioctl lock open ))) 
@@ -392,5 +393,4 @@
     (allow process var_spool_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 
     (allow process var_spool_t ( fifo_file ( getattr read write append ioctl lock open ))) 
     (allow process var_spool_t ( sock_file ( append getattr open read write ))) 
-    (blockinherit home_container)
 )

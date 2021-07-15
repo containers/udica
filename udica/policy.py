@@ -149,7 +149,7 @@ def create_policy(
         policy.write("\n")
 
     # ports
-    for item in ports:
+    for item in sorted(ports, key=lambda x: x.get("portNumber", 0)):
         if "portNumber" in item:
             policy.write(
                 "    (allow process "
@@ -194,7 +194,7 @@ def create_policy(
 
 
 def write_policy_for_crio_mounts(mounts, policy):
-    for item in mounts:
+    for item in sorted(mounts, key=lambda x: str(x["hostPath"])):
         if item["hostPath"].startswith("/var/lib/kubelet"):
             # These should already have the right context
             continue
@@ -295,7 +295,7 @@ def write_policy_for_crio_mounts(mounts, policy):
 
 
 def write_policy_for_podman_devices(devices, policy):
-    for item in devices:
+    for item in sorted(devices, key=lambda x: str(x["PathOnHost"])):
         contexts = list_contexts(item["PathOnHost"])
         for context in contexts:
             policy.write(
@@ -315,7 +315,7 @@ def write_policy_for_podman_devices(devices, policy):
 
 
 def write_policy_for_podman_mounts(mounts, policy):
-    for item in mounts:
+    for item in sorted(mounts, key=lambda x: str(x["Source"])):
         if not item["Source"].find("/"):
             if item["Source"] == LOG_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit log_container)\n")
