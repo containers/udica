@@ -213,7 +213,7 @@ def main():
 
     container_caps = []
 
-    container_caps = engine_helper.get_caps(container_inspect, opts)
+    container_caps = sorted(engine_helper.get_caps(container_inspect, opts))
 
     try:
         create_policy(
