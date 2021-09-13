@@ -15,7 +15,8 @@ case "${OS_RELEASE_ID}" in
         ooe.sh dnf install -y \
             python3 \
             setools-console \
-            systemd-devel
+            systemd-devel \
+            container-selinux
         ;;
     *) bad_os_id_ver ;;
 esac

@@ -26,4 +26,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: rpm -q python3 || dnf install --nogpgcheck -y python3
+      - run: rpm -q git || dnf install --nogpgcheck -y git
       - run: python3 -m unittest -v tests/test_unit.py

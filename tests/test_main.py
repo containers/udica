@@ -14,7 +14,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import subprocess
 import unittest
+from os.path import exists
+from shutil import rmtree
 from unittest.mock import patch
 
 # Import tarfile library to extract tarball with udica policy and templates when --ansible
@@ -29,6 +32,7 @@ SELINUX_ENABLED = False
 # Globally define symbol "udica" so we can override the import
 udica = None
 
+DEFAULT_TEMPLATE_STORE = "/usr/share/udica/templates"
 TEST_DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -39,6 +43,28 @@ def test_file(path):
 class TestBase(unittest.TestCase):
     """Test basic functionality of udica"""
 
+    @classmethod
+    def setUpClass(self):
+        if not exists(DEFAULT_TEMPLATE_STORE):
+            # download latest policy templates from container-selinux
+            try:
+                subprocess.run(
+                    [
+                        "git",
+                        "clone",
+                        "https://github.com/containers/container-selinux.git",
+                        os.path.join(TEST_DIR_PATH, "../", "container-selinux"),
+                    ]
+                )
+            except subprocess.CalledProcessError as e:
+                print('Cannot clone "container-selinux" repository: ' + str(e))
+
+    @classmethod
+    def tearDownClass(self):
+        rmtree(
+            os.path.join(TEST_DIR_PATH, "../", "container-selinux"), ignore_errors=True
+        )
+
     def setUp(self):
         # NOTE: We import udica here so the above mocked modules take place.
         global udica
@@ -48,8 +74,10 @@ class TestBase(unittest.TestCase):
         udica.policy.TEMPLATE_PLAYBOOK = os.path.join(
             TEST_DIR_PATH, "../", "udica/ansible/deploy-module.yml"
         )
-        udica.policy.TEMPLATES_STORE = os.path.join(
-            TEST_DIR_PATH, "../", "udica/templates"
+        udica.policy.TEMPLATES_STORE = (
+            DEFAULT_TEMPLATE_STORE
+            if exists(DEFAULT_TEMPLATE_STORE)
+            else os.path.join(TEST_DIR_PATH, "../", "container-selinux/udica-templates")
         )
         # FIXME: the policy module is using global variable which must be reset to []
         udica.policy.templates_to_load = []
