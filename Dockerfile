@@ -8,6 +8,7 @@ RUN dnf update --disableplugin=subscription-manager -y && \
 
 # Install dependencies
 RUN dnf install --disableplugin=subscription-manager -y \
+            container-selinux \
             python3 \
             python3-setools \
             systemd-devel \

@@ -421,6 +421,11 @@ def write_policy_for_podman_mounts(mounts, policy):
 
 def load_policy(opts):
     PWD = getcwd()
+
+    if not exists(TEMPLATES_STORE):
+        print("Policy templates not found! Please install container-selinux package.")
+        exit(1)
+
     chdir(TEMPLATES_STORE)
 
     if opts["LoadModules"]:
