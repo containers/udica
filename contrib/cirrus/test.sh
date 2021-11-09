@@ -8,6 +8,10 @@ req_env_vars GOPATH SCRIPT_BASE CIRRUS_WORKING_DIR PODMAN_FROM
 
 showrun python3 -m udica --help
 
+showrun rpm -q container-selinux
+
+showrun ls -l /usr/share/udica/templates/
+
 showrun podman run -d -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora sleep 1h
 
 echo "Running podman inspect -l"

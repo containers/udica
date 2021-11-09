@@ -12,6 +12,9 @@ case "${OS_RELEASE_ID}" in
         growpart /dev/sda 1
         resize2fs /dev/sda1
         msg "Installing necessary additional packages"
+        dnf copr enable vmojzis/test -y
+        dnf install -y container-selinux
+        dnf update -y container-selinux
         ooe.sh dnf install -y \
             python3 \
             setools-console \
