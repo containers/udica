@@ -29,6 +29,24 @@ ENGINE_DOCKER = "docker"
 ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER]
 
 
+# Decorator for verifying that getting value from "data" won't
+# result in Key error or Type error
+# e.g. in data[0]["HostConfig"]["Devices"]
+# missing "HostConfig" key in data[0] produces KeyError and
+# data[0]["HostConfig"] == none produces TypeError
+def getter_decorator(function):
+    # Verify that each element in path exists and return the corresponding value,
+    # otherwise return [] -- can be safely processed by iterators
+    def wrapper(self, data, *args):
+        try:
+            value = function(self, data, *args)
+            return value if value else []
+        except (KeyError, TypeError):
+            return []
+
+    return wrapper
+
+
 def json_is_podman_or_docker_format(json_rep):
     """Check if the inspected file is in a format from docker or podman.
 
@@ -91,19 +109,22 @@ class EngineHelper(abc.ABC):
 
     def get_caps(self, data, opts):
         if opts["Caps"]:
-            if opts["Caps"] == "None":
+            if opts["Caps"] in ["None", "none"]:
                 return []
             return opts["Caps"].split(",")
         return []
 
 
 class PodmanDockerHelper(EngineHelper):
+    @getter_decorator
     def get_devices(self, data):
         return data[0]["HostConfig"]["Devices"]
 
+    @getter_decorator
     def get_mounts(self, data):
         return data[0]["Mounts"]
 
+    @getter_decorator
     def get_ports(self, data):
         ports = []
         for key, value in data[0]["NetworkSettings"]["Ports"].items():
@@ -120,8 +141,13 @@ class PodmanHelper(PodmanDockerHelper):
     def __init__(self):
         super().__init__(ENGINE_PODMAN)
 
+    @getter_decorator
     def get_caps(self, data, opts):
-        if not opts["Caps"]:
+        if opts["Caps"]:
+            return (
+                opts["Caps"].split(",") if opts["Caps"] not in ["None", "none"] else []
+            )
+        else:
             return data[0]["EffectiveCaps"]
         return []
 
@@ -138,18 +164,25 @@ class DockerHelper(PodmanDockerHelper):
     def adjust_json_from_docker(self, json_rep):
         """If the json comes from a docker call, we need to adjust it to make use
         of it."""
+        try:
+            if not isinstance(json_rep[0]["NetworkSettings"]["Ports"], dict):
+                raise Exception(
+                    "Error parsing docker engine inspection JSON structure, try to specify container engine using '--container-engine' parameter"
+                )
+        except (KeyError, TypeError):
+            # "Ports" not specified in given json file
+            pass
 
-        if not isinstance(json_rep[0]["NetworkSettings"]["Ports"], dict):
-            raise Exception(
-                "Error parsing docker engine inspection JSON structure, try to specify container engine using '--container-engine' parameter"
-            )
-
-        for item in json_rep[0]["Mounts"]:
-            item["source"] = item["Source"]
-            if item["Mode"] == "rw":
-                item["options"] = "rw"
-            if item["Mode"] == "ro":
-                item["options"] = "ro"
+        try:
+            for item in json_rep[0]["Mounts"]:
+                item["source"] = item["Source"]
+                if item["Mode"] == "rw":
+                    item["options"] = "rw"
+                if item["Mode"] == "ro":
+                    item["options"] = "ro"
+        except (KeyError, TypeError):
+            # "Mounts" not specified in given json file
+            pass
 
 
 class CrioHelper(EngineHelper):
@@ -161,6 +194,7 @@ class CrioHelper(EngineHelper):
         # bind mounting device on the container
         return []
 
+    @getter_decorator
     def get_mounts(self, data):
         return data["status"]["mounts"]
 
