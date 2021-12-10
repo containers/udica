@@ -25,8 +25,11 @@ ENGINE_CRIO = "CRI-O"
 #: Constant for the docker engine
 ENGINE_DOCKER = "docker"
 
+#: Constant for the containerd engine
+ENGINE_CONTAINERD = "containerd"
+
 #: All supported engines
-ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER]
+ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER, ENGINE_CONTAINERD]
 
 
 # Decorator for verifying that getting value from "data" won't
@@ -79,6 +82,8 @@ def get_engine_helper(data, ContainerEngine):
             return PodmanHelper()
         elif engine == ENGINE_CRIO:
             return CrioHelper()
+        elif engine == ENGINE_CONTAINERD:
+            return ContainerdHelper()
         raise RuntimeError("Unkown engine")
 
 
@@ -204,6 +209,35 @@ class CrioHelper(EngineHelper):
         return []
 
 
+class ContainerdHelper(EngineHelper):
+    def __init__(self):
+        super().__init__(ENGINE_CONTAINERD)
+
+    @getter_decorator
+    def get_devices(self, data):
+        return []
+
+    @getter_decorator
+    def get_mounts(self, data):
+        return data[0]["Spec"]["mounts"]
+
+    @getter_decorator
+    def get_ports(self, data):
+        json_data = json.loads(data[0]["Labels"]["nerdctl/ports"])
+        ports = []
+        for port in json_data:
+            new_ports = {
+                "portNumber": port["HostPort"],
+                "protocol": port["Protocol"]
+            }
+            ports.append(new_ports)
+        return ports
+
+    @getter_decorator
+    def get_caps(self, data, opts):
+        return []
+
+
 def parse_cap(data):
     return data.decode().split("\n")[1].split(",")
 
@@ -254,6 +288,7 @@ def parse_avc_file(data):
 
 
 def validate_container_engine(ContainerEngine):
+    print(ContainerEngine)
     if ContainerEngine in ENGINE_ALL + ["CRIO", "-"]:
         # Fix CRIO reference to use ENGINE_CRIO
         if ContainerEngine == "CRIO":
