@@ -29,6 +29,7 @@ Udica supports following container engines:
    * CRI-O v1.14.10+
    * docker v1.13+
    * podman v2.0+
+   * containerd v1.5.0+ (using `nerdctl` v0.14+)
 
 ## Installing
 
@@ -97,7 +98,7 @@ On the other hand, what is completely allowed is network access.
     # sesearch -A -s container_t -t port_type -c tcp_socket
     allow container_net_domain port_type:tcp_socket { name_bind name_connect recv_msg send_msg };
     allow sandbox_net_domain port_type:tcp_socket { name_bind name_connect recv_msg send_msg };
-
+    
     # sesearch -A -s container_t -t port_type -c udp_socket
     allow container_net_domain port_type:udp_socket { name_bind recv_msg send_msg };
     allow sandbox_net_domain port_type:udp_socket { name_bind recv_msg send_msg };
@@ -124,18 +125,18 @@ To create policy for it **udica** tool could be used. Parameter '*-j*' is for *c
 or
 
     # podman inspect 37a3635afb8f | udica  my_container
-
+    
     Policy my_container with container id 37a3635afb8f created!
-
+    
     Please load these modules using:
     # semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
-
+    
     Restart the container with: "--security-opt label=type:my_container.process" parameter
 
 Policy is generated. Let's follow instructions from output:
 
     # semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
-
+    
     # podman run --security-opt label=type:my_container.process -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it fedora bash
 
 Container is now running with **my\_container.process** type:
@@ -149,7 +150,7 @@ Proof that SELinux now allowing access */home* and */var/spool* mount points:
     [root@814ec56079e5 /]# cd /home
     [root@814ec56079e5 home]# ls
     lvrabec
-
+    
     [root@814ec56079e5 ~]# cd /var/spool/
     [root@814ec56079e5 spool]# touch test
     [root@814ec56079e5 spool]#
@@ -162,7 +163,7 @@ Proof that SELinux allows binding only to tcp/udp *21* port.
     Ncat: SHA-1 fingerprint: 6EEC 102E 6666 5F96 CC4F E5FA A1BE 4A5E 6C76 B6DC
     Ncat: Listening on :::21
     Ncat: Listening on 0.0.0.0:21
-
+    
     [root@5bd8cb2ad911 /]# nc -lvp 80
     Ncat: Version 7.60 ( https://nmap.org/ncat )
     Ncat: Generating a temporary 1024-bit RSA key. Use --ssl-key and --ssl-cert to use a permanent one.
