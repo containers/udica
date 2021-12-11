@@ -215,7 +215,7 @@ class ContainerdHelper(EngineHelper):
 
     @getter_decorator
     def get_devices(self, data):
-        return []
+        return data[0]["Spec"]["linux"]["devices"]
 
     @getter_decorator
     def get_mounts(self, data):
@@ -235,6 +235,12 @@ class ContainerdHelper(EngineHelper):
 
     @getter_decorator
     def get_caps(self, data, opts):
+        if opts["Caps"]:
+            return (
+                opts["Caps"].split(",") if opts["Caps"] not in ["None", "none"] else []
+            )
+        else:
+            return data[0]["Spec"]["capabilities"]["effective"]
         return []
 
 
@@ -288,7 +294,6 @@ def parse_avc_file(data):
 
 
 def validate_container_engine(ContainerEngine):
-    print(ContainerEngine)
     if ContainerEngine in ENGINE_ALL + ["CRIO", "-"]:
         # Fix CRIO reference to use ENGINE_CRIO
         if ContainerEngine == "CRIO":
