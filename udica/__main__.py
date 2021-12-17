@@ -18,7 +18,7 @@ import argparse
 
 # import udica
 from udica.parse import parse_avc_file
-from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER, ENGINE_CONTAINERD
+from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER
 from udica.version import version
 from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook

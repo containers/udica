@@ -50,12 +50,21 @@ def getter_decorator(function):
     return wrapper
 
 
-def json_is_podman_or_docker_format(json_rep):
+def json_is_list(json_rep):
     """Check if the inspected file is in a format from docker or podman.
 
     We know this because the type in the inspect command will be a list
     """
     return isinstance(json_rep, list)
+
+
+def json_is_containerd_format(json_rep):
+    """Check if the inspected file is in a format from containerd."""
+    return (
+        isinstance(json_rep, list)
+        and isinstance(json_rep[0], dict)
+        and ("containerd" in json_rep[0].get("Runtime", {}).get("Name", ""))
+    )
 
 
 def json_is_podman_format(json_rep):
@@ -70,11 +79,14 @@ def get_engine_helper(data, ContainerEngine):
     engine = validate_container_engine(ContainerEngine)
     if engine == "-":
         json_rep = json.loads(data)
-        if json_is_podman_or_docker_format(json_rep):
-            if json_is_podman_format(json_rep):
+        if json_is_list(json_rep):
+            if json_is_containerd_format(json_rep):
+                return ContainerdHelper()
+            elif json_is_podman_format(json_rep):
                 return PodmanHelper()
             return DockerHelper()
-        return CrioHelper()
+        else:
+            return CrioHelper()
     else:
         if engine == ENGINE_DOCKER:
             return DockerHelper()
@@ -215,7 +227,16 @@ class ContainerdHelper(EngineHelper):
 
     @getter_decorator
     def get_devices(self, data):
-        return data[0]["Spec"]["linux"]["devices"]
+        # Copy "path" attribute to "PathOnHost"
+        # since that is what other container engines are using
+        devices = []
+        for device in data[0]["Spec"]["linux"]["devices"]:
+            path = device.get("path", None)
+            if path:
+                device["PathOnHost"] = path
+                devices.append(device)
+
+        return devices
 
     @getter_decorator
     def get_mounts(self, data):
@@ -223,25 +244,20 @@ class ContainerdHelper(EngineHelper):
 
     @getter_decorator
     def get_ports(self, data):
-        json_data = json.loads(data[0]["Labels"]["nerdctl/ports"])
         ports = []
-        for port in json_data:
-            new_ports = {
-                "portNumber": port["HostPort"],
-                "protocol": port["Protocol"]
-            }
+        # nerdctl/ports is a json string which needs to be parsed
+        for port in json.loads(data[0]["Labels"]["nerdctl/ports"]):
+            new_ports = {"portNumber": port["HostPort"], "protocol": port["Protocol"]}
             ports.append(new_ports)
         return ports
 
     @getter_decorator
     def get_caps(self, data, opts):
         if opts["Caps"]:
-            return (
-                opts["Caps"].split(",") if opts["Caps"] not in ["None", "none"] else []
-            )
-        else:
-            return data[0]["Spec"]["capabilities"]["effective"]
-        return []
+            if opts["Caps"] in ["None", "none"]:
+                return []
+            return opts["Caps"].split(",")
+        return data[0]["Spec"]["process"]["capabilities"]["effective"]
 
 
 def parse_cap(data):

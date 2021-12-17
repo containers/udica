@@ -172,9 +172,7 @@ def create_policy(
 
     # devices
     # Not applicable for CRI-O container engine
-    if inspect_format == "containerd":
-        write_policy_for_containerd_devices(devices, policy)
-    elif inspect_format != "CRI-0":
+    if inspect_format != "CRI-0":
         write_policy_for_podman_devices(devices, policy)
 
     # mounts
@@ -432,38 +430,6 @@ def write_policy_for_podman_mounts(mounts, policy):
                         + perms.perm["socket_ro"]
                         + " ))) \n"
                     )
-
-
-def write_policy_for_containerd_devices(devices, policy):
-    # devices JSON example:
-    # [
-    #   {
-    #     "path": "/dev/zero",
-    #     "type": "c",
-    #     "major": 1,
-    #     "minor": 5,
-    #     "fileMode": 438,
-    #     "uid": 0,
-    #     "gid": 0
-    #   }
-    # ]
-    for item in sorted(devices, key=lambda x: str(x["path"])):
-        contexts = list_contexts(item["path"])
-        for context in contexts:
-            policy.write(
-                "    (allow process "
-                + context
-                + " ( blk_file ( "
-                + perms.perm["device_rw"]
-                + " ))) \n"
-            )
-            policy.write(
-                "    (allow process "
-                + context
-                + " ( chr_file ( "
-                + perms.perm["device_rw"]
-                + " ))) \n"
-            )
 
 
 def write_policy_for_containerd_mounts(mounts, policy):
