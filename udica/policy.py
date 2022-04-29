@@ -67,12 +67,23 @@ def list_contexts(directory):
                 contexts.append(semanage.semanage_context_get_type(context))
 
     selabel = selinux.selabel_open(selinux.SELABEL_CTX_FILE, None, 0)
-    (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
-    if context == None:
-        if exists(directory) == False:
-            exit(1)
+    try:
+        (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
+    except FileNotFoundError:
+        # File context definition containing "<<none>>" triggers exception
+        context = None
+    if context:
+        contexts.append(context.split(":")[2])
+
+    # Get the real label (ls -lZ) - may differ from what selabel_lookup returns
+    try:
         context = selinux.getfilecon(directory)[1]
-    contexts.append(context.split(":")[2])
+    except FileNotFoundError:
+        context = None
+
+    if context:
+        contexts.append(context.split(":")[2])
+
     return contexts
 
 
