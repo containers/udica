@@ -207,7 +207,10 @@ def create_policy(
 
 
 def write_policy_for_crio_mounts(mounts, policy):
-    for item in sorted(mounts, key=lambda x: str(x["hostPath"])):
+    contexts = []
+    contexts_readonly = []
+
+    for item in mounts:
         if item["hostPath"].startswith("/var/lib/kubelet"):
             # These should already have the right context
             continue
@@ -245,90 +248,100 @@ def write_policy_for_crio_mounts(mounts, policy):
 
         # TODO(jaosorior): Add prefix-dir to path. This way we could call this
         # from a container in kubernetes
-        contexts = list_contexts(item["hostPath"])
-        for context in contexts:
-            if item["readonly"] is False:
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( dir ( "
-                    + perms.perm["dir_rw"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( file ( "
-                    + perms.perm["file_rw"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( fifo_file ( "
-                    + perms.perm["fifo_rw"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( sock_file ( "
-                    + perms.perm["socket_rw"]
-                    + " ))) \n"
-                )
-            else:
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( dir ( "
-                    + perms.perm["dir_ro"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( file ( "
-                    + perms.perm["file_ro"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( fifo_file ( "
-                    + perms.perm["fifo_ro"]
-                    + " ))) \n"
-                )
-                policy.write(
-                    "    (allow process "
-                    + context
-                    + " ( sock_file ( "
-                    + perms.perm["socket_ro"]
-                    + " ))) \n"
-                )
+        if item["readonly"] is False:
+            contexts.extend(list_contexts(item["hostPath"]))
+        else:
+            contexts_readonly.extend(list_contexts(item["hostPath"]))
+
+    for context in sorted(set(contexts)):
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( dir ( "
+            + perms.perm["dir_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( file ( "
+            + perms.perm["file_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( fifo_file ( "
+            + perms.perm["fifo_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( sock_file ( "
+            + perms.perm["socket_rw"]
+            + " ))) \n"
+        )
+
+    for contexts in sorted(set(contexts_readonly)):
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( dir ( "
+            + perms.perm["dir_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( file ( "
+            + perms.perm["file_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( fifo_file ( "
+            + perms.perm["fifo_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( sock_file ( "
+            + perms.perm["socket_ro"]
+            + " ))) \n"
+        )
 
 
 def write_policy_for_podman_devices(devices, policy):
-    for item in sorted(devices, key=lambda x: str(x["PathOnHost"])):
-        contexts = list_contexts(item["PathOnHost"])
-        for context in contexts:
-            policy.write(
-                "    (allow process "
-                + context
-                + " ( blk_file ( "
-                + perms.perm["device_rw"]
-                + " ))) \n"
-            )
-            policy.write(
-                "    (allow process "
-                + context
-                + " ( chr_file ( "
-                + perms.perm["device_rw"]
-                + " ))) \n"
-            )
+    contexts = []
+
+    for item in devices:
+        contexts.extend(list_contexts(item["PathOnHost"]))
+
+    for context in sorted(set(contexts)):
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( blk_file ( "
+            + perms.perm["device_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( chr_file ( "
+            + perms.perm["device_rw"]
+            + " ))) \n"
+        )
 
 
 def write_policy_for_podman_mounts(mounts, policy):
-    for item in sorted(mounts, key=lambda x: str(x["Source"])):
+    contexts = []
+    contexts_rw = []
+
+    for item in mounts:
         if not item["Source"].find("/"):
             if item["Source"] == LOG_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit log_container)\n")
@@ -370,66 +383,70 @@ def write_policy_for_podman_mounts(mounts, policy):
                 add_template("config_container")
                 continue
 
-            contexts = list_contexts(item["Source"])
-            for context in contexts:
-                if item["RW"] is True:
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( dir ( "
-                        + perms.perm["dir_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( file ( "
-                        + perms.perm["file_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( fifo_file ( "
-                        + perms.perm["fifo_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( sock_file ( "
-                        + perms.perm["socket_rw"]
-                        + " ))) \n"
-                    )
-                if item["RW"] is False:
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( dir ( "
-                        + perms.perm["dir_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( file ( "
-                        + perms.perm["file_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( fifo_file ( "
-                        + perms.perm["fifo_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( sock_file ( "
-                        + perms.perm["socket_ro"]
-                        + " ))) \n"
-                    )
+            if item["RW"] is True:
+                contexts_rw.extend(list_contexts(item["Source"]))
+            else:
+                contexts.extend(list_contexts(item["Source"]))
+
+    for context in sorted(set(contexts_rw)):
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( dir ( "
+            + perms.perm["dir_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( file ( "
+            + perms.perm["file_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( fifo_file ( "
+            + perms.perm["fifo_rw"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( sock_file ( "
+            + perms.perm["socket_rw"]
+            + " ))) \n"
+        )
+
+    for context in sorted(set(contexts)):
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( dir ( "
+            + perms.perm["dir_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( file ( "
+            + perms.perm["file_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( fifo_file ( "
+            + perms.perm["fifo_ro"]
+            + " ))) \n"
+        )
+        policy.write(
+            "    (allow process "
+            + context
+            + " ( sock_file ( "
+            + perms.perm["socket_ro"]
+            + " ))) \n"
+        )
 
 
 def write_policy_for_containerd_mounts(mounts, policy):
