@@ -13,6 +13,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         image:
           # test on Fedora Rawhide
