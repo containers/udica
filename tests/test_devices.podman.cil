@@ -4,4 +4,6 @@
 
     (allow process framebuf_device_t ( blk_file ( getattr read write append ioctl lock open ))) 
     (allow process framebuf_device_t ( chr_file ( getattr read write append ioctl lock open ))) 
+    (allow process var_spool_t ( blk_file ( getattr read write append ioctl lock open ))) 
+    (allow process var_spool_t ( chr_file ( getattr read write append ioctl lock open ))) 
 )
