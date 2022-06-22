@@ -16,11 +16,13 @@ jobs:
       matrix:
         image:
           # test on Fedora Rawhide
-          - fedora:rawhide
+          - quay.io/fedora/fedora:rawhide
           # test on the latest stable release of Fedora
-          - fedora:latest
-          # test on the stable release of Centos 8
-          - centos:centos8
+          - quay.io/fedora/fedora:latest
+          # test on the stable release of Centos stream 8
+          - quay.io/centos/centos:stream8
+          # test on the latest stable release of Centos stream
+          - quay.io/centos/centos:stream9
     container:
       image: ${{ matrix.image }}
     steps:
