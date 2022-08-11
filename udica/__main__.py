@@ -133,7 +133,7 @@ def get_args():
         required=False,
         default=None,
         type=str,
-        dest='DeviceAccess'
+        dest="DeviceAccess",
     )
     args = parser.parse_args()
     return vars(args)
