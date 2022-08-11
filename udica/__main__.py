@@ -127,6 +127,14 @@ def get_args():
         required=False,
         default="-",
     )
+    parser.add_argument(
+        "--device-access",
+        help='List of devices the container should have access to, e.g "--device-access /dev/dri/card0,/dev/dri/renderD128"',
+        required=False,
+        default=None,
+        type=str,
+        dest='DeviceAccess'
+    )
     args = parser.parse_args()
     return vars(args)
 

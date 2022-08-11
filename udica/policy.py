@@ -173,6 +173,8 @@ def create_policy(
     # devices
     # Not applicable for CRI-O container engine
     if inspect_format != "CRI-0":
+        if (not devices and opts["DeviceAccess"]):
+            devices = [{"PathOnHost": device} for device in opts["DeviceAccess"].split(',')]
         write_policy_for_podman_devices(devices, policy)
 
     # mounts
