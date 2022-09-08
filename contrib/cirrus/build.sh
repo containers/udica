@@ -20,8 +20,10 @@ showrun make
 showrun make install PREFIX=/usr ETCDIR=/etc
 
 echo "Configuring podman for execution w/in a container"
-sed -r -i -e 's/^driver.+overlay.+/driver = "vfs"/g' /etc/containers/storage.conf
-sed -r -i -e 's/^mountopt =.+/mountopt = ""/g' /etc/containers/storage.conf
+sed -e 's|^#mount_program|mount_program|g' \
+    -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
+    /usr/share/containers/storage.conf \
+    > /etc/containers/storage.conf
 setsebool container_manage_cgroup true  # systemd in container
 
 echo "Installing Udica from source"
