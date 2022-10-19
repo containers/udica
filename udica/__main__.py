@@ -100,6 +100,14 @@ def get_args():
         default=None,
     )
     parser.add_argument(
+        "--devices",
+        type=str,
+        help='List of devices the container should have access to, e.g "--devices /dev/dri/card0,/dev/dri/renderD128"',
+        dest="Devices",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
         "-d",
         "--ansible",
         help="Generate ansible playbook to deploy SELinux policy for containers ",
@@ -126,14 +134,6 @@ def get_args():
         dest="ContainerEngine",
         required=False,
         default="-",
-    )
-    parser.add_argument(
-        "--device-access",
-        help='List of devices the container should have access to, e.g "--device-access /dev/dri/card0,/dev/dri/renderD128"',
-        required=False,
-        default=None,
-        type=str,
-        dest="DeviceAccess",
     )
     args = parser.parse_args()
     return vars(args)

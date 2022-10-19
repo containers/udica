@@ -54,6 +54,11 @@ List of capabilities, for example: "\-c AUDIT\_WRITE,CHOWN,DAC\_OVERRIDE,FOWNER,
 (mandatory to use for Docker Engine, see the BUGS section)
 
 .TP
+.I  \-\-devices DEVS
+List of devices the container should have access to, e.g "\-\-devices /dev/dri/card0,/dev/dri/renderD128"
+(overrides devices specified in the conatiner JSON)
+
+.TP
 .I  \-a, \-\-append-rules FILE
 Append more SELinux allow rules generated from SELinux denials in audit daemon.
 

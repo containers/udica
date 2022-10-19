@@ -361,8 +361,8 @@ class TestBase(unittest.TestCase):
                 "udica",
                 "-j",
                 "tests/test_devices.podman.json",
-                "--device-access",
-                "/dev/fd0",
+                "--devices",
+                "/dev/fb0",
                 "my_container",
             ]
         )
