@@ -20,9 +20,8 @@ env:
     #PRIOR_FEDORA_NAME: "fedora-35"
 
     # Google-cloud VM Images
-    IMAGE_SUFFIX: "c5473162832904192"
+    IMAGE_SUFFIX: "c6310580047314944"
     FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
-    #PRIOR_FEDORA_CACHE_IMAGE_NAME: "prior-fedora-${IMAGE_SUFFIX}"
 
     ####
     #### Command variables to help avoid duplication
@@ -52,15 +51,11 @@ gce_instance:
 
 # Each 'task' runs in parallel, '_task' suffix required on name.
 test_upstream_podman_task:
+    name: "Test podman on ${FEDORA_NAME}"
     alias: test_upstream_podman
 
-    matrix:
-        - name: "Test podman on ${FEDORA_NAME}"
-          gce_instance:
-              image_name: "${FEDORA_CACHE_IMAGE_NAME}"
-        # - name: "Test podman on ${PRIOR_FEDORA_NAME}"
-        #   gce_instance:
-        #       image_name: "${PRIOR_FEDORA_CACHE_IMAGE_NAME}"
+    gce_instance:
+        image_name: "${FEDORA_CACHE_IMAGE_NAME}"
 
     env:
         # Which branch, tag, or sha of podman repository to test against
@@ -87,8 +82,6 @@ meta_task:
 
     env:
         # Space-separated list of ALL images used by automation in this repository
-        # TODO: F35 removed from CI testing due to golang 1.18 requirements
-        # restore after F37 released + re-add below: ${PRIOR_FEDORA_CACHE_IMAGE_NAME}
         IMGNAMES: |-
             ${FEDORA_CACHE_IMAGE_NAME}
         BUILDID: "${CIRRUS_BUILD_ID}"
