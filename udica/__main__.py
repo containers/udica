@@ -140,7 +140,6 @@ def get_args():
 
 
 def main():
-
     opts = get_args()
 
     if opts["ContainerID"]:

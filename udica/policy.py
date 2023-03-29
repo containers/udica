@@ -88,7 +88,6 @@ def list_contexts(directory):
 
 
 def list_ports(port_number, port_proto):
-
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
 
