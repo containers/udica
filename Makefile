@@ -16,7 +16,7 @@ format:
 
 .PHONY:
 format-check:
-	black --check *.py udica/*.py tests/*.py
+	black --check --diff *.py udica/*.py tests/*.py
 
 .PHONY: test
 test: lint format-check
