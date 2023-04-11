@@ -250,4 +250,8 @@
     (allow process zoneminder_spool_t ( file ( append create getattr ioctl lock map open read rename setattr unlink write ))) 
     (allow process zoneminder_spool_t ( fifo_file ( getattr read write append ioctl lock open ))) 
     (allow process zoneminder_spool_t ( sock_file ( append getattr open read write ))) 
+    (allow process net_conf_t ( dir ( getattr ioctl lock open read search ))) 
+    (allow process net_conf_t ( file ( getattr ioctl lock open read ))) 
+    (allow process net_conf_t ( fifo_file ( getattr open read lock ioctl ))) 
+    (allow process net_conf_t ( sock_file ( getattr open read ))) 
 )
