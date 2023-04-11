@@ -284,7 +284,7 @@ def write_policy_for_crio_mounts(mounts, policy):
             + " ))) \n"
         )
 
-    for contexts in sorted(set(contexts_readonly)):
+    for context in sorted(set(contexts_readonly)):
         policy.write(
             "    (allow process "
             + context

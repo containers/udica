@@ -119,7 +119,7 @@ class TestBase(unittest.TestCase):
         self.assert_policy(test_file("test_basic.docker.cil"))
 
     def test_basic_cri(self):
-        """Start CRI-O mounting /var/spool with read/write perms and /home with readonly perms"""
+        """Start CRI-O mounting /var/spool with read/write perms and /home and /etc/hosts with readonly perms"""
         output = self.run_udica(
             [
                 "udica",
@@ -135,7 +135,7 @@ class TestBase(unittest.TestCase):
         self.assert_policy(test_file("test_basic.cri.cil"))
 
     def test_basic_specified_engine_cri(self):
-        """Start CRI-O mounting /var/spool with read/write perms and /home with readonly perms"""
+        """Start CRI-O mounting /var/spool with read/write perms and /home and /etc/hosts with readonly perms"""
         output = self.run_udica(
             [
                 "udica",

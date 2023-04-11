@@ -46,9 +46,9 @@
       },
       {
         "containerPath": "/etc/hosts",
-        "hostPath": "/var/lib/kubelet/pods/59ecb6eb-de09-11e9-8ebe-02e4204e049a/etc-hosts",
+        "hostPath": "/etc/hosts",
         "propagation": "PROPAGATION_PRIVATE",
-        "readonly": false,
+        "readonly": true,
         "selinuxRelabel": false
       },
       {

@@ -25,6 +25,8 @@ def selabel_lookup(selabel, directory, rc):
         return (0, None)
     elif directory == "/dev/fb0":
         return (0, "system_u:object_r:framebuf_device_t:s0")
+    elif directory == "/etc/hosts":
+        return (0, "system_u:object_r:net_conf_t:s0")
     else:
         return (0, "system_u:object_r:var_spool_t:s0")
 
@@ -32,5 +34,7 @@ def selabel_lookup(selabel, directory, rc):
 def getfilecon(directory):
     if directory == "/tmp/test":
         return (0, "system_u:object_r:user_tmp_t:s0")
+    elif directory == "/etc/hosts":
+        return (0, "system_u:object_r:net_conf_t:s0")
     else:
         return (0, "system_u:object_r:var_spool_t:s0")
