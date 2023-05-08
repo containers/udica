@@ -4,7 +4,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: sudo apt-get update -y
       - run: sudo apt-get install -y python3-pip python3-setuptools
       - run: sudo pip3 install black pyflakes
@@ -27,7 +27,7 @@ jobs:
     container:
       image: ${{ matrix.image }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: rpm -q python3 || dnf install --nogpgcheck -y python3
       - run: rpm -q git || dnf install --nogpgcheck -y git
       - run: python3 -m unittest -v tests/test_unit.py
