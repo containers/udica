@@ -37,6 +37,7 @@ setuptools.setup(
     data_files=[
         ("/usr/share/licenses/udica", ["LICENSE"]),
         ("/usr/share/udica/ansible", ["udica/ansible/deploy-module.yml"]),
+        ("/usr/share/udica/macros", ["udica/macros/confined_user_macros.cil"]),
     ],
     # scripts=["bin/udica"],
     entry_points={"console_scripts": ["udica=udica.__main__:main"]},
