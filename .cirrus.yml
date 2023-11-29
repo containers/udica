@@ -16,10 +16,8 @@ env:
     ####
     #### Cache-image names to test with
     ####
-    FEDORA_NAME: "fedora-38"
-
     # Google-cloud VM Images
-    IMAGE_SUFFIX: "c20230614t132754z-f38f37d13"
+    IMAGE_SUFFIX: "c20231004t194547z-f39f38d13"
     FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
 
     ####
@@ -50,7 +48,7 @@ gce_instance:
 
 # Each 'task' runs in parallel, '_task' suffix required on name.
 test_upstream_podman_task:
-    name: "Test podman on ${FEDORA_NAME}"
+    name: "Test podman on Fedora"
     alias: test_upstream_podman
 
     gce_instance:
