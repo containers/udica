@@ -369,7 +369,26 @@ class TestBase(unittest.TestCase):
         self.assert_templates(output, ["base_container"])
         self.assert_policy(test_file("test_devices.podman.cil"))
 
-    def run_udica(self, args):
+    # Confined user tests
+    def test_confined_user(self):
+        """udica confined_user <args> --level s0 --range s0:c0 my_container"""
+        for arg in ["cla", "lb", "lsid", "abcdgilmns"]:
+            output = self.run_udica(
+                [
+                    "udica",
+                    "confined_user",
+                    "-{}".format(arg),
+                    "--level",
+                    "s0",
+                    "--range",
+                    "s0:c0",
+                    "my_container",
+                ],
+                True,
+            )
+            self.assert_policy(test_file("test_confined_{}.cil".format(arg)))
+
+    def run_udica(self, args, confined=False):
         with patch("sys.argv", args):
             with patch("sys.stderr.write") as mock_err, patch(
                 "sys.stdout.write"
@@ -383,10 +402,16 @@ class TestBase(unittest.TestCase):
                 udica.__main__.main()
                 mock_err.assert_not_called()
 
-        self.assertRegex(mock_out.output, "Policy my_container created")
-        self.assertRegex(
-            mock_out.output, "--security-opt label=type:my_container.process"
-        )
+        if confined:
+            self.assertRegex(mock_out.output, "semodule -i my_container.cil")
+            self.assertRegex(
+                mock_out.output, "semanage login -a -s my_container_u my_container"
+            )
+        else:
+            self.assertRegex(mock_out.output, "Policy my_container created")
+            self.assertRegex(
+                mock_out.output, "--security-opt label=type:my_container.process"
+            )
 
         return mock_out.output
 

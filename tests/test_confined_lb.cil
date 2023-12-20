@@ -1,0 +1,12 @@
+(boolean my_container_exec_content true)
+(role my_container_r)
+(type my_container_dbus_t)
+(type my_container_gkeyringd_t)
+(type my_container_t)
+(user my_container_u)
+(userrole my_container_u my_container_r)
+(userlevel my_container_u (s0))
+(userrange my_container_u ((s0 ) (s0 (c0))))
+
+(call confinedom_user_login_macro (my_container_t my_container_r my_container_gkeyringd_t my_container_dbus_t my_container_exec_content))
+(call confined_use_basic_commands_macro (my_container_t my_container_r))
