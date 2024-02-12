@@ -2411,7 +2411,7 @@
         (typetransition utype sudo_exec_t process sudo_type)
         (allow sudo_type utype (fd (use)))
         (allow sudo_type utype (fifo_file (ioctl read write getattr lock append)))
-        (allow sudo_type utype (process (sigchld)))
+        (allow sudo_type utype (process (getpgid sigchld)))
         (allow sudo_type bin_t (dir (getattr open search)))
         (allow sudo_type bin_t (dir (ioctl read getattr lock open search)))
         (allow sudo_type bin_t (dir (getattr open search)))
@@ -4005,6 +4005,12 @@
                 (allow utype mail_spool_t (lnk_file (read getattr)))
             )
         )
+    )
+    ; Telnet login
+    (optional  confinedom_user_login_optional_3
+      (typeattributeset cil_gen_require remote_login_t)
+      (allow remote_login_t utype (process (signal transition)))
+      (allow utype self (bpf (prog_load)))
     )
 )
 

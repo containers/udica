@@ -92,7 +92,7 @@ def get_args():
             "-l",
             "--user_login",
             action="store_true",
-            default=False,
+            default=True,
             dest="user_login",
             help="Basic rules common to all users (tty, pty, ...)",
         )
