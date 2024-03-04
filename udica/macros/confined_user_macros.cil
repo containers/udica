@@ -4012,6 +4012,13 @@
       (allow remote_login_t utype (process (signal transition)))
       (allow utype self (bpf (prog_load)))
     )
+    ; asynchronous I/O operations RHEL 10
+    (optional  confinedom_user_login_optional_4
+      (typeattributeset cil_gen_require io_uring_t)
+      (allow utype self (io_uring (sqpoll)))
+      (allow utype io_uring_t (anon_inode (create)))
+      (allow utype io_uring_t (anon_inode (read write getattr map)))
+    )
 )
 
 (macro confined_ssh_connect_macro ((type utype) (role urole) (type ssh_agent_type))
