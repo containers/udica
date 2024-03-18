@@ -331,6 +331,20 @@ class TestBase(unittest.TestCase):
         self.assert_templates(output, ["base_container", "tty_container"])
         self.assert_policy(test_file("test_ttyaccess.podman.cil"))
 
+    def test_kerberosaccess_podman(self):
+        """podman run fedora"""
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_default.podman.json",
+                "--kerberos-access",
+                "my_container",
+            ]
+        )
+        self.assert_templates(output, ["base_container", "kerberos_container"])
+        self.assert_policy(test_file("test_kerberosaccess.podman.cil"))
+
     def test_append_more_rules_podman(self):
         """podman run fedora"""
         output = self.run_udica(
