@@ -3078,7 +3078,7 @@
         (allow utype locale_t (dir (getattr open search)))
         (allow utype locale_t (lnk_file (getattr watch)))
         (allow utype mount_var_run_t (dir (getattr open search)))
-        (allow utype mount_var_run_t (file (ioctl read getattr lock open)))
+        (allow utype mount_var_run_t (file (ioctl read getattr lock open watch)))
         (allow utype mount_var_run_t (dir (getattr open search)))
         (allow utype mount_var_run_t (dir (ioctl read getattr lock open search watch watch_reads)))
         (allow utype var_t (lnk_file (read getattr)))
