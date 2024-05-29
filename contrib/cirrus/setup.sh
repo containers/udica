@@ -11,7 +11,8 @@ case "${OS_RELEASE_ID}" in
         msg "Installing necessary additional packages"
         ooe.sh dnf install -y \
             setools-console \
-            systemd-devel
+            systemd-devel \
+            fuse-overlayfs
         ;;
     *) bad_os_id_ver ;;
 esac
