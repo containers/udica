@@ -129,6 +129,10 @@ def create_policy(
         policy.write("    (blockinherit tty_container)\n")
         add_template("tty_container")
 
+    if opts["KerberosAccess"]:
+        policy.write("    (blockinherit kerberos_container)\n")
+        add_template("kerberos_container")
+
     if ports:
         policy.write("    (blockinherit restricted_net_container)\n")
         add_template("net_container")

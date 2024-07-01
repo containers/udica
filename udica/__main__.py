@@ -185,6 +185,13 @@ def get_args():
             action="store_true",
         )
         parser.add_argument(
+            "--kerberos-access",
+            help="Allow container to use Kerberos authentication ",
+            required=False,
+            dest="KerberosAccess",
+            action="store_true",
+        )
+        parser.add_argument(
             "-s",
             "--stream-connect",
             help="Allow container to stream connect with given SELinux domain ",
