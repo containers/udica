@@ -283,7 +283,7 @@ class LxdHelper(EngineHelper):
         devices = []
         config_devices = data["expanded_devices"]
         for name, device in config_devices.items():
-            if device["type"] == "unix-block" or device["type"] == "unix-char":
+            if device["type"] in ["unix-block", "unix-char"]:
                 device["PathOnHost"] = device.get("path", "")
                 devices.append(device)
         return devices
@@ -295,7 +295,12 @@ class LxdHelper(EngineHelper):
         config_devices = data["expanded_devices"]
         for name, device in config_devices.items():
             if device["type"] == "disk":
-                mounts.append(device)
+                mount = {
+                    "source": device.get("source", ""),
+                    "path": device.get("path", ""),
+                    "readonly": device.get("readonly", False),
+                }
+                mounts.append(mount)
         return mounts
 
     @getter_decorator
