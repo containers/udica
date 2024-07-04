@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# Dictionary of permissions for various device and file types
 perm = {
     "device_rw": "getattr read write append ioctl lock open",
     "dir_rw": "add_name create getattr ioctl lock open read remove_name rmdir search setattr write",
@@ -25,4 +26,5 @@ perm = {
     "socket_ro": "getattr open read",
 }
 
+# Dictionary of socket types mapped to their corresponding SELinux object class
 socket = {"tcp": "tcp_socket", "udp": "udp_socket", "sctp": "sctp_socket"}
