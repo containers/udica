@@ -17,6 +17,7 @@ from shutil import copy
 from os import chdir, getcwd, remove
 from os.path import exists
 import tarfile
+import re
 
 import selinux
 import semanage
@@ -105,6 +106,39 @@ def list_ports(port_number, port_proto):
             return ctype
 
 
+def validate_cil_template(cil_path):
+    """Ensures that the file is correctly balanced with respect to parentheses."""
+    try:
+        with open(cil_path, 'r') as cil_file:
+            lines = cil_file.readlines()
+
+            if not lines:
+                print("Error: CIL file is empty.")
+                return False
+
+            # Check for balanced parentheses
+            open_parens = 0
+            for idx, line in enumerate(lines):
+                line = line.strip()
+                open_parens += line.count('(')
+                open_parens -= line.count(')')
+                if open_parens < 0:
+                    print(f"Error: Unbalanced parentheses detected in the custom CIL file at line {idx + 1}.")
+                    return False
+
+            if open_parens != 0:
+                print("Error: Unbalanced parentheses in the CIL file.")
+                return False
+
+        return True
+
+    except FileNotFoundError:
+        print(f"Error: CIL file {cil_path} not found.")
+        return False
+    except Exception as e:
+        print(f"Unexpected error while validating CIL file: {e}")
+        return False
+        
 def create_policy(
     opts, capabilities, devices, mounts, ports, append_rules, inspect_format
 ):
@@ -168,6 +202,19 @@ def create_policy(
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"
             )
+    
+    # Validate and include custom template if provided
+    if opts.get("CustomRules"):
+        if validate_cil_template(opts["CustomRules"]):
+            with open(opts["CustomRules"], "r") as template_file:
+                custom_template = template_file.read()
+                policy.write("\n; Start of custom CIL template\n")
+                policy.write(custom_template)
+                policy.write("\n; End of custom CIL template\n")
+        else:
+            print("Invalid custom template. Aborting policy creation.")
+            policy.close()
+            return
 
     # devices
     # Not applicable for CRI-O container engine
