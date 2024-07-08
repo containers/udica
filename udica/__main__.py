@@ -216,6 +216,14 @@ def get_args():
             default=None,
         )
         parser.add_argument(
+            "--tcp-connect",
+            type=str,
+            help="Comma-separated list of TCP ports to allow connections to, e.g. --tcp-connect 5432,636",
+            dest="TcpConnect",
+            required=False,
+            default=None,
+        )
+        parser.add_argument(
             "-d",
             "--ansible",
             help="Generate ansible playbook to deploy SELinux policy for containers ",
