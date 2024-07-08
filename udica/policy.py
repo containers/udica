@@ -169,6 +169,16 @@ def create_policy(
                 + " (  name_bind ))) \n"
             )
 
+    # TCP connect permissions
+    if opts["TcpConnect"]:
+        tcp_ports = [int(port) for port in opts["TcpConnect"].split(",")]
+        for port in tcp_ports:
+            policy.write(
+                "    (allow process "
+                + list_ports(port, "tcp")
+                + " ( tcp_socket ( name_connect ))) \n"
+            )
+
     # devices
     # Not applicable for CRI-O container engine
     if inspect_format != "CRI-0":

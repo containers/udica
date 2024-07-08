@@ -67,6 +67,10 @@ Append more SELinux allow rules generated from SELinux denials in audit daemon.
 Allow container to stream connect with given SELinux domain.
 
 .TP
+.I  \-\-tcp-connect PORTS
+Comma-separated list of TCP ports to allow connections to, e.g. "\-\-tcp-connect 5432,636"
+
+.TP
 .I \-e, \-\-container-engine ENGINE
 Specify which container engine is used for the inspected container (supports: CRI-O, docker, podman)
 
