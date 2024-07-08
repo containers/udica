@@ -216,6 +216,21 @@ def get_args():
             default=None,
         )
         parser.add_argument(
+            "--tcp-connect",
+            type=str,
+            help="Comma-separated list of TCP ports to allow connections to, e.g. --tcp-connect 5432,636",
+            dest="TcpConnect",
+            required=False,
+            default=None,
+        )
+        parser.add_argument(
+            "--unix-connect",
+            help="Allow container to connect to UNIX domain sockets",
+            required=False,
+            dest="UnixConnect",
+            action="store_true",
+        )
+        parser.add_argument(
             "-d",
             "--ansible",
             help="Generate ansible playbook to deploy SELinux policy for containers ",
@@ -334,6 +349,10 @@ def main():
 
     container_caps = sorted(engine_helper.get_caps(container_inspect, opts))
 
+    tcp_ports = []
+    if opts["TcpConnect"]:
+        tcp_ports = [int(port) for port in opts["TcpConnect"].split(",")]
+
     try:
         create_policy(
             opts,
@@ -343,6 +362,8 @@ def main():
             container_ports,
             append_rules,
             engine_helper.container_engine,
+            tcp_ports,
+            opts["UnixConnect"],
         )
     except Exception as e:
         print("Couldn't create policy:", e)
