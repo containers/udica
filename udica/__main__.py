@@ -216,6 +216,14 @@ def get_args():
             default=None,
         )
         parser.add_argument(
+            "-t",
+            "--custom-template",
+            type=str,
+            help="Path to a custom CIL template file",
+            dest="CustomTemplate",
+            required=False,
+        )
+        parser.add_argument(
             "-d",
             "--ansible",
             help="Generate ansible playbook to deploy SELinux policy for containers ",

@@ -17,6 +17,7 @@ from shutil import copy
 from os import chdir, getcwd, remove
 from os.path import exists
 import tarfile
+import re
 
 import selinux
 import semanage
@@ -104,7 +105,47 @@ def list_ports(port_number, port_proto):
         if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
+def validate_cil_template(cil_path):
+    """Validates the format of a CIL file. Not an exhaustive validation.
 
+    Ensures that the file does not start with '(block '
+    to avoid any conflicts with the primary policy block created by Udica. 
+    Also ensures that each line starts and ends with a parenthesis.
+    """
+    # Pattern to match any line starting with '(' and ending with ')'
+    valid_line_pattern = re.compile(r'^\s*\(.*\)\s*$')
+    # Pattern to ensure the file does not start with '(block '
+    # to avoid any conflicts with the primary policy block created by Udica.
+    invalid_start_pattern = re.compile(r'^\s*\(block ')
+
+    try:
+        with open(cil_path, 'r') as cil_file:
+            lines = cil_file.readlines()
+
+            if not lines:
+                print("Error: CIL file is empty.")
+                return False
+
+            # Check if the file starts with an invalid '(block ' statement
+            if invalid_start_pattern.match(lines[0].strip()):
+                print("Error: CIL file starts with an invalid '(block' statement.")
+                return False
+
+            # Check each line for valid CIL statements
+            for line in lines:
+                line = line.strip()
+                if line and not valid_line_pattern.match(line):
+                    print(f"Error: Invalid CIL statement: {line}")
+                    return False
+        return True
+
+    except FileNotFoundError:
+        print(f"Error: CIL file {cil_path} not found.")
+        return False
+    except Exception as e:
+        print(f"Unexpected error while validating CIL file: {e}")
+        return False
+        
 def create_policy(
     opts, capabilities, devices, mounts, ports, append_rules, inspect_format
 ):
@@ -168,6 +209,18 @@ def create_policy(
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"
             )
+    
+    # Validate and include custom template if provided
+    if opts.get("CustomTemplate"):
+        if validate_cil_template(opts["CustomTemplate"]):
+            with open(opts["CustomTemplate"], "r") as template_file:
+                custom_template = template_file.read()
+                policy.write(custom_template)
+                policy.write("\n")
+        else:
+            print("Invalid custom template. Aborting policy creation.")
+            policy.close()
+            return
 
     # devices
     # Not applicable for CRI-O container engine
