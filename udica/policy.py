@@ -204,9 +204,9 @@ def create_policy(
             )
     
     # Validate and include custom template if provided
-    if opts.get("CustomTemplate"):
-        if validate_cil_template(opts["CustomTemplate"]):
-            with open(opts["CustomTemplate"], "r") as template_file:
+    if opts.get("CustomRules"):
+        if validate_cil_template(opts["CustomRules"]):
+            with open(opts["CustomRules"], "r") as template_file:
                 custom_template = template_file.read()
                 policy.write("\n; Start of custom CIL template\n")
                 policy.write(custom_template)

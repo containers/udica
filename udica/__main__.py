@@ -216,11 +216,10 @@ def get_args():
             default=None,
         )
         parser.add_argument(
-            "-t",
-            "--custom-template",
+            "--custom-rules",
             type=str,
-            help="Path to a custom CIL template file",
-            dest="CustomTemplate",
+            help="Path to a CIL file with custom rules",
+            dest="CustomRules",
             required=False,
         )
         parser.add_argument(
