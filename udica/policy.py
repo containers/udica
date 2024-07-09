@@ -105,19 +105,9 @@ def list_ports(port_number, port_proto):
         if low <= port_number <= high and port_proto == proto_str:
             return ctype
 
+
 def validate_cil_template(cil_path):
-    """Validates the format of a CIL file. Not an exhaustive validation.
-
-    Ensures that the file does not start with '(block '
-    to avoid any conflicts with the primary policy block created by Udica. 
-    Also ensures that each line starts and ends with a parenthesis.
-    """
-    # Pattern to match any line starting with '(' and ending with ')'
-    valid_line_pattern = re.compile(r'^\s*\(.*\)\s*$')
-    # Pattern to ensure the file does not start with '(block '
-    # to avoid any conflicts with the primary policy block created by Udica.
-    invalid_start_pattern = re.compile(r'^\s*\(block ')
-
+    """Ensures that the file is correctly balanced with respect to parentheses."""
     try:
         with open(cil_path, 'r') as cil_file:
             lines = cil_file.readlines()
@@ -126,17 +116,20 @@ def validate_cil_template(cil_path):
                 print("Error: CIL file is empty.")
                 return False
 
-            # Check if the file starts with an invalid '(block ' statement
-            if invalid_start_pattern.match(lines[0].strip()):
-                print("Error: CIL file starts with an invalid '(block' statement.")
+            # Check for balanced parentheses
+            open_parens = 0
+            for idx, line in enumerate(lines):
+                line = line.strip()
+                open_parens += line.count('(')
+                open_parens -= line.count(')')
+                if open_parens < 0:
+                    print(f"Error: Unbalanced parentheses detected in the custom CIL file at line {idx + 1}.")
+                    return False
+
+            if open_parens != 0:
+                print("Error: Unbalanced parentheses in the CIL file.")
                 return False
 
-            # Check each line for valid CIL statements
-            for line in lines:
-                line = line.strip()
-                if line and not valid_line_pattern.match(line):
-                    print(f"Error: Invalid CIL statement: {line}")
-                    return False
         return True
 
     except FileNotFoundError:
@@ -215,8 +208,9 @@ def create_policy(
         if validate_cil_template(opts["CustomTemplate"]):
             with open(opts["CustomTemplate"], "r") as template_file:
                 custom_template = template_file.read()
+                policy.write("\n; Start of custom CIL template\n")
                 policy.write(custom_template)
-                policy.write("\n")
+                policy.write("\n; End of custom CIL template\n")
         else:
             print("Invalid custom template. Aborting policy creation.")
             policy.close()
