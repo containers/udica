@@ -151,6 +151,16 @@ class TestBase(unittest.TestCase):
         )
         self.assert_policy(test_file("test_basic.cri.cil"))
 
+    def test_basic_lxd(self):
+        """LXD container with /home readonly, /var/spool read-write, and port 21"""
+        output = self.run_udica(
+            ["udica", "-j", "tests/test_basic.lxd.json", "my_container"]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_basic.lxd.cil"))
+
     def test_basic_specified_engine_cri(self):
         """Start CRI-O mounting /var/spool with read/write perms and /home and /etc/hosts with readonly perms"""
         output = self.run_udica(
