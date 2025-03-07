@@ -64,13 +64,11 @@ def json_is_containerd_format(json_rep):
 
 def json_is_podman_format(json_rep):
     """Check if the inspected file is in a format from podman."""
-    return (
-        isinstance(json_rep, list)
-        and (
-            "container=oci" in json_rep[0]["Config"]["Env"]
-            or "container=podman" in json_rep[0]["Config"]["Env"]
-        )
+    return isinstance(json_rep, list) and (
+        "container=oci" in json_rep[0]["Config"]["Env"]
+        or "container=podman" in json_rep[0]["Config"]["Env"]
     )
+
 
 def json_is_lxd_format(json_rep):
     """Check if the inspected file is in a format from LXD."""
@@ -85,7 +83,7 @@ def json_is_lxd_format(json_rep):
 
 def get_engine_helper(data, ContainerEngine):
     engine = validate_container_engine(ContainerEngine)
-    
+
     if engine == "-":
         json_rep = json.loads(data)
 
@@ -273,6 +271,7 @@ class ContainerdHelper(EngineHelper):
             return opts["Caps"].split(",")
         return data[0]["Spec"]["process"]["capabilities"]["effective"]
 
+
 class LxdHelper(EngineHelper):
     def __init__(self):
         super().__init__(ENGINE_LXD)
@@ -311,7 +310,7 @@ class LxdHelper(EngineHelper):
             if device["type"] == "proxy":
                 port_info = {
                     "portNumber": int(device["listen"].split(":")[-1]),
-                    "protocol": device["connect"].split(":")[0]
+                    "protocol": device["connect"].split(":")[0],
                 }
                 ports.append(port_info)
         return ports
