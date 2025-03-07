@@ -19,7 +19,7 @@ import sys
 
 # import udica
 from udica.parse import parse_avc_file
-from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER
+from udica.parse import ENGINE_ALL, ENGINE_PODMAN, ENGINE_DOCKER, ENGINE_LXD
 from udica.version import version
 from udica import parse
 from udica.policy import create_policy, load_policy, generate_playbook
@@ -260,13 +260,20 @@ def main():
 
     if opts["ContainerID"]:
         container_inspect_raw = None
-        for backend in [ENGINE_PODMAN, ENGINE_DOCKER]:
+        for backend in [ENGINE_PODMAN, ENGINE_DOCKER, ENGINE_LXD]:
             try:
-                run_inspect = subprocess.Popen(
-                    [backend, "inspect", opts["ContainerID"]],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL,
-                )
+                if backend == ENGINE_LXD:
+                    run_inspect = subprocess.Popen(
+                        ["lxc", "query", "/1.0/instances/", opts["ContainerID"]],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.DEVNULL,
+                    )
+                else:
+                    run_inspect = subprocess.Popen(
+                        [backend, "inspect", opts["ContainerID"]],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.DEVNULL,
+                    )
                 inspect_data = run_inspect.communicate()[0]
                 if run_inspect.returncode != 0:
                     inspect_data = None
@@ -278,7 +285,7 @@ def main():
                 break
 
         if not container_inspect_raw:
-            print("Container with specified ID does not exits!")
+            print("Container with specified ID does not exist!")
             exit(3)
 
     if opts["JsonFile"]:

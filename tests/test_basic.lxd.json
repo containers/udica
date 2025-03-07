@@ -1,0 +1,92 @@
+{
+	"architecture": "x86_64",
+	"config": {
+		"image.architecture": "amd64",
+		"image.description": "ubuntu 20.04 LTS amd64 (release) (20240626)",
+		"image.label": "release",
+		"image.os": "ubuntu",
+		"image.release": "focal",
+		"image.serial": "20240626",
+		"image.type": "squashfs",
+		"image.version": "20.04",
+		"volatile.base_image": "afeb6fc84380878e47e1be18b3cd4e0a6671610f94ad3ffc8a50481afbe77a19",
+		"volatile.cloud-init.instance-id": "402d6e74-3ce0-483c-8d46-fdb28cdab306",
+		"volatile.eth0.host_name": "veth21ca03ab",
+		"volatile.eth0.hwaddr": "00:16:3e:fc:a1:ec",
+		"volatile.idmap.base": "0",
+		"volatile.idmap.current": "[{\"Isuid\":true,\"Isgid\":false,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000},{\"Isuid\":false,\"Isgid\":true,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000}]",
+		"volatile.idmap.next": "[{\"Isuid\":true,\"Isgid\":false,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000},{\"Isuid\":false,\"Isgid\":true,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000}]",
+		"volatile.last_state.idmap": "[]",
+		"volatile.last_state.power": "RUNNING",
+		"volatile.last_state.ready": "false",
+		"volatile.uuid": "5835af62-6142-4a7c-9282-35d31ae22cb7",
+		"volatile.uuid.generation": "5835af62-6142-4a7c-9282-35d31ae22cb7"
+	},
+	"created_at": "2024-06-29T16:03:00.781248448Z",
+	"description": "",
+	"devices": {},
+	"ephemeral": false,
+	"expanded_config": {
+		"image.architecture": "amd64",
+		"image.description": "ubuntu 20.04 LTS amd64 (release) (20240626)",
+		"image.label": "release",
+		"image.os": "ubuntu",
+		"image.release": "focal",
+		"image.serial": "20240626",
+		"image.type": "squashfs",
+		"image.version": "20.04",
+		"volatile.base_image": "afeb6fc84380878e47e1be18b3cd4e0a6671610f94ad3ffc8a50481afbe77a19",
+		"volatile.cloud-init.instance-id": "402d6e74-3ce0-483c-8d46-fdb28cdab306",
+		"volatile.eth0.host_name": "veth21ca03ab",
+		"volatile.eth0.hwaddr": "00:16:3e:fc:a1:ec",
+		"volatile.idmap.base": "0",
+		"volatile.idmap.current": "[{\"Isuid\":true,\"Isgid\":false,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000},{\"Isuid\":false,\"Isgid\":true,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000}]",
+		"volatile.idmap.next": "[{\"Isuid\":true,\"Isgid\":false,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000},{\"Isuid\":false,\"Isgid\":true,\"Hostid\":1000000,\"Nsid\":0,\"Maprange\":1000000000}]",
+		"volatile.last_state.idmap": "[]",
+		"volatile.last_state.power": "RUNNING",
+		"volatile.last_state.ready": "false",
+		"volatile.uuid": "5835af62-6142-4a7c-9282-35d31ae22cb7",
+		"volatile.uuid.generation": "5835af62-6142-4a7c-9282-35d31ae22cb7"
+	},
+	"expanded_devices": {
+		"eth0": {
+			"name": "eth0",
+			"network": "lxdbr0",
+			"type": "nic"
+		},
+		"home": {
+			"path": "/home",
+			"readonly": "true",
+			"source": "/home",
+			"type": "disk"
+		},
+		"myport21": {
+			"bind": "host",
+			"connect": "tcp:127.0.0.1:21",
+			"listen": "tcp:0.0.0.0:21",
+			"type": "proxy"
+		},
+		"root": {
+			"path": "/",
+			"pool": "default",
+			"type": "disk"
+		},
+		"spool": {
+			"path": "/var/spool",
+			"source": "/var/spool",
+			"type": "disk"
+		}
+	},
+	"last_used_at": "2024-07-01T15:00:22.55170503Z",
+	"location": "none",
+	"name": "my-ubuntu-container",
+	"profiles": [
+		"default",
+		"myprofile"
+	],
+	"project": "default",
+	"stateful": false,
+	"status": "Running",
+	"status_code": 103,
+	"type": "container"
+}

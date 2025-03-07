@@ -16,20 +16,15 @@
 import abc
 import json
 
-#: Constant for the podman engine
+#: Constants for container engines
 ENGINE_PODMAN = "podman"
-
-#: Constant for the cri-o engine
 ENGINE_CRIO = "CRI-O"
-
-#: Constant for the docker engine
 ENGINE_DOCKER = "docker"
-
-#: Constant for the containerd engine
 ENGINE_CONTAINERD = "containerd"
+ENGINE_LXD = "LXD"
 
 #: All supported engines
-ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER, ENGINE_CONTAINERD]
+ENGINE_ALL = [ENGINE_PODMAN, ENGINE_CRIO, ENGINE_DOCKER, ENGINE_CONTAINERD, ENGINE_LXD]
 
 
 # Decorator for verifying that getting value from "data" won't
@@ -75,11 +70,26 @@ def json_is_podman_format(json_rep):
     )
 
 
+def json_is_lxd_format(json_rep):
+    """Check if the inspected file is in a format from LXD."""
+    return (
+        # LXD's inspection output returns a single dictionary for a single container
+        isinstance(json_rep, dict)
+        and "expanded_devices" in json_rep
+        and "architecture" in json_rep
+        and "config" in json_rep
+    )
+
+
 def get_engine_helper(data, ContainerEngine):
     engine = validate_container_engine(ContainerEngine)
+
     if engine == "-":
         json_rep = json.loads(data)
-        if json_is_list(json_rep):
+
+        if json_is_lxd_format(json_rep):
+            return LxdHelper()
+        elif json_is_list(json_rep):
             if json_is_containerd_format(json_rep):
                 return ContainerdHelper()
             elif json_is_podman_format(json_rep):
@@ -96,7 +106,9 @@ def get_engine_helper(data, ContainerEngine):
             return CrioHelper()
         elif engine == ENGINE_CONTAINERD:
             return ContainerdHelper()
-        raise RuntimeError("Unkown engine")
+        elif engine == ENGINE_LXD:
+            return LxdHelper()
+        raise RuntimeError("Unknown engine")
 
 
 class EngineHelper(abc.ABC):
@@ -258,6 +270,55 @@ class ContainerdHelper(EngineHelper):
                 return []
             return opts["Caps"].split(",")
         return data[0]["Spec"]["process"]["capabilities"]["effective"]
+
+
+class LxdHelper(EngineHelper):
+    def __init__(self):
+        super().__init__(ENGINE_LXD)
+
+    @getter_decorator
+    def get_devices(self, data):
+        # Extract devices from the config
+        devices = []
+        config_devices = data["expanded_devices"]
+        for name, device in config_devices.items():
+            if device["type"] in ["unix-block", "unix-char"]:
+                device["PathOnHost"] = device.get("path", "")
+                devices.append(device)
+        return devices
+
+    @getter_decorator
+    def get_mounts(self, data):
+        # Extract mounts (disk devices)
+        mounts = []
+        config_devices = data["expanded_devices"]
+        for name, device in config_devices.items():
+            if device["type"] == "disk":
+                mount = {
+                    "source": device.get("source", ""),
+                    "path": device.get("path", ""),
+                    "readonly": device.get("readonly", False),
+                }
+                mounts.append(mount)
+        return mounts
+
+    @getter_decorator
+    def get_ports(self, data):
+        # Extract port information from the LXD JSON configuration
+        ports = []
+        for name, device in data["expanded_devices"].items():
+            if device["type"] == "proxy":
+                port_info = {
+                    "portNumber": int(device["listen"].split(":")[-1]),
+                    "protocol": device["connect"].split(":")[0],
+                }
+                ports.append(port_info)
+        return ports
+
+    @getter_decorator
+    def get_caps(self, data, opts):
+        # Capabilities are not part of LXD spec directly
+        return []
 
 
 def parse_cap(data):
