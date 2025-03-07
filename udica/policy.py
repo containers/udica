@@ -179,10 +179,8 @@ def create_policy(
     # mounts
     if inspect_format == "CRI-O":
         write_policy_for_crio_mounts(mounts, policy)
-    elif inspect_format == "containerd":
+    elif inspect_format in ["containerd", "LXD"]:
         write_policy_for_containerd_mounts(mounts, policy)
-    elif inspect_format == "LXD":
-        write_policy_for_lxd_mounts(mounts, policy)
     else:
         write_policy_for_podman_mounts(mounts, policy)
 
@@ -467,111 +465,6 @@ def write_policy_for_containerd_mounts(mounts, policy):
     # }
     for item in sorted(mounts, key=lambda x: str(x["source"])):
         if not item["source"].find("/"):
-            if item["source"] == LOG_CONTAINER and "ro" in item["options"]:
-                policy.write("    (blockinherit log_container)\n")
-                add_template("log_container")
-                continue
-
-            if item["source"] == LOG_CONTAINER and "ro" not in item["options"]:
-                policy.write("    (blockinherit log_rw_container)\n")
-                add_template("log_container")
-                continue
-
-            if item["source"] == HOME_CONTAINER and "ro" in item["options"]:
-                policy.write("    (blockinherit home_container)\n")
-                add_template("home_container")
-                continue
-
-            if item["source"] == HOME_CONTAINER and "ro" not in item["options"]:
-                policy.write("    (blockinherit home_rw_container)\n")
-                add_template("home_container")
-                continue
-
-            if item["source"] == TMP_CONTAINER and "ro" in item["options"]:
-                policy.write("    (blockinherit tmp_container)\n")
-                add_template("tmp_container")
-                continue
-
-            if item["source"] == TMP_CONTAINER and "ro" not in item["options"]:
-                policy.write("    (blockinherit tmp_rw_container)\n")
-                add_template("tmp_container")
-                continue
-
-            if item["source"] == CONFIG_CONTAINER and "ro" in item["options"]:
-                policy.write("    (blockinherit config_container)\n")
-                add_template("config_container")
-                continue
-
-            if item["source"] == CONFIG_CONTAINER and "ro" not in item["options"]:
-                policy.write("    (blockinherit config_rw_container)\n")
-                add_template("config_container")
-                continue
-
-            contexts = list_contexts(item["source"])
-            for context in contexts:
-                if "ro" not in item["options"]:
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( dir ( "
-                        + perms.perm["dir_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( file ( "
-                        + perms.perm["file_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( fifo_file ( "
-                        + perms.perm["fifo_rw"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( sock_file ( "
-                        + perms.perm["socket_rw"]
-                        + " ))) \n"
-                    )
-                if "ro" in item["options"]:
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( dir ( "
-                        + perms.perm["dir_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( file ( "
-                        + perms.perm["file_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( fifo_file ( "
-                        + perms.perm["fifo_ro"]
-                        + " ))) \n"
-                    )
-                    policy.write(
-                        "    (allow process "
-                        + context
-                        + " ( sock_file ( "
-                        + perms.perm["socket_ro"]
-                        + " ))) \n"
-                    )
-
-
-def write_policy_for_lxd_mounts(mounts, policy):
-    for item in sorted(mounts, key=lambda x: str(x["source"])):
-        if not item["source"].find("/"):
             if item["source"] == LOG_CONTAINER and "ro" in item.get("options", []):
                 policy.write("    (blockinherit log_container)\n")
                 add_template("log_container")
@@ -607,7 +500,9 @@ def write_policy_for_lxd_mounts(mounts, policy):
                 add_template("config_container")
                 continue
 
-            if item["source"] == CONFIG_CONTAINER and "ro" not in item.get("options", []):
+            if item["source"] == CONFIG_CONTAINER and "ro" not in item.get(
+                "options", []
+            ):
                 policy.write("    (blockinherit config_rw_container)\n")
                 add_template("config_container")
                 continue
