@@ -106,7 +106,14 @@ def list_ports(port_number, port_proto):
 
 
 def create_policy(
-    opts, capabilities, devices, mounts, ports, append_rules, inspect_format, prefix_dir=""
+    opts,
+    capabilities,
+    devices,
+    mounts,
+    ports,
+    append_rules,
+    inspect_format,
+    prefix_dir="",
 ):
     policy = open(opts["ContainerName"] + ".cil", "w")
     policy.write("(block " + opts["ContainerName"] + "\n")
@@ -214,7 +221,7 @@ def write_policy_for_crio_mounts(mounts, policy, prefix_dir=""):
     for item in mounts:
         # Include prefix_dir in the path for Kubernetes container calls.
         host_path = prefix_dir + item["hostPath"]
-        
+
         if host_path.startswith("/var/lib/kubelet"):
             # These should already have the right context
             continue
