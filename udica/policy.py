@@ -106,7 +106,14 @@ def list_ports(port_number, port_proto):
 
 
 def create_policy(
-    opts, capabilities, devices, mounts, ports, append_rules, inspect_format
+    opts,
+    capabilities,
+    devices,
+    mounts,
+    ports,
+    append_rules,
+    inspect_format,
+    prefix_dir="",
 ):
     policy = open(opts["ContainerName"] + ".cil", "w")
     policy.write("(block " + opts["ContainerName"] + "\n")
@@ -178,7 +185,7 @@ def create_policy(
 
     # mounts
     if inspect_format == "CRI-O":
-        write_policy_for_crio_mounts(mounts, policy)
+        write_policy_for_crio_mounts(mounts, policy, prefix_dir)
     elif inspect_format == "containerd":
         write_policy_for_containerd_mounts(mounts, policy)
     else:
@@ -207,15 +214,18 @@ def create_policy(
     policy.close()
 
 
-def write_policy_for_crio_mounts(mounts, policy):
+def write_policy_for_crio_mounts(mounts, policy, prefix_dir=""):
     contexts = []
     contexts_readonly = []
 
     for item in mounts:
-        if item["hostPath"].startswith("/var/lib/kubelet"):
+        # Include prefix_dir in the path for Kubernetes container calls.
+        host_path = prefix_dir + item["hostPath"]
+
+        if host_path.startswith("/var/lib/kubelet"):
             # These should already have the right context
             continue
-        if item["hostPath"] == LOG_CONTAINER:
+        if host_path == LOG_CONTAINER:
             if item["readonly"]:
                 policy.write("    (blockinherit log_container)\n")
             else:
@@ -223,7 +233,7 @@ def write_policy_for_crio_mounts(mounts, policy):
             add_template("log_container")
             continue
 
-        if item["hostPath"] == HOME_CONTAINER:
+        if host_path == HOME_CONTAINER:
             if item["readonly"]:
                 policy.write("    (blockinherit home_container)\n")
             else:
@@ -231,7 +241,7 @@ def write_policy_for_crio_mounts(mounts, policy):
             add_template("home_container")
             continue
 
-        if item["hostPath"] == TMP_CONTAINER:
+        if host_path == TMP_CONTAINER:
             if item["readonly"]:
                 policy.write("    (blockinherit tmp_container)\n")
             else:
@@ -239,7 +249,7 @@ def write_policy_for_crio_mounts(mounts, policy):
             add_template("tmp_container")
             continue
 
-        if item["hostPath"] == CONFIG_CONTAINER:
+        if host_path == CONFIG_CONTAINER:
             if item["readonly"]:
                 policy.write("    (blockinherit config_container)\n")
             else:
@@ -247,12 +257,10 @@ def write_policy_for_crio_mounts(mounts, policy):
             add_template("config_container")
             continue
 
-        # TODO(jaosorior): Add prefix-dir to path. This way we could call this
-        # from a container in kubernetes
         if item["readonly"] is False:
-            contexts.extend(list_contexts(item["hostPath"]))
+            contexts.extend(list_contexts(host_path))
         else:
-            contexts_readonly.extend(list_contexts(item["hostPath"]))
+            contexts_readonly.extend(list_contexts(host_path))
 
     for context in sorted(set(contexts)):
         policy.write(
