@@ -30,6 +30,7 @@ Udica supports following container engines:
    * docker v1.13+
    * podman v2.0+
    * containerd v1.5.0+ (using `nerdctl` v0.14+ or crictl)
+   * LXD v5.21.1+
 
 ## Installing
 
