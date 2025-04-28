@@ -106,7 +106,7 @@ def list_ports(port_number, port_proto):
 
 
 def create_policy(
-    opts, capabilities, devices, mounts, ports, append_rules, inspect_format
+    opts, capabilities, devices, mounts, ports, append_rules, inspect_format, tcp_ports, unix_connect
 ):
     policy = open(opts["ContainerName"] + ".cil", "w")
     policy.write("(block " + opts["ContainerName"] + "\n")
@@ -168,6 +168,20 @@ def create_policy(
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"
             )
+    
+    # TCP connect permissions
+    for port in tcp_ports:
+        policy.write(
+            "    (allow process "
+            + list_ports(port, "tcp")
+            + " ( tcp_socket ( name_connect ))) \n"
+        )
+
+    # UNIX socket connect permissions
+    if unix_connect:
+        policy.write(
+            "    (allow process container_runtime_t ( unix_stream_socket ( connectto ))) \n"
+        )
 
     # devices
     # Not applicable for CRI-O container engine
