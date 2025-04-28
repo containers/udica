@@ -1,0 +1,6 @@
+(block my_container
+    (blockinherit container)
+    (blockinherit kerberos_container)
+    (allow process process ( capability ( audit_write chown dac_override fowner fsetid kill mknod net_bind_service net_raw setfcap setgid setpcap setuid sys_chroot ))) 
+
+)
