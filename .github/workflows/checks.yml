@@ -20,8 +20,11 @@ jobs:
           - quay.io/fedora/fedora:rawhide
           # test on the latest stable release of Fedora
           - quay.io/fedora/fedora:latest
-          # test on the latest stable release of Centos stream
+          # test on Centos stream 9
           - quay.io/centos/centos:stream9
+          # test on the latest stable release of Centos stream
+          - quay.io/centos/centos:stream10
+
     container:
       image: ${{ matrix.image }}
     steps:
