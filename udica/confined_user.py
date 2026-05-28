@@ -66,10 +66,10 @@ def create_confined_user_policy(opts):
     # separate MCS portion
     if ":" in opts["range"]:
         # s0:c0.c1023
-        (mls_range, mcs_range) = opts["range"].split(":")
+        mls_range, mcs_range = opts["range"].split(":")
     if "-" in mls_range:
         # s0-s15
-        (range_l, range_h) = mls_range.split("-")
+        range_l, range_h = mls_range.split("-")
     else:
         # s0
         range_l = mls_range
@@ -77,7 +77,7 @@ def create_confined_user_policy(opts):
     if mcs_range != "":
         if "." in mcs_range:
             # s0:c0.c1023 -> (userrange {uname}_u ((s0 ) (s0 (range c0 c1023))))
-            (mcs_range_l, mcs_range_h) = mcs_range.split(".")
+            mcs_range_l, mcs_range_h = mcs_range.split(".")
             mcs_range = "(range {} {})".format(mcs_range_l, mcs_range_h)
         else:
             # s0:c0 -> (userrange {uname}_u ((s0 ) (s0 (c0))))
@@ -92,9 +92,7 @@ def create_confined_user_policy(opts):
 (userrole {uname}_u {uname}_r)
 (userlevel {uname}_u ({level}))
 (userrange {uname}_u ({range}))
-""".format(
-        uname=opts["uname"], level=opts["level"], range=range
-    )
+""".format(uname=opts["uname"], level=opts["level"], range=range)
 
     # process arguments determining which macros are to be used
     for arg, value in opts.items():

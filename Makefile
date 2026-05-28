@@ -12,11 +12,11 @@ lint:
 
 .PHONY:
 format:
-	black *.py udica/*.py tests/*.py
+	black -t py34 *.py udica/*.py tests/*.py
 
 .PHONY:
 format-check:
-	black --check --diff *.py udica/*.py tests/*.py
+	black -t py34 --check --diff *.py udica/*.py tests/*.py
 
 .PHONY: test
 test: lint format-check

@@ -54,9 +54,9 @@ def list_contexts(directory):
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
 
-    (rc, fclist) = semanage.semanage_fcontext_list(handle)
-    (rc, fclocal) = semanage.semanage_fcontext_list_local(handle)
-    (rc, fchome) = semanage.semanage_fcontext_list_homedirs(handle)
+    rc, fclist = semanage.semanage_fcontext_list(handle)
+    rc, fclocal = semanage.semanage_fcontext_list_local(handle)
+    rc, fchome = semanage.semanage_fcontext_list_homedirs(handle)
 
     contexts = []
     for fcontext in fclist + fclocal + fchome:
@@ -68,7 +68,7 @@ def list_contexts(directory):
 
     selabel = selinux.selabel_open(selinux.SELABEL_CTX_FILE, None, 0)
     try:
-        (rc, context) = selinux.selabel_lookup(selabel, directory, 0)
+        rc, context = selinux.selabel_lookup(selabel, directory, 0)
     except FileNotFoundError:
         # File context definition containing "<<none>>" triggers exception
         context = None
@@ -91,8 +91,8 @@ def list_ports(port_number, port_proto):
     handle = semanage.semanage_handle_create()
     semanage.semanage_connect(handle)
 
-    (rc, plist) = semanage.semanage_port_list(handle)
-    (rc, plocal) = semanage.semanage_port_list_local(handle)
+    rc, plist = semanage.semanage_port_list(handle)
+    rc, plocal = semanage.semanage_port_list_local(handle)
 
     for port in plocal + plist:
         con = semanage.semanage_port_get_con(port)
