@@ -243,6 +243,14 @@ def get_args():
             required=False,
             default="-",
         )
+        parser.add_argument(
+            "--mount-prefix",
+            type=str,
+            help="Prefix to add to host paths of mounts (useful when running udica inside a container)",
+            dest="MountPrefix",
+            required=False,
+            default="",
+        )
 
     args = parser.parse_args()
     return vars(args)
