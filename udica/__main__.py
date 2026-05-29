@@ -216,13 +216,6 @@ def get_args():
             default=None,
         )
         parser.add_argument(
-            "--custom-rules",
-            type=str,
-            help="Path to a CIL file with custom rules",
-            dest="CustomRules",
-            required=False,
-        )
-        parser.add_argument(
             "-d",
             "--ansible",
             help="Generate ansible playbook to deploy SELinux policy for containers ",
@@ -234,10 +227,18 @@ def get_args():
             "-a",
             "--append-rules",
             type=str,
-            help="Append more SELinux allow rules from file",
+            help="Append additional allow rules based on AVC denials from the provided file (e.g. audit.log)",
             dest="FileAVCS",
             required=False,
             default=None,
+        )
+        parser.add_argument(
+            "-C",
+            "--custom-rules",
+            type=str,
+            help="Append custom CIL rules from the provided file. See man page for examples.",
+            dest="CustomRules",
+            required=False,
         )
         parser.add_argument(
             "-e",

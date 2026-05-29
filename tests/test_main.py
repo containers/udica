@@ -118,6 +118,23 @@ class TestBase(unittest.TestCase):
         )
         self.assert_policy(test_file("test_basic.docker.cil"))
 
+    def test_custom_rules_docker(self):
+        """docker run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora with custom rules"""
+        output = self.run_udica(
+            [
+                "udica",
+                "-j",
+                "tests/test_basic.docker.json",
+                "--custom-rules",
+                "tests/custom_rules.cil",
+                "my_container",
+            ]
+        )
+        self.assert_templates(
+            output, ["base_container", "net_container", "home_container"]
+        )
+        self.assert_policy(test_file("test_custom_rules.docker.cil"))
+
     def test_basic_cri(self):
         """Start CRI-O mounting /var/spool with read/write perms and /home and /etc/hosts with readonly perms"""
         output = self.run_udica(

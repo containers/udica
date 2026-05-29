@@ -1,0 +1,15 @@
+(optional test_optional_1
+    (typeattributeset cil_gen_require systemd_socket_proxyd_t)
+    (allow process systemd_socket_proxyd_t (unix_stream_socket (connectto)))
+    (optional test_optional_2
+        (typeattributeset cil_gen_require abrt_dump_oops_t)
+        ; deny_ptrace
+        (booleanif (deny_ptrace)
+            (false
+                (allow process abrt_dump_oops_t (process (sigchld))) ; comment at the end of a line
+                (allow abrt_dump_oops_t process (process (ptrace)))
+            )
+        )
+;    )   -- commented parenthesis
+    )
+)

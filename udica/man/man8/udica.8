@@ -63,6 +63,14 @@ List of devices the container should have access to, e.g "\-\-devices /dev/dri/c
 Append more SELinux allow rules generated from SELinux denials in audit daemon.
 
 .TP
+.I  \-C, \-\-custom-rules FILE
+Path to a CIL file with custom rules that will be included in the generated policy.
+Rules must use 'process' as the source context to work correctly with the rest of the policy.
+For example, to allow the container to connect to a unix stream socket:
+.br
+(allow process container_runtime_t ( unix_stream_socket ( connectto )))
+
+.TP
 .I  \-s, \-\-stream-connect DOMAIN
 Allow container to stream connect with given SELinux domain.
 
@@ -107,6 +115,10 @@ error while creating an SELinux policy.
 .nf
 # cat my_con.json | udica \-\-x\-access \-\-full\-network\-access my_container
 Creates a new SELinux policy with name my_container based on inspecting container and adding access to the X server and full network access.
+
+# echo "(allow process container_runtime_t ( unix_stream_socket ( connectto )))" > custom.cil
+# udica \-j container.json \-\-custom\-rules custom.cil my_container
+Creates a new SELinux policy module named my_container based on container.json and CIL rules from custom.cil.
 
 .SH SEE ALSO
 .BR selinux(8),

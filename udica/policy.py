@@ -17,7 +17,6 @@ from shutil import copy
 from os import chdir, getcwd, remove
 from os.path import exists
 import tarfile
-import re
 
 import selinux
 import semanage
@@ -107,27 +106,61 @@ def list_ports(port_number, port_proto):
 
 
 def validate_cil_template(cil_path):
-    """Ensures that the file is correctly balanced with respect to parentheses."""
-    try:
-        with open(cil_path, 'r') as cil_file:
-            lines = cil_file.readlines()
+    """Ensures that the file is correctly balanced with respect to parentheses.
 
-            if not lines:
-                print("Error: CIL file is empty.")
+    Handles CIL comments (semicolons) and string literals properly.
+    """
+    try:
+        with open(cil_path, "r", encoding="utf-8") as cil_file:
+            open_parens = 0
+            has_content = False
+
+            for idx, line in enumerate(cil_file, start=1):
+                # Remove comments (everything after semicolon)
+                comment_pos = line.find(";")
+                if comment_pos != -1:
+                    line = line[:comment_pos]
+
+                # Skip string literals by removing them
+                # CIL strings are double-quoted, handle escaped quotes
+                in_string = False
+                escaped = False
+                filtered_line = []
+
+                for char in line:
+                    if escaped:
+                        escaped = False
+                        continue
+                    if char == "\\":
+                        escaped = True
+                        continue
+                    if char == '"':
+                        in_string = not in_string
+                        continue
+                    if not in_string:
+                        filtered_line.append(char)
+
+                processed_line = "".join(filtered_line).strip()
+
+                if processed_line:
+                    has_content = True
+                    open_parens += processed_line.count("(")
+                    open_parens -= processed_line.count(")")
+
+                    if open_parens < 0:
+                        print(
+                            f"Error: Unbalanced parentheses detected in the custom CIL file at line {idx}."
+                        )
+                        return False
+
+            if not has_content:
+                print("Error: CIL file is empty or contains only comments.")
                 return False
 
-            # Check for balanced parentheses
-            open_parens = 0
-            for idx, line in enumerate(lines):
-                line = line.strip()
-                open_parens += line.count('(')
-                open_parens -= line.count(')')
-                if open_parens < 0:
-                    print(f"Error: Unbalanced parentheses detected in the custom CIL file at line {idx + 1}.")
-                    return False
-
             if open_parens != 0:
-                print("Error: Unbalanced parentheses in the CIL file.")
+                print(
+                    f"Error: Unbalanced parentheses in the CIL file ({open_parens} unclosed)."
+                )
                 return False
 
         return True
@@ -135,10 +168,14 @@ def validate_cil_template(cil_path):
     except FileNotFoundError:
         print(f"Error: CIL file {cil_path} not found.")
         return False
+    except UnicodeDecodeError:
+        print(f"Error: CIL file {cil_path} is not valid UTF-8.")
+        return False
     except Exception as e:
         print(f"Unexpected error while validating CIL file: {e}")
         return False
-        
+
+
 def create_policy(
     opts, capabilities, devices, mounts, ports, append_rules, inspect_format
 ):
@@ -202,19 +239,6 @@ def create_policy(
                 + perms.socket[item["protocol"]]
                 + " (  name_bind ))) \n"
             )
-    
-    # Validate and include custom template if provided
-    if opts.get("CustomRules"):
-        if validate_cil_template(opts["CustomRules"]):
-            with open(opts["CustomRules"], "r") as template_file:
-                custom_template = template_file.read()
-                policy.write("\n; Start of custom CIL template\n")
-                policy.write(custom_template)
-                policy.write("\n; End of custom CIL template\n")
-        else:
-            print("Invalid custom template. Aborting policy creation.")
-            policy.close()
-            return
 
     # devices
     # Not applicable for CRI-O container engine
@@ -249,6 +273,19 @@ def create_policy(
                     + rule[0]
                     + " seems to be unrelated to this container policy. Skipping allow rule."
                 )
+
+    # Validate and include custom rules if provided
+    if opts.get("CustomRules"):
+        if validate_cil_template(opts["CustomRules"]):
+            with open(opts["CustomRules"], "r") as template_file:
+                custom_template = template_file.read()
+                policy.write("\n; Start of custom CIL policy\n")
+                policy.write(custom_template)
+                policy.write("\n; End of custom CIL policy\n")
+        else:
+            print("Invalid custom rules. Aborting policy creation.")
+            policy.close()
+            return
 
     policy.write(")")
     policy.close()
