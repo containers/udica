@@ -15,7 +15,7 @@
 
 from shutil import copy
 from os import chdir, getcwd, remove
-from os.path import exists
+from os.path import exists, join
 import tarfile
 
 import selinux
@@ -113,7 +113,6 @@ def create_policy(
     ports,
     append_rules,
     inspect_format,
-    prefix_dir="",
 ):
     policy = open(opts["ContainerName"] + ".cil", "w")
     policy.write("(block " + opts["ContainerName"] + "\n")
@@ -184,12 +183,13 @@ def create_policy(
         write_policy_for_podman_devices(devices, policy)
 
     # mounts
+    mount_prefix = opts.get("MountPrefix", "")
     if inspect_format == "CRI-O":
-        write_policy_for_crio_mounts(mounts, policy, prefix_dir)
+        write_policy_for_crio_mounts(mounts, policy, mount_prefix)
     elif inspect_format == "containerd":
-        write_policy_for_containerd_mounts(mounts, policy)
+        write_policy_for_containerd_mounts(mounts, policy, mount_prefix)
     else:
-        write_policy_for_podman_mounts(mounts, policy)
+        write_policy_for_podman_mounts(mounts, policy, mount_prefix)
 
     if append_rules != None:
         for rule in append_rules:
@@ -214,13 +214,15 @@ def create_policy(
     policy.close()
 
 
-def write_policy_for_crio_mounts(mounts, policy, prefix_dir=""):
+def write_policy_for_crio_mounts(mounts, policy, mount_prefix=""):
     contexts = []
     contexts_readonly = []
 
     for item in mounts:
-        # Include prefix_dir in the path for Kubernetes container calls.
-        host_path = prefix_dir + item["hostPath"]
+        # Include mount_prefix in the path for Kubernetes container calls.
+        host_path = (
+            join(mount_prefix, item["hostPath"]) if mount_prefix else item["hostPath"]
+        )
 
         if host_path.startswith("/var/lib/kubelet"):
             # These should already have the right context
@@ -346,56 +348,61 @@ def write_policy_for_podman_devices(devices, policy):
         )
 
 
-def write_policy_for_podman_mounts(mounts, policy):
+def write_policy_for_podman_mounts(mounts, policy, mount_prefix=""):
     contexts = []
     contexts_rw = []
 
     for item in mounts:
         if not item["Source"].find("/"):
-            if item["Source"] == LOG_CONTAINER and item["RW"] is False:
+            # Include mount_prefix in the path for container calls.
+            source_path = (
+                join(mount_prefix, item["Source"]) if mount_prefix else item["Source"]
+            )
+
+            if source_path == LOG_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit log_container)\n")
                 add_template("log_container")
                 continue
 
-            if item["Source"] == LOG_CONTAINER and item["RW"] is True:
+            if source_path == LOG_CONTAINER and item["RW"] is True:
                 policy.write("    (blockinherit log_rw_container)\n")
                 add_template("log_container")
                 continue
 
-            if item["Source"] == HOME_CONTAINER and item["RW"] is False:
+            if source_path == HOME_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit home_container)\n")
                 add_template("home_container")
                 continue
 
-            if item["Source"] == HOME_CONTAINER and item["RW"] is True:
+            if source_path == HOME_CONTAINER and item["RW"] is True:
                 policy.write("    (blockinherit home_rw_container)\n")
                 add_template("home_container")
                 continue
 
-            if item["Source"] == TMP_CONTAINER and item["RW"] is False:
+            if source_path == TMP_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit tmp_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if item["Source"] == TMP_CONTAINER and item["RW"] is True:
+            if source_path == TMP_CONTAINER and item["RW"] is True:
                 policy.write("    (blockinherit tmp_rw_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if item["Source"] == CONFIG_CONTAINER and item["RW"] is False:
+            if source_path == CONFIG_CONTAINER and item["RW"] is False:
                 policy.write("    (blockinherit config_container)\n")
                 add_template("config_container")
                 continue
 
-            if item["Source"] == CONFIG_CONTAINER and item["RW"] is True:
+            if source_path == CONFIG_CONTAINER and item["RW"] is True:
                 policy.write("    (blockinherit config_rw_container)\n")
                 add_template("config_container")
                 continue
 
             if item["RW"] is True:
-                contexts_rw.extend(list_contexts(item["Source"]))
+                contexts_rw.extend(list_contexts(source_path))
             else:
-                contexts.extend(list_contexts(item["Source"]))
+                contexts.extend(list_contexts(source_path))
 
     for context in sorted(set(contexts_rw)):
         policy.write(
@@ -458,7 +465,7 @@ def write_policy_for_podman_mounts(mounts, policy):
         )
 
 
-def write_policy_for_containerd_mounts(mounts, policy):
+def write_policy_for_containerd_mounts(mounts, policy, mount_prefix=""):
     # mount JSON example:
     # {
     #   "destination": "/sys/fs/cgroup",
@@ -473,47 +480,52 @@ def write_policy_for_containerd_mounts(mounts, policy):
     # }
     for item in sorted(mounts, key=lambda x: str(x["source"])):
         if not item["source"].find("/"):
-            if item["source"] == LOG_CONTAINER and "ro" in item["options"]:
+            # Include mount_prefix in the path for container calls.
+            source_path = (
+                join(mount_prefix, item["source"]) if mount_prefix else item["source"]
+            )
+
+            if source_path == LOG_CONTAINER and "ro" in item["options"]:
                 policy.write("    (blockinherit log_container)\n")
                 add_template("log_container")
                 continue
 
-            if item["source"] == LOG_CONTAINER and "ro" not in item["options"]:
+            if source_path == LOG_CONTAINER and "ro" not in item["options"]:
                 policy.write("    (blockinherit log_rw_container)\n")
                 add_template("log_container")
                 continue
 
-            if item["source"] == HOME_CONTAINER and "ro" in item["options"]:
+            if source_path == HOME_CONTAINER and "ro" in item["options"]:
                 policy.write("    (blockinherit home_container)\n")
                 add_template("home_container")
                 continue
 
-            if item["source"] == HOME_CONTAINER and "ro" not in item["options"]:
+            if source_path == HOME_CONTAINER and "ro" not in item["options"]:
                 policy.write("    (blockinherit home_rw_container)\n")
                 add_template("home_container")
                 continue
 
-            if item["source"] == TMP_CONTAINER and "ro" in item["options"]:
+            if source_path == TMP_CONTAINER and "ro" in item["options"]:
                 policy.write("    (blockinherit tmp_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if item["source"] == TMP_CONTAINER and "ro" not in item["options"]:
+            if source_path == TMP_CONTAINER and "ro" not in item["options"]:
                 policy.write("    (blockinherit tmp_rw_container)\n")
                 add_template("tmp_container")
                 continue
 
-            if item["source"] == CONFIG_CONTAINER and "ro" in item["options"]:
+            if source_path == CONFIG_CONTAINER and "ro" in item["options"]:
                 policy.write("    (blockinherit config_container)\n")
                 add_template("config_container")
                 continue
 
-            if item["source"] == CONFIG_CONTAINER and "ro" not in item["options"]:
+            if source_path == CONFIG_CONTAINER and "ro" not in item["options"]:
                 policy.write("    (blockinherit config_rw_container)\n")
                 add_template("config_container")
                 continue
 
-            contexts = list_contexts(item["source"])
+            contexts = list_contexts(source_path)
             for context in contexts:
                 if "ro" not in item["options"]:
                     policy.write(
