@@ -1,0 +1,114 @@
+summary: Udica integration tests with podman
+
+discover:
+    how: fmf
+
+execute:
+    how: tmt
+
+prepare:
+    - name: Install dependencies
+      how: shell
+      script: |
+        dnf install -y \
+          python3 \
+          python3-setuptools \
+          setools-console
+      order: 10
+
+    - name: Install podman from rhcontainerbot/podman-next copr
+      how: shell
+      script: |
+        dnf install -y 'dnf-command(copr)'
+        dnf copr enable -y rhcontainerbot/podman-next
+        dnf install -y podman
+      order: 20
+
+    - name: Configure podman
+      how: shell
+      script: |
+        mkdir -p /etc/containers
+        sed -e 's|^#mount_program|mount_program|g' \
+            -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
+            /usr/share/containers/storage.conf > /etc/containers/storage.conf
+        setsebool container_manage_cgroup true || true
+
+        # Initialize podman networking
+        podman system reset --force || true
+        podman network create podman || true
+      order: 30
+
+    - name: Install udica
+      how: shell
+      script: |
+        cd $TMT_TREE
+        python3 ./setup.py install
+      order: 40
+
+provision:
+    how: artemis
+    hardware:
+        memory: ">= 4 GB"
+        cpu:
+            cores: ">= 2"
+        disk:
+            - size: ">= 20 GB"
+
+finish:
+    how: shell
+    script: |
+        # Archive logs to TMT_PLAN_DATA for post-test analysis
+        mkdir -p "$TMT_PLAN_DATA/logs"
+
+        # Copy audit logs (SELinux denials, audit events)
+        if [ -f /var/log/audit/audit.log ]; then
+            cp /var/log/audit/audit.log "$TMT_PLAN_DATA/logs/"
+            echo "Audit logs copied to $TMT_PLAN_DATA/logs/audit.log"
+        else
+            echo "No audit log found at /var/log/audit/audit.log"
+        fi
+
+        # Capture full journal (current boot only)
+        journalctl -b --no-pager --all --output=short-precise &> "$TMT_PLAN_DATA/logs/journal.log"
+        echo "Journal output saved to $TMT_PLAN_DATA/logs/journal.log"
+
+        # Capture podman info
+        podman info &> "$TMT_PLAN_DATA/logs/podman-info.log" || true
+        echo "Podman info saved to $TMT_PLAN_DATA/logs/podman-info.log"
+
+        echo "All logs archived to $TMT_PLAN_DATA/logs/"
+
+/basic:
+    summary: Basic udica functionality test
+    test: |
+        # Enable command echoing
+        set -x
+
+        # Change to the test tree directory
+        cd $TMT_TREE
+
+        # Verify udica is installed and working
+        python3 -m udica --help
+
+        # Start a test container with podman
+        podman run -d -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora sleep 1h
+
+        # Generate container inspection JSON
+        podman inspect -l > /tmp/container.json
+
+        # Generate SELinux policy with udica
+        udica -j /tmp/container.json my_container
+
+        # Verify the generated policy exists
+        test -f my_container.cil
+
+        # Verify policy contains expected content
+        grep "(blockinherit restricted_net_container)" my_container.cil
+        grep "(blockinherit home_container)" my_container.cil
+
+        # Display the generated policy
+        echo "=== Generated SELinux policy (my_container.cil) ==="
+        cat my_container.cil
+
+        echo "Basic udica test passed successfully"
+    duration: 10m

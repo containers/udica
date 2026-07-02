@@ -1,0 +1,31 @@
+---
+# See the documentation for more information:
+# https://packit.dev/docs/configuration/
+
+downstream_package_name: udica
+upstream_tag_template: v{version}
+
+# Sync test files from upstream to downstream (Fedora) for testing
+files_to_sync:
+  - .packit.yaml
+  - src: plans/
+    dest: plans/
+    delete: true
+    mkpath: true
+  - src: .fmf/
+    dest: .fmf/
+    delete: true
+
+jobs:
+  # Run integration tests on Testing Farm
+  # Tests build udica from source on the VM
+  - job: tests
+    trigger: pull_request
+    skip_build: true
+    notifications: &packit_failure_notification
+      failure_comment:
+        message: "Testing Farm tests failed. Please check the logs."
+    targets:
+      - fedora-latest
+      - fedora-rawhide
+    tmt_plan: "/plans/integration"
