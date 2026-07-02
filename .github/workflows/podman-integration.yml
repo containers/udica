@@ -1,0 +1,125 @@
+name: podman-integration
+on: [push, pull_request]
+
+jobs:
+  test-upstream-podman:
+    name: Test podman on Fedora VM
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Lima VM
+        uses: lima-vm/lima-actions/setup@v1
+        with:
+          version: v2.1.1
+
+      - name: Start Fedora VM
+        run: |
+          # Use the same VM images that podman project uses
+          AUTOMATION_RELEASE="20260616t073924z"
+          IMAGE_URL="https://objectstorage.us-ashburn-1.oraclecloud.com/n/id0lmbbwgcdv/b/podman-ci-vm-images/o/releases/$AUTOMATION_RELEASE/fedora-current.x86_64.qcow2.zst"
+
+          # Create lima config
+          cat > fedora-vm.yml << 'EOF'
+          images: []
+          mounts:
+            - location: "~"
+            - location: "/tmp/lima"
+              writable: true
+          EOF
+
+          # Start VM with Fedora image
+          limactl --yes start --plain --name=udica-test \
+            --cpus $(nproc) --memory 4 \
+            --set ".images=[{\"location\":\"$IMAGE_URL\", \"arch\": \"x86_64\"}]" \
+            fedora-vm.yml
+
+      - name: Copy repository to VM
+        run: limactl copy . udica-test:/tmp/udica
+
+      - name: Install dependencies in VM
+        run: |
+          limactl shell udica-test sudo dnf install -y \
+            git \
+            make \
+            golang \
+            python3 \
+            setools-console \
+            systemd-devel \
+            fuse-overlayfs
+
+      - name: Build and install podman from main in VM
+        run: |
+          limactl shell udica-test bash -c '
+            git clone https://github.com/containers/libpod.git /tmp/podman
+            cd /tmp/podman
+            make
+            sudo make install PREFIX=/usr ETCDIR=/etc
+          '
+
+      - name: Configure podman in VM
+        run: |
+          limactl shell udica-test bash -c '
+            sudo mkdir -p /etc/containers
+            sudo sed -e "s|^#mount_program|mount_program|g" \
+                -e "s|^mountopt[[:space:]]*=.*$|mountopt = \"nodev,fsync=0\"|g" \
+                /usr/share/containers/storage.conf > /tmp/storage.conf
+            sudo mv /tmp/storage.conf /etc/containers/storage.conf
+            sudo setsebool container_manage_cgroup true || true
+          '
+
+      - name: Install udica in VM
+        run: |
+          limactl shell udica-test bash -c '
+            cd /tmp/udica
+            sudo python3 ./setup.py install
+          '
+
+      - name: Test udica with podman in VM
+        run: |
+          limactl shell udica-test bash -c '
+            python3 -m udica --help
+            sudo podman run -d -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 fedora sleep 1h
+            sudo podman inspect -l > /tmp/container.json
+            cd /tmp/udica
+            sudo udica -j /tmp/container.json my_container
+            ls -la my_container.cil
+            # Verify policy contains expected content
+            grep "(blockinherit restricted_net_container)" my_container.cil
+            grep "(blockinherit home_container)" my_container.cil
+          '
+
+      - name: Display generated policy
+        run: |
+          limactl shell udica-test bash -c '
+            cd /tmp/udica
+            echo "=== Generated SELinux policy (my_container.cil) ==="
+            cat my_container.cil
+          '
+
+      - name: Show diagnostics
+        if: always()
+        run: |
+          limactl shell udica-test bash -c '
+            echo "=== Disk space ==="
+            df -lhTx tmpfs || true
+
+            echo -e "\n=== Audit log (last 100 lines) ==="
+            sudo tail -n 100 /var/log/audit/audit.log 2>/dev/null || echo "No audit log"
+
+            echo -e "\n=== Journal ==="
+            sudo journalctl -b --no-pager || true
+
+            echo -e "\n=== Podman info ==="
+            sudo podman info || true
+
+            echo -e "\n=== SELinux status ==="
+            getenforce || true
+          ' || true
+
+      - name: Cleanup VM
+        if: always()
+        run: limactl delete --force udica-test || true
